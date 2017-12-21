@@ -37,6 +37,7 @@
 - [32. 在`virtual box`中安装`windows10`](./doc/install_windows_in_virtualbox.md)  
 - [33. 在`Ubuntu 14.04`安装和使用`Docker`](./doc/docker_install.md)  
 - [34. grep 用法](./doc/grep_usage.md)   
+- [35. 查看目录占用的磁盘空间](./doc/disk_space_usage.md)   
 
 
 

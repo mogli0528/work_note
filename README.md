@@ -10,3 +10,9 @@
 - [6. `linux driver`](./linux_driver/)      
 - [7. `rtems` 操作系统](./rtems/)         
 - [8. `work plan`](./work_plan/)  
+
+
+私人数据目录:    
+~/work/    
+~/ssd/models/    
+~/DownLoads/    
