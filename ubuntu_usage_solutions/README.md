@@ -2,6 +2,7 @@
  Ubuntu usage problems' solutions
 
 ## 目录  
+- [0. `chrome`提示无法正确打开您的个人资料](./doc/chrome.md)  
 - [1. `chrome`提示无法正确打开您的个人资料](./doc/chrome.md)  
 - [2. `ubuntu 14.04`状态栏不显示时间](./doc/timedate_bar.md)  
 - [3. `ubuntu 14.04`设置程序启动快捷键](./doc/shortcuts.md)  
