@@ -2,7 +2,7 @@
  Ubuntu usage problems' solutions
 
 ## 目录  
-- [0. `chrome`提示无法正确打开您的个人资料](./doc/chrome.md)  
+- [0. `ubuntu`常用命令 `cheatsheet`](./doc/quick_cmd.md)  
 - [1. `chrome`提示无法正确打开您的个人资料](./doc/chrome.md)  
 - [2. `ubuntu 14.04`状态栏不显示时间](./doc/timedate_bar.md)  
 - [3. `ubuntu 14.04`设置程序启动快捷键](./doc/shortcuts.md)  
@@ -39,6 +39,7 @@
 - [33. 在`Ubuntu 14.04`安装和使用`Docker`](./doc/docker_install.md)  
 - [34. grep 用法](./doc/grep_usage.md)   
 - [35. 查看目录占用的磁盘空间](./doc/disk_space_usage.md)   
+- [36. nohup 的使用](./doc/nohup.md)   
 
 
 
