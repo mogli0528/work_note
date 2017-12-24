@@ -10,6 +10,7 @@
 - [6. `linux driver`](./linux_driver/)      
 - [7. `rtems` 操作系统](./rtems/)         
 - [8. `work plan`](./work_plan/)  
+- [9. 项目相关](./project_platform/)  
 
 
 私人数据目录:    
