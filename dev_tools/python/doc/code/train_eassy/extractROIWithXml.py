@@ -59,10 +59,10 @@ def loadROI(path):
 
     roi = []
     rois = []
-    colStart = 0
-    colEnd = 0
-    rowStart = 0
-    rowEnd = 0 
+    xmin = 0
+    ymin = 0
+    xmax = 0
+    ymax = 0 
     class_name = []
 
     name_node = per.getiterator("name") 
@@ -71,19 +71,19 @@ def loadROI(path):
         class_name.append(name.text)
 
     lst_node = per.getiterator("bndbox")  
-    for oneper in lst_node:  #找出person节点  
-        for child in oneper.getchildren(): #找出person节点的子节点  
+    for oneper in lst_node:  # 找出 bndbox 节点  
+        for child in oneper.getchildren(): # 找出 bndbox 节点的子节点  
             
             if child.tag == 'xmin':
-                colStart = int(child.text)
+                xmin = int(child.text)
             elif child.tag == 'ymin':
-                colEnd = int(child.text)
+                ymin = int(child.text)
             elif child.tag == 'xmax':
-                rowStart = int(child.text)
+                xmax = int(child.text)
             elif child.tag == 'ymax':
-                rowEnd = int(child.text)
+                ymax = int(child.text)
 
-            roi=[[colStart, colEnd],[rowStart,rowEnd]] # 此时只考虑了一个框
+            roi=[[xmin, ymin],[xmax,ymax]] # 此时解析完一个框,矩形框的两个角点
         
         rois.append(roi)
         # print roi[0][0],roi[0][1],roi[1][0],roi[1][1], type(roi)
