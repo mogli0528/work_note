@@ -4,6 +4,12 @@
       然后在原jpg上标出ROI框并保存
 注意： 
       ROI 区域的切片规则是：[row_s:row_e，column_s:column_e]
+
+changelog:
+2017-12-29
+    修改了bounding box为浮点数表示的形式,另外对xml中各个域的检查做了严格判断    
+
+
 '''
 
 import os
@@ -13,12 +19,12 @@ from xml.etree import ElementTree as ET
 
 # 保存.jpg和.xml文件的目录
 # test
-# jpgPath = "jpg"
-# xmlPath = "xml"
+jpgPath = "jpg"
+xmlPath = "xml"
 
 # Standard directory
-jpgPath = "JPEGImages"
-xmlPath = "Annotations"
+#jpgPath = "JPEGImages"
+#xmlPath = "Annotations"
 
 
 colors = [(0, 255, 0), (255, 0, 0)]
@@ -66,30 +72,38 @@ def loadROI(path):
     class_name = []
 
     name_node = per.getiterator("name") 
-    for name in name_node:
-        print "node.text:%s" % name.text   
-        class_name.append(name.text)
+    if len(name_node) > 0:
+        for name in name_node:
+            print "node.text:%s" % name.text   
+            class_name.append(name.text)
 
-    lst_node = per.getiterator("bndbox")  
-    for oneper in lst_node:  # 找出 bndbox 节点  
-        for child in oneper.getchildren(): # 找出 bndbox 节点的子节点  
-            
-            if child.tag == 'xmin':
-                xmin = int(child.text)
-            elif child.tag == 'ymin':
-                ymin = int(child.text)
-            elif child.tag == 'xmax':
-                xmax = int(child.text)
-            elif child.tag == 'ymax':
-                ymax = int(child.text)
+        lst_node = per.getiterator("bndbox")  
+        if len(lst_node) > 0:
+            for oneper in lst_node:  # 找出 bndbox 节点  
+                for child in oneper.getchildren(): # 找出 bndbox 节点的子节点  
+                    
+                    if child.tag == 'xmin':
+                        # xmin = int(child.text)
+                        xmin = int(round(float(child.text)))
+                    elif child.tag == 'ymin':
+                        # ymin = int(child.text)
+                        ymin = int(round(float(child.text)))
+                    elif child.tag == 'xmax':
+                        # xmax = int(child.text)
+                        xmax = int(round(float(child.text)))
+                    elif child.tag == 'ymax':
+                        # ymax = int(child.text)
+                        ymax = int(round(float(child.text)))
 
-            roi=[[xmin, ymin],[xmax,ymax]] # 此时解析完一个框,矩形框的两个角点
-        
-        rois.append(roi)
-        # print roi[0][0],roi[0][1],roi[1][0],roi[1][1], type(roi)
+                    roi=[[xmin, ymin],[xmax,ymax]] # 此时解析完一个框,矩形框的两个角点
+                
+                rois.append(roi)
+                # print roi[0][0],roi[0][1],roi[1][0],roi[1][1], type(roi)
     print len(rois), len(class_name)
     if len(rois) == len(class_name):
         return rois, class_name
+    else:
+        return [], []
 
 # 保存为ROI图片        
 def saveROI(name, class_name, rois, img):
