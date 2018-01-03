@@ -48,7 +48,11 @@ mkdir Annotations ImageSets/Main JPEGImages -p
 4.拷贝训练所需的数据文件   
 (1)把`.xml`全部复制到`Annotations`里面;   
 (2)把`.jpg`复制到`JPEGImages`;   
-(3)然后运行`python make-list-file.py`命令，会产生`trainval.txt`和`test.txt`两个文本文件，将这两个文件复制到`ImageSets/Main`目录下;    
+(3)然后运行 [make-list-file.py](make-list-file.py) 脚本  
+```bash
+python make-list-file.py
+```
+会产生`trainval.txt`和`test.txt`两个文本文件，将这两个文件复制到`ImageSets/Main`目录下;    
 5.进入到`{CAFFE_ROOT}/caffe/data`，执行下面的命令：   
 ```bash
 cp VOC0712/ xwk/ -R

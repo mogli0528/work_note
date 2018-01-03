@@ -1,13 +1,9 @@
-
-
-
 #include <process.h>
 #include <cv.h>
 #include <highgui.h>
 #include <Windows.h>
 using namespace cv;
 using namespace std;
-
 
 void thread(void* p){
 	int index = *(int*)p;

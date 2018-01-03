@@ -8,9 +8,11 @@
 changelog:
 2017-12-29
     修改了bounding box为浮点数表示的形式,另外对xml中各个域的检查做了严格判断    
-
-
+2018-01-03
+    修改图片大小为 0kb 的数据.
+    解决了由于自动标注工具造成的 xmin < 0 的情况.  
 '''
+
 
 import os
 import cv2
@@ -25,7 +27,6 @@ xmlPath = "xml"
 # Standard directory
 #jpgPath = "JPEGImages"
 #xmlPath = "Annotations"
-
 
 colors = [(0, 255, 0), (255, 0, 0)]
 
@@ -74,7 +75,7 @@ def loadROI(path):
     name_node = per.getiterator("name") 
     if len(name_node) > 0:
         for name in name_node:
-            print "node.text:%s" % name.text   
+            #print "node.text:%s" % name.text   
             class_name.append(name.text)
 
         lst_node = per.getiterator("bndbox")  
@@ -85,12 +86,15 @@ def loadROI(path):
                     if child.tag == 'xmin':
                         # xmin = int(child.text)
                         xmin = int(round(float(child.text)))
+                        
                     elif child.tag == 'ymin':
                         # ymin = int(child.text)
                         ymin = int(round(float(child.text)))
+                        
                     elif child.tag == 'xmax':
                         # xmax = int(child.text)
                         xmax = int(round(float(child.text)))
+
                     elif child.tag == 'ymax':
                         # ymax = int(child.text)
                         ymax = int(round(float(child.text)))
@@ -98,7 +102,7 @@ def loadROI(path):
                     roi=[[xmin, ymin],[xmax,ymax]] # 此时解析完一个框,矩形框的两个角点
                 
                 rois.append(roi)
-                # print roi[0][0],roi[0][1],roi[1][0],roi[1][1], type(roi)
+                # print xmin, ymin, xmax, ymax
     print len(rois), len(class_name)
     if len(rois) == len(class_name):
         return rois, class_name
@@ -135,7 +139,15 @@ def saveROI(name, class_name, rois, img):
             # roiImg = np.zeros((height,width,3), np.uint8)
             # roiImg = (colStart, rowStart), (colEnd, rowEnd)
             # roiImg = ( rowStart:rowEnd, colStart:colEnd)
-            cv2.imwrite(full_name, img[rowStart:rowEnd, colStart:colEnd], [int(cv2.IMWRITE_JPEG_QUALITY), 100])   # 100 is the highest quality.
+
+            # 剔除异常的 bounding box 
+            if (rowEnd - rowStart) * (colEnd - colStart) > 5:
+                # 这种 xmin < 0 的情况一般是由于自动标注工具造成的.  
+                if rowEnd > 0 and rowStart > 0 and colEnd > 0 and colStart > 0:
+                    cv2.imwrite(full_name, img[rowStart:rowEnd, colStart:colEnd], [int(cv2.IMWRITE_JPEG_QUALITY), 100])   # 100 is the highest quality.
+            else:
+                print "waring: %s, roi:" % full_name
+                print colStart, colEnd, rowStart, rowEnd
             # cv2.imwrite(full_name, img[colStart:colEnd, rowStart:rowEnd], [int(cv2.IMWRITE_JPEG_QUALITY), 100])   # 100 is the highest quality.
 
             index = index + 1
