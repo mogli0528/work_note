@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+#coding=utf-8  
   
 #=================  
 #File: PyOpenCV.py  
@@ -6,7 +6,7 @@
 #Date: 2013-12-03  
 #=================  
   
-#eclipse, python2.7, opencv 2.4.11
+#python2.7, opencv 2.4.11
   
 import cv2  
   

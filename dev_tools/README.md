@@ -2,6 +2,7 @@
  编程语言也是开发工具，因此放在这个目录。   
 
 ## 编程语言
+[0. 有用的示例程序](./useful_examples/)   
 [1. `C++` 笔记](./cpp/)      
 [2. `python` 笔记](./python/)      
 [3. `matlab` 笔记](./matlab/)      
@@ -11,7 +12,7 @@
 [7. `Makefile` 语法](./makefile/)     
 [6. `ROS`——机器人操作系统](./ros/)       
 [8. `windows` 系统 `API`](./windows_api/)  
-[9. `MarkDown`使用教程](./markdownUsage/)        
+[9. `MarkDown`使用教程](./md_usage/)        
 [10. `Doxygen`使用教程](./doxygen/)        
 
 ## 加油站    

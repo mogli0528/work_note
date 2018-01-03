@@ -1,5 +1,4 @@
-# 《ubuntu 使用中的一些问题及解决方法》  
- Ubuntu usage problems' solutions
+# ubuntu 系统遇到的问题及解决方法   
 
 ## 目录  
 - [0. `ubuntu`常用命令 `cheatsheet`](./doc/quick_cmd.md)  
@@ -40,8 +39,6 @@
 - [34. grep 用法](./doc/grep_usage.md)   
 - [35. 查看目录占用的磁盘空间](./doc/disk_space_usage.md)   
 - [36. nohup 的使用](./doc/nohup.md)   
-
-
 
 ```shadowsocks5
 "server": 69.171.73.29
