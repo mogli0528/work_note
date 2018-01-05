@@ -15,5 +15,9 @@
 [9. `MarkDown`使用教程](./md_usage/)        
 [10. `Doxygen`使用教程](./doxygen/)        
 
+## work on server effective
+[1. 如何与深度学习服务器优雅的交互？](./work_on_server_effective.md)        
+
+
 ## 加油站    
 [1. 《编程之法：面试和算法心得》](https://github.com/julycoding/The-Art-Of-Programming-By-July/tree/master/ebook/zh)   

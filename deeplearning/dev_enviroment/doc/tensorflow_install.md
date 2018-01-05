@@ -22,7 +22,7 @@ Successfully installed virtualenv-15.1.0
 3. 创建虚拟环境   
 ```
 $ virtualenv --system-site-packages ~/tf101py27
-New python executable in /home/tsiangleo/tf101py27/bin/python
+New python executable in /home/klm/tf101py27/bin/python
 Installing setuptools, pip, wheel...done.
 ```
 上述命令在`~/tf101py27`目录下创建了一个虚拟环境。    
