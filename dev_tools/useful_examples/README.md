@@ -8,6 +8,7 @@
 [3. 从大量的标注样本中选取固定数量样本](./doc/code/train_eassy/copy_fixed_amount_files.py)  
 [4. 在图片上将标注好的框显示出来](./doc/code/train_eassy/drawRectWithXml.py)  
 [5. 老杜的 lab 标注工具](./doc/code/lab.py)  
+[6. 数据增广小工具](./doc/code/opencv/data_augment.py)  
 
 ## 2 xml文件解析   
 [1. 解析 `xml` 文件](./doc/code/parse_xml/parse_xml.py)   

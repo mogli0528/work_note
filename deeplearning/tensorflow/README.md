@@ -1,9 +1,8 @@
 # tensorflow
 
 ## 笔记
-[1. `tensorflow ubuntu 14.04`安装](./doc/note/tensorflow_install.md)   
+[1. `First Contact With Tensorflow`](./doc/note/first_contact_with_tensorflow.md)   
 [2. `tensorflow`使用中出现的问题汇总](./doc/note/tensorflow_Q-A.md)   
-[3. `First Contact With Tensorflow`](./doc/note/first_contact_with_tensorflow.md)   
 
 ## 代码
 [1. 线性回归](./doc/code/first_contact/linear_regression.py)   

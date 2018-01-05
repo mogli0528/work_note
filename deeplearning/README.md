@@ -1,13 +1,15 @@
 # 深度学习系列
 
+## 环境搭建   
+[1. caffe/ssd/tensorflow 环境搭建](./dev_enviroment/)    
 ## 深度学习理论基础
 [《神经网络与深度学习》](https://www.gitbook.com/book/tigerneil/neural-networks-and-deep-learning-zh/details)      
 
 ## 深度学习框架
-[1. 吴恩达系列课程学习笔记](./Andrew_Ng)   
-[2. `caffe` 笔记](./caffe/)   
-[3. `tensorflow` 笔记](./tensorflow/)   
-[4. `ssd 到 caffe` 笔记](./caffe_to_ssd/)    
+[1. 从 caffe 到 ssd 笔记](./caffe_to_ssd/)    
+[2. caffe 笔记](./caffe/)   
+[3. tensorflow ](./tensorflow/)   
+[4. 吴恩达系列课程学习笔记](./Andrew_Ng)   
 
 ## 深度学习实践--`training skills`   
 [1. 如何更好的训练网络](./train/trainModels.md)   
