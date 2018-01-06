@@ -1,6 +1,6 @@
 # bash 脚本常用操作    
 
-## 1. 基本语法   
+## 1. 正则表达式基本语法   
 1.1 星号 `*`    
 匹配 `*` 号前面的字符串或正则表达式任意次(`包括0次`)。   
 比如：`1122*`   
@@ -65,6 +65,7 @@ $ echo $?
 2.1 查找包含字符串"112"且其后至少有一个字符的行.   
 ```bash
 $ grep -nR "112." test_list.txt
+
 1122
 11222
 1122222112
@@ -73,12 +74,14 @@ $ grep -nR "112." test_list.txt
 2.2 查找字符 "d" 和 "e" 之间有一个任意字符的行.    
 ```bash
 $ grep -nR "d.e" test_list.txt 
+
 abdde
 bbdde
 ```
 2.3 查找在字符"2"后有两个任意字符的行.   
 ```bash
 $ grep -nR "2.." test_list.txt 
+
 11222
 2211
 22111
@@ -88,22 +91,26 @@ $ grep -nR "2.." test_list.txt
 2.4 查找`/etc/passwd`文件中`root`账号的信息，不使用插入符号 `^` 匹配.    
 ```bash
 $ grep -nR "root" /etc/passwd
+
 root:x:0:0:root:/root:/bin/bash
 operator:x:11:0:operator:/root:/sbin/nologin
 ```
 2.5 查找`/etc/passwd`文件中`root`账号的信息，使用插入符号 `^` 匹配.   
 ```bash
 $ grep -nR "^root" /etc/passwd
+
 root:x:0:0:root:/root:/bin/bash
 ```
 2.6 查看有空行有多少行.   
 ```bash
 $ grep -nR "^$" test_list.txt | wc -l
+
 3
 ```
 2.7 查看所有匹配 `112*` 的行.    
 ```bash
 $ grep -nR "112*" test_list.txt 
+
 1122
 112
 11222
@@ -112,16 +119,18 @@ $ grep -nR "112*" test_list.txt
 1122222112
 3131231112112
 ```
-2.8 查看所有以数字 `3` 开头，`2` 结尾的行：
+2.8 查看所有以数字 `3` 开头，`2` 结尾的行.    
 ```bash
 $ grep -nR "\<3.*2\>" test_list.txt --color
+
 3131231112112
 ```
-查看文件中含有至少11个连续小写字母的行：
-[weblogic@etp-mall-dev7][/tpdata/shell_script]$ grep -nR "[a-z]\{8\}" test_list.txt 
+2.9 查看文件中含有至少 `8` 个连续小写字母的行.   
+```bash
+$ grep -nR "[a-z]\{8\}" test_list.txt 
+
 bbcdefss
 the people's replublic of China
 fdoutjjlsjpwkfks
 abdabeccde
-
 ```
