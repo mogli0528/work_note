@@ -9,6 +9,8 @@
 [4. 在图片上将标注好的框显示出来](./doc/code/train_eassy/drawRectWithXml.py)  
 [5. 老杜的 lab 标注工具](./doc/code/lab.py)  
 [6. 数据增广小工具](./doc/code/opencv/data_augment.py)  
+[7. 删除经过 ROI 挑选后存在错误的样本](./doc/code/train_eassy/delete_error_files.py)  
+[8. 使用新标注的样本完全替换原来的样本(+rename)](./doc/code/train_eassy/remove_bad_data_dirs.py)  
 
 ## 2 xml文件解析   
 [1. 解析 `xml` 文件](./doc/code/parse_xml/parse_xml.py)   
