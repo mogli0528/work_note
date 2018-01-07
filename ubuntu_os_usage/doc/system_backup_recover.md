@@ -12,7 +12,7 @@
 ```bash  
 # 将已经删除了的软件包的.deb安装文件从硬盘中删除掉
 $ sudo apt-get autoclean   
-# 类似上面的命令，但它删除包缓存中的所有包。这是个很好的做法，因为多数情况下这些包没有用了。   
+# 类似上面的命令，但它删除包缓存中的所有包。   
 $ sudo apt-get clean
 ```
 ## 2. 删除系统不再使用的孤立软件     
@@ -33,13 +33,41 @@ $ su - root
 ```
 - (3) 使用`gzip`压缩格式（压缩略低，但是速度快）    
 ```bash
-$ tar vzcpf /Downloads/ubuntu_`date +%Y%m%d_%H`.tar.gz --exclude=/proc --exclude=/dev --exclude=/mnt --exclude=/media --exclude=/lost+found --exclude=/cdrom --exclude=/tmp --exclude=/sys --exclude=/home/klm/.cache --exclude=/home/klm/pkgs --exclude=/home/klm/Downloads --exclude=/run  / > /Downloads/ubuntu_`date +%Y%m%d_%H`.log 2> /Downloads/ubuntu_`date +%Y%m%d_%H`.error
+$ tar vzcpf /Downloads/ubuntu_`date +%Y%m%d_%H`.tar.gz \
+--exclude=/proc \
+--exclude=/dev \
+--exclude=/mnt \
+--exclude=/media \
+--exclude=/lost+found \
+--exclude=/cdrom \
+--exclude=/tmp \
+--exclude=/sys \
+--exclude=/home/klm/.cache \
+--exclude=/home/klm/pkgs \
+--exclude=/home/klm/Downloads \
+--exclude=/run  / \
+> /Downloads/ubuntu_`date +%Y%m%d_%H`.log 2 \
+> /Downloads/ubuntu_`date +%Y%m%d_%H`.error
 ```
 其中，`-exclude=`表示这些目录并不会被打包。这里有：`/proc，/dev，/mnt，/media，/lost+found，/cdrom，/tmp，/sys，/home/ldd/.cache，/run`。    
 如果你的硬盘已经分区了`/home`，则应该对`/home`目录单独备份，或者不要备份。    
 - (4) 使用`bzip2`压缩格式（压缩略高，但是速度慢）   
 ```bash
-$ tar vjcpf /Downloads/ubuntu_`date +%Y%m%d_%H`.tar.bz2 --exclude=/proc --exclude=/dev --exclude=/mnt --exclude=/media --exclude=/lost+found --exclude=/cdrom --exclude=/tmp --exclude=/sys --exclude=/home/klm/.cache --exclude=/home/klm/pkgs --exclude=/home/klm/Downloads --exclude=/run  / > /Downloads/ubuntu_`date +%Y%m%d_%H`.log 2> /Downloads/ubuntu_`date +%Y%m%d_%H`.error
+$ tar vjcpf /Downloads/ubuntu_`date +%Y%m%d_%H`.tar.bz2 \
+--exclude=/proc \
+--exclude=/dev \
+--exclude=/mnt \
+--exclude=/media \
+--exclude=/lost+found \
+--exclude=/cdrom \
+--exclude=/tmp \
+--exclude=/sys \
+--exclude=/home/klm/.cache \
+--exclude=/home/klm/pkgs \
+--exclude=/home/klm/Downloads \
+--exclude=/run  / \
+> /Downloads/ubuntu_`date +%Y%m%d_%H`.log 2 \
+> /Downloads/ubuntu_`date +%Y%m%d_%H`.error
 ```
 
 ## 4. 备份两个重要的文件    
