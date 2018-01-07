@@ -33,41 +33,14 @@ $ su - root
 ```
 - (3) 使用`gzip`压缩格式（压缩略低，但是速度快）    
 ```bash
-$ tar vzcpf /Downloads/ubuntu_`date +%Y%m%d_%H`.tar.gz \
---exclude=/proc \
---exclude=/dev \
---exclude=/mnt \
---exclude=/media \
---exclude=/lost+found \
---exclude=/cdrom \
---exclude=/tmp \
---exclude=/sys \
---exclude=/home/klm/.cache \
---exclude=/home/klm/pkgs \
---exclude=/home/klm/Downloads \
---exclude=/run  / \
-> /Downloads/ubuntu_`date +%Y%m%d_%H`.log 2 \
-> /Downloads/ubuntu_`date +%Y%m%d_%H`.error
+$ tar vzcpf /home/klm/Downloads/ubuntu_`date +%Y%m%d_%H`.tar.gz --exclude=/proc --exclude=/dev --exclude=/mnt --exclude=/media --exclude=/lost+found --exclude=/cdrom --exclude=/tmp --exclude=/sys --exclude=/home/klm/.cache --exclude=/home/klm/pkgs --exclude=/home/klm/Downloads --exclude=/run  / > /home/klm/Downloads/ubuntu_`date +%Y%m%d_%H`.log 2> /home/klm/Downloads/ubuntu_`date +%Y%m%d_%H`.error
 ```
-其中，`-exclude=`表示这些目录并不会被打包。这里有：`/proc，/dev，/mnt，/media，/lost+found，/cdrom，/tmp，/sys，/home/ldd/.cache，/run`。    
+其中，`-exclude=`表示这些目录并不会被打包。这里有：`/proc，/dev，/mnt，/media，/lost+found，/cdrom，/tmp，/sys，/home/klm/.cache，/run`。    
 如果你的硬盘已经分区了`/home`，则应该对`/home`目录单独备份，或者不要备份。    
 - (4) 使用`bzip2`压缩格式（压缩略高，但是速度慢）   
 ```bash
-$ tar vjcpf /Downloads/ubuntu_`date +%Y%m%d_%H`.tar.bz2 \
---exclude=/proc \
---exclude=/dev \
---exclude=/mnt \
---exclude=/media \
---exclude=/lost+found \
---exclude=/cdrom \
---exclude=/tmp \
---exclude=/sys \
---exclude=/home/klm/.cache \
---exclude=/home/klm/pkgs \
---exclude=/home/klm/Downloads \
---exclude=/run  / \
-> /Downloads/ubuntu_`date +%Y%m%d_%H`.log 2 \
-> /Downloads/ubuntu_`date +%Y%m%d_%H`.error
+$ tar vjcpf /home/klm/Downloads/ubuntu_`date +%Y%m%d_%H`.tar.bz2
+--exclude=/proc --exclude=/dev --exclude=/mnt --exclude=/media --exclude=/lost+found --exclude=/cdrom --exclude=/tmp --exclude=/sys --exclude=/home/klm/.cache --exclude=/home/klm/pkgs --exclude=/home/klm/Downloads --exclude=/run  / > /home/klm/Downloads/ubuntu_`date +%Y%m%d_%H`.log 2> /home/klm/Downloads/ubuntu_`date +%Y%m%d_%H`.error
 ```
 
 ## 4. 备份两个重要的文件    
