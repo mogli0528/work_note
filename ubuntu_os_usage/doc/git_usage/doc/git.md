@@ -174,7 +174,6 @@ IdentityFile C:/Users/Administrator/.ssh/id_rsa
 Port 443 
 ```
 注意修改你的邮箱，保存并关闭.      
-
 进行测试是否连接上`github.com`      
 ```
 ssh -T git@github.com 
@@ -198,7 +197,7 @@ git config --global credential.helper cache
 git config credential.helper 'cache --timeout=3600'
 ```
 这样就设置一个小时之后失效。   
-12.2 长期存储密码   
+12.2 **长期存储密码 **  
 ```
 git config --global credential.helper store
 ```
