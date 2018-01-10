@@ -151,8 +151,8 @@ git pull origin master     #从github更新
  其中，`name`表示你要给这个远程库起的名字, `url`表示这个库的地址提交的时候，先`add`, `commit`。          
  `git push <name> <branch>`      
  其中，`name`表示你在上一步给它起的名字，`branch`表示某一个分支。      
-11. connect to host github.com port 22: Connection timed out                
- 访问`github.com`超时。    
+11. 访问`github.com`超时。    
+connect to host github.com port 22: Connection timed out.   
 ```
 $ ssh git@github.com 
 ssh: connect to host github.com port 22: Connection timed out

@@ -42,3 +42,6 @@ caffemodels/
 
 # c_blind_clear
 a.out
+
+# python compile
+*.pyc

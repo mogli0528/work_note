@@ -10,7 +10,10 @@ changelog:
     修改了bounding box为浮点数表示的形式,另外对xml中各个域的检查做了严格判断    
 2018-01-03
     修改图片大小为 0kb 的数据.
-    解决了由于自动标注工具造成的 xmin < 0 的情况.  
+    解决了由于自动标注工具造成的 xmin < 0 的情况. 
+2018-01-08
+    解决了 xml 文件为空的情况. 一旦出现空的 xml 文件,就需要将对应的 jpg 文件删除
+     
 '''
 
 
@@ -58,58 +61,70 @@ dpoint = []
 epoint = []
 
 
-def load_bbox_info_from_xml(path):
+def loadROI(jpgPath, xml_file):
     # per=ET.parse('testXml.xml')  
-    # path = path + '.xml'
-    print path
-    per=ET.parse(path) 
-
+    # xml_file = xml_file + '.xml'
     roi = []
-    rois = []           # 存放本 xml 文件中所有的 bounding box 
-    class_name = []     # 存放本 xml 文件中所有的 name
+    rois = []
     xmin = 0
     ymin = 0
     xmax = 0
     ymax = 0 
+    class_name = []
+    print xml_file
 
-    # 找出 xml 中包含的所有的 name, 和下面的 bndbox 意义对应
-    name_node = per.getiterator("name") 
-    if len(name_node) > 0:
-        for name in name_node:
-            class_name.append(name.text)
+    # 确保 xml 文件不为空文件
+    if os.path.getsize(xml_file) == 0:
+        # 一旦出现空的 xml 文件, 就需要将对应的 jpg 文件一并删除   
+        basename = os.path.basename(xml_file)
+        pre_file, ext = os.path.splitext(basename)
+        jpg_file = pre_file + ".jpg"
+        jpg_file_fullpath = os.path.join(jpgPath, jpg_file)
+        os.remove(jpg_file_fullpath)
+        os.remove(xml_file)
+    else:
+        per=ET.parse(xml_file) 
 
-        # 找出 xml 中包含的所有的 bndbox
-        lst_node = per.getiterator("bndbox")  
-        if len(lst_node) > 0:
-            for oneper in lst_node:   
-                for child in oneper.getchildren(): # 找出 bndbox 节点的子节点  
+        name_node = per.getiterator("name") 
+        if len(name_node) > 0:
+            for name in name_node:
+                #print "node.text:%s" % name.text   
+                class_name.append(name.text)
+
+            lst_node = per.getiterator("bndbox")  
+            if len(lst_node) > 0:
+                for oneper in lst_node:  # 找出 bndbox 节点  
+                    for child in oneper.getchildren(): # 找出 bndbox 节点的子节点  
+                        
+                        if child.tag == 'xmin':
+                            # xmin = int(child.text)
+                            xmin = int(round(float(child.text)))
+                            
+                        elif child.tag == 'ymin':
+                            # ymin = int(child.text)
+                            ymin = int(round(float(child.text)))
+                            
+                        elif child.tag == 'xmax':
+                            # xmax = int(child.text)
+                            xmax = int(round(float(child.text)))
+
+                        elif child.tag == 'ymax':
+                            # ymax = int(child.text)
+                            ymax = int(round(float(child.text)))
+
+                        roi=[[xmin, ymin],[xmax,ymax]] # 此时解析完一个框,矩形框的两个角点
                     
-                    if child.tag == 'xmin':
-                        xmin = int(round(float(child.text)))
-                        
-                    elif child.tag == 'ymin':
-                        ymin = int(round(float(child.text)))
-                        
-                    elif child.tag == 'xmax':
-                        xmax = int(round(float(child.text)))
+                    rois.append(roi)
+                    # print xmin, ymin, xmax, ymax
 
-                    elif child.tag == 'ymax':
-                        ymax = int(round(float(child.text)))
-
-                    roi=[[xmin, ymin],[xmax,ymax]] # 此时解析得到矩形框的两个角点坐标
-                
-                rois.append(roi)  # end of get a rectangle corrd
-               
     print len(rois), len(class_name)
-
     if len(rois) == len(class_name):
         return rois, class_name
     else:
-        print "class_name's number need to equals rois' number, %d vs %d" %(len(class_name), len(rois))
         return [], []
 
 # 保存为ROI图片        
-def save_roi_with_bbox(name, class_name, rois, img):
+def saveROI(name, class_name, rois, img):
     index = 0
 
     if(not os.path.exists('roi')):
@@ -152,8 +167,8 @@ def save_roi_with_bbox(name, class_name, rois, img):
             index = index + 1
 
 
-# 将 bounding box 画在jpg上并保存  
-def draw_bbox_on_image(name, class_name, rois, img):
+# 在图片上将ROI区域框选出来  
+def saveRect(name, class_name, rois, img):
     index = 0
     class_path = 'roi/'+ class_name[index]
 
@@ -201,9 +216,9 @@ while i < len(imgs):
 
     show = cv2.imread(imgs[i][1])
     pos = imgs[i][0].rfind(".")   # 文件扩展名的前缀
-    rois, class_name = load_bbox_info_from_xml("%s/%s.xml" %(xmlPath, imgs[i][0][:pos]))
+    rois, class_name = loadROI(jpgPath, "%s/%s.xml" %(xmlPath, imgs[i][0][:pos]))
     # currentClass, objs = loadObjs("%s/%s.xml.txt" %(path, imgs[i][0][:pos]))
     # print rois
-    save_roi_with_bbox("%s.jpg" %(imgs[i][0][:pos]), class_name, rois, show)
-    #draw_bbox_on_image("%s.jpg" %(imgs[i][0][:pos]), class_name, rois, show)
+    saveROI("%s.jpg" %(imgs[i][0][:pos]), class_name, rois, show)
+    #saveRect("%s.jpg" %(imgs[i][0][:pos]), class_name, rois, show)
     i = i+1
