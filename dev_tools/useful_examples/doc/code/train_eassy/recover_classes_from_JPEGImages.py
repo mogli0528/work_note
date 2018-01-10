@@ -7,6 +7,10 @@
       
 changelog:
 
+2018-01-08:
+    1. 修改了只对 jstxxx 感兴趣的 class name.   
+    2. 更正了 xml 中 class name 为 '' 的情况.   
+
 '''
 
 import os
@@ -14,8 +18,10 @@ import cv2
 import shutil
 from xml.etree import ElementTree as ET  
 
-JPEGImages = "jpgs"
-Annotations = "xmls"
+#JPEGImages = "jpgs"
+#Annotations = "xmls"
+JPEGImages = "JPEGImages"
+Annotations = "Annotations"
 Txts = "txts"
 cluster_dir = "new_cluster"
 
@@ -63,17 +69,24 @@ def extract_classname_from_xml(path):
     # print path
     per=ET.parse(path) 
 
-    class_name = ''     # 存放本 xml 文件中所有的 name
+    class_name = set()    # 存放本 xml 文件中所有的 name
 
     # 找出 xml 中包含的所有的 name, 和下面的 bndbox 意义对应
     name_node = per.getiterator("name") 
     if len(name_node) > 0:
         for name in name_node:
-            if class_name == '':
-                class_name = name.text
-            # for name in name_node:
-            if name.text != class_name:
-                print "warning: class number larger than 1, ignore: %s" % class_name
+            if name != '':
+                class_name.add(name.text)
+
+        if len(class_name) == 1:
+            class_ = class_name.pop()
+            if class_.find('jst') != -1:
+                class_name = class_
+            else:
+                class_name = ''
+        else:
+            print "warning: class number larger than 1, ignore: %s" % class_name
+            class_name = ''
 
     return class_name
 
@@ -91,6 +104,7 @@ def cluster_files(jpgPath, xmlPath, txtPath, output_dir):
         # txt_file = os.path.join(txtPath, imgs[i][0][:pos]+".xml.txt")
         xml_file = os.path.join(xmlPath, imgs[i][0][:pos]+".xml")
         class_name = extract_classname_from_xml(xml_file)
+        print xml_file, class_name
 
         if class_name != '':
             # dict 必须显示初始化
