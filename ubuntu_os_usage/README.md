@@ -39,6 +39,7 @@
 - [34. grep 用法](./doc/grep_usage.md)   
 - [35. 查看目录占用的磁盘空间](./doc/disk_space_usage.md)   
 - [36. nohup 的使用](./doc/nohup.md)   
+- [37. 改变系统中的默认的 python 版本](./doc/change_python_version_in_system.md)   
 
 ```shadowsocks5
 "server": 69.171.73.29

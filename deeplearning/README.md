@@ -1,19 +1,24 @@
 # 深度学习系列
 
-## 环境搭建   
+`-------------------------------我是分割线------------------------------------`
+## 1. 环境搭建   
 [1. caffe/ssd/tensorflow 环境搭建](./dev_enviroment/)    
-## 深度学习理论基础
-[《神经网络与深度学习》](https://www.gitbook.com/book/tigerneil/neural-networks-and-deep-learning-zh/details)      
 
-## 深度学习框架
-[1. 从 caffe 到 ssd 笔记](./caffe_to_ssd/)    
-[2. caffe 笔记](./caffe/)   
-[3. tensorflow ](./tensorflow/)   
-[4. 吴恩达系列课程学习笔记](./Andrew_Ng)   
+`-------------------------------我是分割线------------------------------------`
+## 2. 深度学习框架
+[1. caffe/ssd 笔记](./caffe_ssd/)    
+[2. tensorflow ](./tensorflow/)   
+[3. 吴恩达系列课程学习笔记](./common/doc/Andrew_Ng)   
 
-## 深度学习实践--`training skills`   
-[1. 如何更好的训练网络](./train/trainModels.md)   
-[2. 训练——知乎专栏](https://zhuanlan.zhihu.com/p/27763696)         
+`-------------------------------我是分割线------------------------------------`
+## 3. 深度学习实践--`training skills`   
+[1. 训练——知乎专栏](https://zhuanlan.zhihu.com/p/27763696)         
 
-## 深度学习面试
+`-------------------------------我是分割线------------------------------------`
+## 4. 深度学习理论基础
+[1.《神经网络与深度学习》](https://www.gitbook.com/book/tigerneil/neural-networks-and-deep-learning-zh/details)      
+[2. 全连接层的作用是什么？](./doc/common/doc/role_of_full_connections.md)   
+
+`-------------------------------我是分割线------------------------------------`
+## 5. 深度学习面试
 [面试问题总结](./interview/interview.md)  
