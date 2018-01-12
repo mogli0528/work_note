@@ -1,8 +1,8 @@
 # 深度学习开发环境搭建   
 
 ## 1. caffe 安装    
-[1.  caffe 安装b - windows10-VS2013 ](./doc/caffe_vs2013_cuda8_cudnn5.md)    
-[2.  caffe 安装 - ubuntu 14.04 ](./doc/caffe_ubuntu-14-04.md.md)
+[1.  caffe 安装 - windows10-VS2013 ](./doc/caffe_vs2013_cuda8_cudnn5.md)    
+[2.  caffe 安装 - ubuntu 14.04 ](./doc/caffe_ubuntu-14-04.md)
 
 ## 2. ssd 安装     
 [1. ssd 安装 - ubuntu 14.04 ](./doc/ssd_cuda8_cudnn5_ubuntu-14-04.md)
