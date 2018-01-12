@@ -1,5 +1,7 @@
 # AnnotatedDataLayer 分析  
- 这层并没有`Forward_cpu`和`Backward_cpu`函数。    
+这层是数据层,也就是网络的最底层. 因此这层有以下两个特点:    
+- 没有输入,只有输出.   
+- 没有 `Forward_cpu()` 和 `Backward_cpu()` 函数。    
  
 ## 成员变量     
 ```cpp
@@ -28,8 +30,26 @@ BlockingQueue<Batch<Dtype>*> prefetch_full_;
 Blob<Dtype> transformed_data_;   
 
 ## 核心成员函数
-1. DataLayerSetUp()  
-只是对数据的shape进行调整，包括`data`和`label`。
+1. DataLayerSetUp()   
+为了维持函数结构的完整性,虽然 `bottom` 形参在函数中没有任何作用,这层依然会保留它.   
+```cpp
+pe>::DataLayerSetUp(
+    const vector<Blob<Dtype>*>& bottom, 
+    const vector<Blob<Dtype>*>& top); 
+```
+跟随 top 来分析函数.   
+1.1 top 的 shape    
+首先根据 anno_datum 数据来推断输出(top)的 shape .   
+InferBlobShape() 函数基于 opencv 进行操作.   
+
+
+
+
+一言以蔽之:这个函数就是对 Annotated data 的 shape 进行调整，Annotated data 包括 `data` 和 `bounding box`。   
+
+
+
+
 2. load_batch()  
 该函数由`prefetch`线程调用。    
 

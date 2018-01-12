@@ -8,10 +8,11 @@
 [3. 从大量的标注样本中选取固定数量样本](./doc/code/train_eassy/copy_fixed_amount_files.py)  
 [4. 在图片上将标注好的框显示出来](./doc/code/train_eassy/drawRectWithXml.py)  
 [5. 老杜的 lab 标注工具](./doc/code/lab.py)  
-[6. 数据增广小工具](./doc/code/opencv/data_augment.py)  
+[6. 数据增广小工具](./doc/code/opencv/image_augmentation.py)  
 [7. 删除经过 ROI 挑选后存在错误的样本](./doc/code/train_eassy/delete_error_files.py)  
 [8. 使用新标注的样本完全替换原来的样本(+rename)](./doc/code/train_eassy/replace_bad_data_dirs.py)  
-[9. 从 JPEGImages 和 Annotations 目录中恢复 class](./doc/code/train_eassy/recover_classes_from_JPEGImages.md)  
+[9. 从 JPEGImages 和 Annotations 目录中恢复 class](./doc/code/train_eassy/recover_classes_from_JPEGImages.py)  
+[10. 向现有的样本库中添加补录的数据 ](./doc/code/train_eassy/add_data_for_classification.py)  
 
 ## 2 xml文件解析   
 [1. 解析 `xml` 文件](./doc/code/parse_xml/parse_xml.py)   

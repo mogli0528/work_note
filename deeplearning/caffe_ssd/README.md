@@ -31,6 +31,9 @@
 ## 4. caffe/ssd 通用功能    
 [1. 编译 caffe/ssd 源码中提供的文档 ](./doc/common/build_docs_of_caffe_or_ssd.md)   
 [2. caffe/ssd 中的脚本列表 ](./doc/common/scripts_of_ssd.md)   
-[3. caffe/ssd 工程中的术语 ](./doc/common/terms_in_caffe_or_ssd.md)   
+[3. caffe/ssd 中的术语 ](./doc/common/terms_in_caffe_or_ssd.md)   
 [4. protobuf 使用方法](./doc/common/protobuf_compile.md)  
 [5. datum 和 blob 的区别](./doc/common/datum_blob.md)  
+
+
+[1. layers 官方文档](./doc/common/official_layers.md)  
