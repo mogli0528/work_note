@@ -40,14 +40,9 @@ pe>::DataLayerSetUp(
 跟随 top 来分析函数.   
 1.1 top 的 shape    
 首先根据 anno_datum 数据来推断输出(top)的 shape .   
-InferBlobShape() 函数基于 opencv 进行操作.   
-
-
-
+InferBlobShape() 函数基于 opencv 编解码操作.   
 
 一言以蔽之:这个函数就是对 Annotated data 的 shape 进行调整，Annotated data 包括 `data` 和 `bounding box`。   
-
-
 
 
 2. load_batch()  

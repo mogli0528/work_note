@@ -35,5 +35,4 @@
 [4. protobuf 使用方法](./doc/common/protobuf_compile.md)  
 [5. datum 和 blob 的区别](./doc/common/datum_blob.md)  
 
-
 [1. layers 官方文档](./doc/common/official_layers.md)  

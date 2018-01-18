@@ -52,3 +52,5 @@ nohup python examples/ssd/ssd_weimeng.py >weimeng.log 2>&1 &
 tail -f weimeng.log
 ```
 其中 `-f` 的作用是显示追加到文件中的内容。  
+3. 什么时候需要降低学习率?   
+当样本训练的 loss 总是处于波动状态时, 需要将学习率降低(1/10), 然后继续观察训练过程.   

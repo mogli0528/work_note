@@ -421,8 +421,8 @@ self.export_bbox(os.sep.join([self._data_dir, get_bbox_name(filename)]), self._b
 print('Labels updated!')
 
 if __name__ == '__main__':
-dir_with_images = askdirectory(title='Where are the images?')
-labeling_task = SimpleBBoxLabeling(dir_with_images)
-labeling_task.start()
+	dir_with_images = askdirectory(title='Where are the images?')
+	labeling_task = SimpleBBoxLabeling(dir_with_images)
+	labeling_task.start()
 
 需要注意的是几个比较通用且独立的方法前加上了一句@staticmethod，表明是个静态方法。执行这个程序，并选择samples文件夹，标注时的画面如下图：

@@ -13,6 +13,13 @@
 [8. 使用新标注的样本完全替换原来的样本(+rename)](./doc/code/train_eassy/replace_bad_data_dirs.py)  
 [9. 从 JPEGImages 和 Annotations 目录中恢复 class](./doc/code/train_eassy/recover_classes_from_JPEGImages.py)  
 [10. 向现有的样本库中添加补录的数据 ](./doc/code/train_eassy/add_data_for_classification.py)  
+[11. 使用旧的 label_txt 文件生成新的 label_txt 文件 ](./doc/code/train_eassy/generate_new_label_txt.py)  
+[12. 将满足数量的类别数据拷贝出来 ](./doc/code/train_eassy/copy_availiable_data.py)  
+[13. 提取一定数量的数据 ](./doc/code/train_eassy/calc_amount_and_extract_fixed_amount_data.py)  
+[14. 结算台样本增广小工具 ](./doc/code/train_eassy/jst_augmentation.py)  
+[15. 统计样本数量并排序 ](./doc/code/train_eassy/list_files_amount.py)  
+[16. 合并两个人挑选后的样本 ](./doc/code/train_eassy/merge_two_data.py)  
+[17. 裁剪背景样本 ](./doc/code/train_eassy/crop_background.py)  
 
 ## 2 xml文件解析   
 [1. 解析 `xml` 文件](./doc/code/parse_xml/parse_xml.py)   
