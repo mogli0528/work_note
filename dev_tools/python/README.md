@@ -17,3 +17,7 @@
 [xx. `python`源码剖析`--1`](./doc/note/python_src_analysis.md)  
 [xx. `python`源码剖析一书中的错误](./doc/note/python_src_mistake.md)  
 
+## python / c
+[1. `python` 调用 c 库函数](./doc/note/call_libc_func.md)  
+[2. `python` 和 C/C++ 相互调用](./doc/note/call_c_func.md)  
+
