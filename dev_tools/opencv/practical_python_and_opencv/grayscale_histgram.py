@@ -2,8 +2,8 @@
 #coding=utf-8
 
 '''
-功能: 图像通道拆分和合并  
-	提取感兴趣的图像内容(还可以使用crop).
+功能: 灰度图直方图  
+	统计图像中的像素值个数.
 
 Keep in mind:
 	实际调用的还是 cv2.split() 函数.
@@ -32,12 +32,14 @@ if os.path.exists(args["image"]):
 	cv2.waitKey(0)
 
 	hist = cv2.calcHist([image], [0], None, [256], [0, 256])
+	print hist.shape
 
 	plt.figure()
 	plt.title("HistGram of a GrayScale image")
 	plt.xlabel("bins")
 	plt.ylabel("# of pixels")
+	plt.plot(hist)
 	plt.xlim([0, 256])
-	plt.show(hist)
+	plt.show()
 
 	cv2.waitKey(10)
