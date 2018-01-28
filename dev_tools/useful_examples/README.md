@@ -20,6 +20,9 @@
 [15. 统计样本数量并排序 ](./doc/code/train_eassy/list_files_amount.py)  
 [16. 合并两个人挑选后的样本 ](./doc/code/train_eassy/merge_two_data.py)  
 [17. 裁剪背景样本 ](./doc/code/train_eassy/crop_background.py)  
+[18. 从 voc 中提取固定数量的样本(jpg和xml) ](./doc/code/train_eassy/extract_fixed_files_in_VOC.py)  
+[19. 删除经过 ROI 挑选后存在错误的样本(v2.0) ](./doc/code/train_eassy/delete_error_files_v2.py)  
+[20. 删除多余的 xml 或 jpg 文件 ](./doc/code/train_eassy/remove_odd_jpgs_xmls.py)  
 
 ## 2 xml文件解析   
 [1. 解析 `xml` 文件](./doc/code/parse_xml/parse_xml.py)   

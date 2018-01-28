@@ -45,3 +45,6 @@ a.out
 
 # python compile
 *.pyc
+
+# qt build directorys
+build-*/

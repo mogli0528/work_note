@@ -5,7 +5,7 @@
 [4. `freezer`项目总结](./doc/freezer_summary.md)   
 [5. 便利店设计思路](./doc/work.md)   
 
-
 ## 静态结算台
 [1. 结算台大面积识别变差的原因](./doc/jst_todo_list.md)  
 [2. 结算台第一次样本筛选记录](./doc/jst_classification_valid.md)  
+[3. 结算台效果提升尝试的方法](./doc/tracks_in_jst.md)  

@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
 	new_txt_file = r"labels_new.txt"
 	old_txt_file = r"labels.txt"
-	ref_lable_txt_file = r"availiable_jst_data-labels.txt"
+	ref_lable_txt_file = r"jst_v2-labels.txt"
 
 	check_if_exists(old_txt_file)
 	check_if_exists(ref_lable_txt_file)

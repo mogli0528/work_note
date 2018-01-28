@@ -10,6 +10,15 @@
 ## `VS2013`使用教程
 1. [`vs2013`使用教程](./doc/vs2013_usage.md)   
 
+## boost 库使用
+[1. boost 使用教程](./doc/boost/boost_api_in_ssd.md)   
+
+## 在山寨中成长      
+
+- [x] convert_annoset.cpp 中的 gflag/glog 语法模仿;   
+- [ ] caffe 增广方式的改变;   
+
+
 ## 老杜培训
 1. 结构体中的字节对齐；
 progma(push);
