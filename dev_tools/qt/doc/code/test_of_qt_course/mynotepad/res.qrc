@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/new/icon">
+        <file>images/copy.png</file>
+        <file>images/cut.png</file>
+        <file>images/new.png</file>
+        <file>images/open.png</file>
+        <file>images/paste.png</file>
+        <file>images/save.png</file>
+        <file>images/cool.gif</file>
+        <file>images/notepad.ico</file>
+        <file>images/splash.jpg</file>
+    </qresource>
+</RCC>

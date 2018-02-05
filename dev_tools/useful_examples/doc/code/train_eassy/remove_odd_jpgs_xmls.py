@@ -7,9 +7,11 @@
 import os
 import sys
 
-jpg_path = "JPEGImages"
-xml_path = "Annotations"
+# jpg_path = "JPEGImages"
+# xml_path = "Annotations"
 
+jpg_path = "jpg"
+xml_path = "xml"
 
 xmls = os.listdir(xml_path)
 jpgs = os.listdir(jpg_path)
@@ -25,7 +27,7 @@ if len(xmls) < len(jpgs):
             os.remove(os.path.join(xml_path, xml_right))
 elif len(xmls) > len(jpgs):
     print "xmls is odd..."  
-     for xml in xmls:
+    for xml in xmls:
         pos = xml.find(".xml")
         jpg_right = xml[:pos]+".jpg"
         if jpg_right not in jpgs:
