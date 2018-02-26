@@ -44,19 +44,38 @@
 - [查看目录占用的磁盘空间](./doc/disk_space_usage.md)   
 
 ```shadowsocks5
-"server": 69.171.73.29
-"port":	444
-"password":	tgKqnWART4
-"method":	aes-256-cfb
-```
-
-```
 {
 	"server": "104.128.95.11",
 	"server_port": 443,
 	"local_address" : "127.0.0.1",
 	"localPort": 1080,
 	"password": "MTc5NjJkNj",
+	"timeout": 600,
+	"method": "aes-256-cfb",
+	"fast_open": false
+}
+```
+
+```
+{
+	"server": "23.83.244.29",
+	"server_port": 444,
+	"local_address" : "127.0.0.1",
+	"localPort": 1080,
+	"password": "NmEyOTg5Nm",
+	"timeout": 600,
+	"method": "aes-256-cfb",
+	"fast_open": false
+}
+```
+
+```
+{
+	"server": "69.171.73.29",
+	"server_port": 444,
+	"local_address" : "127.0.0.1",
+	"localPort": 1080,
+	"password": "tgKqnWART4",
 	"timeout": 600,
 	"method": "aes-256-cfb",
 	"fast_open": false
