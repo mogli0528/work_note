@@ -478,7 +478,8 @@ int main(int argc, char** argv)
 5.3 C++编译成二进制可执行文件   
 ```bash
 g++ -o call_py call_py.cpp -I/usr/include/python2.7 -L/usr/lib/python2.7/config-x86_64-linux-gnu -lpython2.7
-```，编译选项需要手动指定 Python 的 include 路径和链接接路径（Python 版本号根据具体情况而定）。   
+```
+编译选项需要手动指定 Python 的 include 路径和链接接路径（Python 版本号根据具体情况而定）。   
 5.4 运行结果   
 ```
 ---import sys---

@@ -19,6 +19,3 @@
 [1.《神经网络与深度学习》](https://www.gitbook.com/book/tigerneil/neural-networks-and-deep-learning-zh/details)      
 [2. 全连接层的作用是什么？](./doc/common/doc/role_of_full_connections.md)   
 
-`-------------------------------我是分割线------------------------------------`
-## 5. 深度学习面试
-[面试问题总结](./interview/interview.md)  

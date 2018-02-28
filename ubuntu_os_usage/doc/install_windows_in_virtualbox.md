@@ -22,12 +22,16 @@ $ sudo apt-get install virtualbox
 4.1 选择 “设备”--“安装增强功能” ，第一次使用，这里会提示需要下载增强插件，下载下来就好用了。     
 4.2 加载增强插件后，会提示安装，或者在 “此电脑” 中找到 “CD驱动器VirtualBox Guest Addition”， 进入执行其中的  “VboxWindowsAdditions” ，一步一步安装，过程中可能提示不兼容也选择安装。    
 4.3 安装完成后，重启自己的windows10就好用多了，桌面可以自适应了。    
-5. windows和Ubuntu文件共享     
+5. windows 和 Ubuntu文件共享     
 5.1 设置virtualbox中主机的共享文件夹   
 ![](../pictures/share_folder.png)    
 5.2 设置share文件夹的属性    
 ![](../pictures/share_props.png)   
 5.3 在windows中映射网络驱动器。      
+此电脑 | 映射网络驱动器, 输入下面的路径.    
+```
+\\vboxsvr\share 
+```  
 ![](../pictures/server.png)   
 到此，共享文件夹就设置好了。    
 ![](../pictures/net_use.png)

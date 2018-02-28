@@ -1,6 +1,9 @@
 # PX4 学习笔记
 
 ## 目录
+### 飞行理论基础   
+[1. 飞机导航系统 ](./doc/polit_course/navigation.md)   
+
 ### 环境搭建   
 [1. `PX4`编译环境搭建](./doc/px4_build.md)    
 [2. `PX4`仿真环境`Gazebo`搭建](./doc/px4_gazebo.md)   
