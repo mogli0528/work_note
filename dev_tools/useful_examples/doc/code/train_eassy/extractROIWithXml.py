@@ -24,12 +24,12 @@ from xml.etree import ElementTree as ET
 
 # 保存.jpg和.xml文件的目录
 # test
-jpgPath = "jpg"
-xmlPath = "xml"
+#jpgPath = "jpg"
+#xmlPath = "xml"
 
 # Standard directory
-#jpgPath = "JPEGImages"
-#xmlPath = "Annotations"
+jpgPath = "JPEGImages"
+xmlPath = "Annotations"
 
 colors = [(0, 255, 0), (255, 0, 0)]
 
