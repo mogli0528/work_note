@@ -7,12 +7,11 @@
 - [3. Deep Learning ](./deeplearning/)           
 - [4. ubuntu os usage ](./ubuntu_os_usage/)        
 - [5. auto control ](./auto_control_system/)       
-- [6. algorithms ](./algorithms/)       
-- [7. linux device driver ](./linux_driver/)      
-- [8. rtems os](./rtems/)         
-- [9. work plan ](./work_plan/)  
-- [10. project ](./project_platform/)  
-- [11. 面试 ](./interview/)  
+- [6. linux device driver ](./linux_driver/)      
+- [7. rtems os](./rtems/)         
+- [8. work plan ](./work_plan/)  
+- [9. project ](./project_platform/)  
+- [10. 面试 ](./interview/)  
 
 
 私人数据目录:    

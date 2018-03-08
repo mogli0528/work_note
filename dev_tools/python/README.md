@@ -21,3 +21,5 @@
 [1. `python` 调用 c 库函数](./doc/note/call_libc_func.md)  
 [2. `python` 和 C/C++ 相互调用](./doc/note/call_c_func.md)  
 
+## numpy 使用   
+[1. numpy 的使用](./doc/note/numpy.md)  
