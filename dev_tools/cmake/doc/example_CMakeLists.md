@@ -10,7 +10,7 @@ PROJECT(cmake_test)
 
 # 设置编译器和编译选项
 SET(CMAKE_C_COMPILER g++)
-SET(CMAK_CXX_COMPILER g++)
+SET(CMAKE_CXX_COMPILER g++)
 # 允许c++11标准、O3优化、多线程。match选项可避免一些cpu上的问题
 SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -march=native -O3 -pthread" )
 
@@ -54,7 +54,7 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT(cmake_test)  
 
 SET(CMAKE_C_COMPILER g++)
-SET(CMAK_CXX_COMPILER g++)
+SET(CMAKE_CXX_COMPILER g++)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -march=native -O3 -pthread" )
 
 SET( CMAKE_BUILD_TYPE Release )
