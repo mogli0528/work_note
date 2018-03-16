@@ -1,0 +1,14 @@
+net: "train.prototxt"    
+base_lr: 0.01  
+lr_policy: "step"  
+gamma: 0.1  
+stepsize: 10000  
+display: 1  
+max_iter: 1  
+weight_decay: 0.0005  
+snapshot: 1  
+snapshot_prefix: "models/imagescale"  
+momentum: 0.9  
+# solver mode: CPU or GPU  
+test_initialization: false
+solver_mode: CPU   # 没有实现 GPU 版本的前向/反向传递函数

@@ -5,8 +5,7 @@
 [1. caffe 源码阅读笔记 - langb ](./doc/caffe/read_caffe_source_code/)    
 [2. 学习 caffe 系列 - 徐其华](./doc/caffe/learning_caffe/)     
 [3. 使用 caffe ](./doc/caffe/use_caffe/)     
-[4. 在 caffe 中添加 heatmap 层](./doc/caffe/heatmap/)     
-[5. 在 caffe 中添加 Weighted_Softmax_Loss 层](./doc/caffe/weighted_softmax/)     
+   
 
 `-------------------------------我是分割线------------------------------------`
 ## 2. SSD 笔记

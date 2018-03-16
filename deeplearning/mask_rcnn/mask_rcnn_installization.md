@@ -51,24 +51,26 @@ git clone https://github.com/matterport/Mask_RCNN.git
 git clone  https://github.com/cocodataset/cocoapi.git
 # 编译生成 coco 包   
 cd cocoapi/PythonAPI/
-make -j
-cp pycocotools/ ../../ -R 
-cd ../../pycocotools/
 python3 setup.py build_ext --inplace
-
-# 如果导包时提示符号错误(或者未定义), 则是由于 python 版本的原因.  
+cp pycocotools/ /path/to/Mash_RCNN/ -R 
+# 然后切换到 Mask_RCNN 工程目录下  
+cd /path/to/Mash_RCNN/pycocotools/
+```
+如果导包时提示符号错误(或者未定义), 则是由于 python2 / python3 版本的原因. 务必确认上一步中编译生成 coco 包时使用的是 `python3 setup.py build_ext --inplace` python3. 重新编译之后需要更新下面的动态链接库:    
+```
 mv _mask.so _mask.cpython-27m.so
 cp _mask.cpython-34m.so _mask.so
 ```
 
 ## 测试 Mask_RCNN 安装是否完成.   
-运行 jupyter notebook 后在浏览器中运行 demo.ipynb 文件.   
+运行 `jupyter notebook` 后在浏览器中运行 `demo.ipynb` 文件.   
 
 ## 训练自己的数据集   
 1. 下载 coco 数据集, 放到 ./data 目录中, 然后运行 python download.py 和 convert_data.py 来生成 tf-records, 这需要花费一段时间.   
 2. 下载 resnet50 的预训练模型, wget http://download.tensorflow.org/models/resnet_v1_50_2016_08_28.tar.gz, 解压到 ./data/pretrained_models/ 目录下.   
 3. 切换到 ./libs 目录下编译: `make -j` .   
 4. run `python train/train.py` 开始训练.   
+
 **Note:**   
 可能会出现一些 Bugs.   
 

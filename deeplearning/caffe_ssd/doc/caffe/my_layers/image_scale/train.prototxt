@@ -1,0 +1,31 @@
+# Simple single-layer network to showcase editing model parameters.  
+
+name: "simple"
+layer {
+  name: "data"  
+  type: "Data"  
+  top: "data"  
+  include {  
+    phase: TRAIN  
+  }  
+  transform_param {  
+    scale: 0.0039215684  
+  }  
+  data_param {  
+    source: "/home/klm/data/mnist/lmdb/mnist_train_lmdb"  
+    batch_size: 10  
+    backend: LMDB  
+  }  
+}
+
+layer {
+    name: "imagescaled"
+    type: "ImageScale"
+    bottom: "data"
+    top: "imagescaled"
+    image_scale_param {
+        out_height: 128
+        out_width: 128
+        visible: true
+    }
+}

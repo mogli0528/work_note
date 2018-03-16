@@ -108,6 +108,8 @@ DropOut 正则化.
 14. DropOut 中需要注意的地方.   
 (1) DropOut 实现过程的最后需要对本层输出(下一层的输入)进行缩放(除以 keep_prop).   
 (2) 在 test 阶段是不使用 DropOut 的.   
+15. 为什么 Batch Norm 会起作用?   
+
 
 ## 工作中解决的重要问题
 1. VOC 数据集对误检的影响   
