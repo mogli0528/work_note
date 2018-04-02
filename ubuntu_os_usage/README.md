@@ -22,6 +22,7 @@
 - [jupyter-python2.7 安装问题](./doc/jupyter_python2.7_install.md) 
 - [Ubuntu 16.04 系统备份和恢复](./doc/system_backup_recover.md)  
 - [在 virtual box 中安装 windows10](./doc/install_windows_in_virtualbox.md)  
+- [在 ubuntu 中同时安装 opencv 3 和 opencv 2](./doc/install_opencv2_and_opencv3.md)  
  
 ## 系统使用中的坑   
 - [chrome 提示无法正确打开您的个人资料](./doc/chrome.md)  

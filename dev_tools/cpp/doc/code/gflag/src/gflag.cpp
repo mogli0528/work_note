@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 	cout << "Iterations " << FLAGS_iterations << endl;
 	LOG(INFO) << "Iterations " << FLAGS_iterations;
 	LOG(ERROR) << "\t" << FLAGS_iterations;
-	LOG(FATAL) << "Invalid signal effect \""<< FLAGS_iterations << "\" was specified";
+	//LOG(FATAL) << "Invalid signal effect \""<< FLAGS_iterations << "\" was specified";
 
 	return 0;
 }
