@@ -9,11 +9,12 @@ if(WIN32)
 else()
     set(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Installation Directory")
 endif()
-```    
-将默认的安装路径：`/usr/local` 修改为你要安装的路径 `/path/to/opencv3`   
+```
+将默认的安装路径：`/usr/local` 修改为你要安装的路径 `/path/to/opencv3`.   
 ```
 set(CMAKE_INSTALL_PREFIX "/path/to/opencv3" CACHE PATH "Installation Directory") 
-```　　　　　　　　　 
+```
+这里我们设置 `/path/to/opencv3` 为 `usr/local/opencv3`.   
 3. 接着编译，很简单.   
 ```
 sudo apt-get install liblapacke-dev
@@ -25,11 +26,10 @@ make install
 你就会在指定安装的路径下找到对应的头文件和库（时间很长，耐心等待就好了）。    
 4. 最后就是如何在工程中加入 opencv3.2 的库和头文件。这里需要改变一下，否则很容易链接到位于 /usr/local 下的 opencv2 。在工程文件中的 CMakeLists.txt 加上：    
 ```
-set(OpenCV_DIR "/path/to/opencv3") 
+set(OpenCV_DIR "/usr/local/opencv3/share/OpenCV") 
 ```
-来重新制定 opencv 的安装路径， 因为安装 opencv2 时已经生成了系统变量 `OpenCV_DIR = /usr/local/share/opencv`, 所以需要用 set 来改变这个变量的值，新的路径为与文件 OpencvConfig.cmake 路径相同。   
+来重新制定 opencv 的安装路径， 因为安装 opencv2 时已经生成了系统变量 `OpenCV_DIR = /usr/local/opencv3`, 所以需要用 set 来改变这个变量的值，新的路径为与文件 OpencvConfig.cmake 路径相同。   
 注意：这个 OpencvConfig.cmake 文件里面定义了一堆变量，可以在这里面查阅使用。如 OpenCV_INCLUDE_DIRS 、OpenCV_LIBS 等.   
-
 
 ## 出现的问题  
 1. lapack 包的问题.  
