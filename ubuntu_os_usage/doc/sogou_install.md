@@ -49,6 +49,3 @@ $ sudo apt-get autoremove
 
 最后别忘注销或者重启系统，如果注销按钮不能使用，可以使用命令`sudo pkill Xorg`，当再次登录系统之后，可以看到搜狗输入法已经完全被卸载干净了。
 
-
-export PATH="/home/klm/opt/Qt5.10.0/5.10.0/gcc_64/bin":$PATH
-export LD_LIBRARY_PATH=/home/klm/opt/Qt5.10.0/5.10.0/gcc_64/lib:$LD_LIBRARY_PATH  

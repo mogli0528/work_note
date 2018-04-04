@@ -47,4 +47,9 @@ a.out
 *.pyc
 
 # qt build directorys
+build-*Debug/
+build-*Release/
+build-*Default/
 build-*/
+build/
+*.user

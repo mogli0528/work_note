@@ -18,4 +18,6 @@
 私人数据目录:    
 ~/work/    
 ~/ssd/models/    
-~/DownLoads/    
+~/DownLoads/   
+qt5_sogou 动态库文件   
+ 
