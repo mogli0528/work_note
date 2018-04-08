@@ -1,24 +1,30 @@
-# `C++` 笔记
+# C++ 笔记
 
-## 目录
-[1. C++ Primer 5nd 知识点总结](./doc/c++_primer_5nd.md)       
-[2. vector 基本操作](./doc/vector_operation.md)      
-[3. short int 使用注意事项](./doc/shortInt.md)   
-[4. map 使用实例](./doc/map_instance.md)    
-[5. shared_ptr 使用实例](./doc/shared_ptr.md)    
+## 笔记目录  
+### VS 使用教程   
+[1. vs2013 使用教程](./doc/vs2013_usage.md)   
+### C++ primer 5th 笔记 
+[1. map 使用实例](./doc/cpp_primer_5nd/map_instance.md)    
+[2. vector 操作](./doc/cpp_primer_5nd/vector_operation.md)      
+[3. shared_ptr 使用实例](./cpp_primer_5nd/doc/shared_ptr.md)    
+[4. C++ Primer 5nd 知识点总结](./doc/cpp_primer_5nd/cpp_primer_5nd.md)       
 
-## `VS2013`使用教程
-1. [`vs2013`使用教程](./doc/vs2013_usage.md)   
-
-## boost 库使用
+### boost 库使用
 [1. boost 使用教程](./doc/boost/boost_api_in_ssd.md)   
+[2. short int 使用注意事项](./doc/shortInt.md)   
 
-## 在山寨中成长      
-
+### 在山寨中成长      
 - [x] convert_annoset.cpp 中的 gflag/glog 语法模仿;   
 - [ ] caffe 增广方式的改变;   
 
+## 代码目录   
+### C++ primer 5th 笔记对应代码 
+[1. map 使用实例](./code/cpp_primer_5nd/map_instance/map_instance.cpp)    
+[2. vector 操作](./code/cpp_primer_5nd/vector_operation/vector_operation.cpp)  
+[3. shared_ptr 使用实例](./code/cpp_primer_5nd/shared_ptr/shared_ptr.cpp)    
+[4. 默认参数使用实例](./code/cpp_primer_5nd/default_paramter/default_paramter.cpp)    
 
+/work/gitwork/work_note/dev_tools/cpp/code/cpp_primer_5nd/shared_ptr
 ## 老杜培训
 1. 结构体中的字节对齐；
 progma(push);

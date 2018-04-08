@@ -1,76 +1,92 @@
-# vector操作详解
+# vector 操作   
+> 顺序容器选用标准: (1) 向容器中添加或从容器中删除元素的代价. (2) 非顺序访问容器中元素的代价.     
 
-1.vector是线性容器，它的元素严格的按照线性序列排序，可以看成是动态数组。和数组一样,它的元素存储在一块连续的存储空间中，这也意味着我们不仅可以使用迭代器(iterator)访问元素，还可以使用指针的偏移方式访问。
-和常规数组不一样的是，vector能够自动存储元素，可以自动增长或缩小存储空间。以下是vector的优点:
-(1). 可以使用下标访问个别的元素
-(2). 迭代器可以按照不同的方式遍历容器
-(3). 可以在容器的末尾增加或删除元素
-和数组相比，虽然容器在自动处理容量的大小时会消耗更多的内存，但是容器能提供和数组一样的性能，而且能很好的调整存储空间大小。和其他标准的顺序容器相比(deques or lists)，能更有效访问容器内的元素和在末尾添加和删除元素，在其他位置添加和删除元素，vector则不及其他顺序容器，在迭代器和引用也不比lists支持的好。
+**顺序容器的一些特点:**    
+(1) vector:       在尾部之外的位置插入或删除元素可能很慢;   
+(2) list:         只支持双向顺序访问, 任何位置的插入删除都很快, 随机访问可能很慢;   
+(3) forward_list: 只支持单向顺序访问, 任何位置的插入删除都很快, 随机访问可能很慢;   
 
-容器的大小和容器的容量是有区别的，大小是指元素的个数。容量是分配的内存大小，容量一般等于或大于容器的大小。
-vector::size()返回容器的大小，vector::capacity()返回容量值，容量多于容器大小的部分用于以防容器的增加使用，每次重新分配内存都会很影响程序的性能，所以一般分配的容量大于容器的大小。
-若要自己指定分配的容量的大小，则可以使用vector::reserve()，但是规定的值要大于size()值。
- 
-2. 基本操作
-(1)头文件#include<vector>.
-(2)创建vector对象，vector<int> vec;
-(3)尾部插入数字：vec.push_back(a);
-(4)使用下标访问元素，cout<<vec[0]<<endl;记住下标是从0开始的。
-(5)使用迭代器访问元素.
+**如果访问操作和删除(或添加)操作是在不同阶段完成的, 那么可以根据不同顺序容器的特点在一个阶段完成操作后拷贝到另一个顺序容器中**.   
+
+## vector 容器操作    
+**推荐使用迭代器操作顺序容器, 而不是下标操作**.   
+### 1. vector 容器特点   
+vector 是线性容器，它的元素严格的按照线性序列排序，可以看成是动态数组。和数组一样,它的元素存储在一块连续的存储空间中，这也意味着我们不仅可以使用迭代器(iterator)访问元素，还可以使用指针的偏移方式访问。   
+和常规数组不一样的是，vector 能够自动存储元素，可以自动增长或缩小存储空间。以下是 vector的 优点:
+(1). 可以使用下标访问个别的元素    
+(2). 迭代器可以按照不同的方式遍历容器   
+(3). 可以在容器的末尾增加或删除元素   
+和数组相比，虽然容器在自动处理容量的大小时会消耗更多的内存，但是容器能提供和数组一样的性能，而且能很好的调整存储空间大小。和其他标准的顺序容器相比(deques or lists)，能更有效访问容器内的元素和在末尾添加和删除元素，在其他位置添加和删除元素，vector 则不及其他顺序容器，在迭代器和引用也不比 lists 支持的好。   
+### 2. 容器的大小和容器的容量
+容器的大小(size) 和 容器的容量(capacity) 是有区别的，大小是当前容器中包含的元素个数。容量是容器在不重新分配空间的情况下可容纳的元素个数，容量一般等于或大于容器的大小。   
+`vector::size()`返回容器的大小，`vector::capacity()`返回容量值，容量大于容器大小的部分用于以防容器的元素增加使用，每次重新分配内存都会很影响程序的性能，所以一般分配的容量大于容器的大小。   
+若要自己指定分配的容量的大小，则可以使用`vector::reserve(n)`，但函数的参数值 `n` 要大于 `vector::size()` 的值。    
+`vector::resize(n)` 操作可以对容器中的元素个数进行控制重新指定, 如果函数的参数值 `n` 大于 `vector::size()`, 则会在当前容器的元素末尾添加 `n - vector::size()` 个元素. 如果函数的参数值 `n` 小于 `vector::size()`, 则会从尾部开始删除元素,最后会剩下 `n` 个元素.  
+**需要注意的是, `vector::resize(n)` 操作不会改变c apacity 的大小**.   
+### 3. 基本操作   
+(1) 头文件 `#include <vector>`.   
+(2) 创建 vector 对象: vector<int> vec;   
+(3) 尾部插入数字：     vec.push_back(a);   
+(4) 使用下标访问元素:  cout << vec[0] << endl; 记住下标是从 `0` 开始的。   
+(5) 清空:            vec.clear()　　　|清空之后，vec.size()为０
+(6) 插入元素：        vec.insert(vec.begin()+i, a); 在第 `i` 个元素后面插入`a`;
+(7) 删除元素：        vec.erase();
+(8) 容器大小:         vec.size();
+(9) 使用迭代器访问元素.   
 ```cpp
 vector<int>::iterator it;  
-for(it=vec.begin();it!=vec.end();it++)  
-    cout<<*it<<endl;
+for(it = vec.begin(); it != vec.end(); it++)  
+    cout<< *it << endl;
 ```
-(6)插入元素：    vec.insert(vec.begin()+i,a); 在第i个元素后面插入a;
-(7)删除元素：    
 ```cpp
 vec.erase(vec.begin()+2);                        |删除第3个元素
-vec.erase(vec.begin()+i,vec.end()+j);       |删除区间[i,j-1];区间从0开始
+vec.erase(vec.begin()+i, vec.end()+j);       |删除区间[i,j-1];区间从0开始
 ```
-(8)向量大小:vec.size();
-(9)清空:vec.clear()　　　|清空之后，vec.size()为０
 
-以下是vector的所有成员函数：
+下表是 vector 常用的成员函数：   
+
 |vector方法(常用)|功能|
 |:--------------|:-----------|
-|c.begin()                  | 传回迭代器中的一个数据。|
-|c.end()                   | 指向迭代器中的最后一个数据地址。|
-|c.clear()                  | 移除容器中所有数据。|
-|c.empty()                | 判断容器是否为空。|
-|c.erase(pos)           | 删除pos位置的数据，传回下一个数据的位置。|
-|c.erase(beg,end)    | 删除[beg,end)区间的数据，传回下一个数据的位置。|
-|c.capacity()             | 返回容器中数据个数。|
-|get_allocator         | 使用构造函数返回一个拷贝。|
-|c.push_back(elem)   | 在尾部加入一个数据。|
-|c.insert(pos,elem)  | 在pos位置插入一个elem拷贝，传回新数据位置。|
+|c.begin()        | 传回迭代器中的一个数据|
+|c.end()          | 指向迭代器中的最后一个数据地址|
+|c.clear()        | 移除容器中所有数据|
+|c.empty()        | 判断容器是否为空|
+|c.erase(pos)     | 删除pos位置的数据，传回下一个数据的位置|
+|c.erase(beg,end) | 删除[beg,end)区间的数据，传回下一个数据的位置|
+|c.capacity()     | 返回容器中数据个数|
+|get_allocator    | 使用构造函数返回一个拷贝|
+|c.push_back(elem)| 在尾部加入一个数据|
+|c.insert(pos,elem)   | 在pos位置插入一个elem拷贝，传回新数据位置|
 |c.insert(pos,n,elem) | 在pos位置插入n个elem数据。无返回值。|
-|c.insert(pos,beg,end) | 在pos位置插入在[beg,end)区间的数据。无返回值。|
-|c.max_size()            | 返回容器中最大数据的数量。|
-|c.pop_back()            | 删除最后一个数据。|
-|c.size()             | 返回容器中实际数据的个数。|
-|c1.swap(c2)     | 将c1和c2元素互换。|
-|vector c1(c2) | 用c2拷贝c1|
-|vector c(n)  | 创建一个vector，含有n个数据，数据均已缺省构造产生。|
-|vector c(n, elem) | 创建一个含有n个elem拷贝的vector。|
-|vector c(beg,end) |  创建一个以[beg;end)区间的vector。|
+|c.insert(pos,beg,end)| 在pos位置插入在[beg,end)区间的数据。无返回值|
+|c.max_size()         | 返回容器中最大数据的数量|
+|c.pop_back()         | 删除最后一个数据|
+|c.size()             | 返回容器中实际数据的个数|
+|c1.swap(c2)       | 将c1和c2元素互换|
+|vector c1(c2)     | 用c2拷贝c1|
+|vector c(n)       | 创建一个vector，含有n个数据，数据均已缺省构造产生|
+|vector c(n, elem) | 创建一个含有n个elem拷贝的vector|
+|vector c(beg,end) |  创建一个以[beg;end)区间的vector|
+
+下表是 vector 其余的成员函数：   
 
 |vector方法|功能|
 |:--------------|:-----------|
-|c.~vector () |  销毁所有数据，释放内存。|
-|operator[] | 返回容器中指定位置的一个引用。|
-|swap(c1,c2)     | 同上操作。|
-|c.rbegin()          | 传回一个逆向队列的第一个数据。|
-|c.rend()            | 传回一个逆向队列的最后一个数据的下一个位置。|
-|c.resize(num)    | 重新指定队列的长度。|
-|c.reserve()        | 保留适当的容量。|
-|c.front()                 | 传回第一个数据。|
-|c.assign(beg,end)     | 将[beg; end)区间中的数据赋值给c。|
-|c.assign(n,elem)       | 将n个elem的拷贝赋值给c。|
-|c.at(idx)                   | 传回索引idx所指的数据，如果idx越界，抛出out_of_range。|
-|c.back()                   | 传回最后一个数据，不检查这个数据是否存在。|
+|c.~vector () |  销毁所有数据，释放内存|
+|operator[] | 返回容器中指定位置的一个引用|
+|swap(c1,c2) | 同上操作|
+|c.rbegin() | 传回一个逆向队列的第一个数据|
+|c.rend()   | 传回一个逆向队列的最后一个数据的下一个位置|
+|c.resize(num) | 重新指定队列的长度|
+|c.reserve()  | 保留适当的容量|
+|c.front()  | 传回第一个数据|
+|c.assign(beg,end)  | 将[beg; end)区间中的数据赋值给c|
+|c.assign(n,elem)| 将n个elem的拷贝赋值给c|
+|c.at(idx)   | 传回索引idx所指的数据，如果idx越界，抛出out_of_range|
+|c.back()   | 传回最后一个数据，不检查这个数据是否存在|
 
-(1). 构造和复制构造函数
+### 4. vector 的操作
+(1). vector 的构造和复制构造函数
 ```cpp
 explicit vector ( const Allocator& = Allocator() );
 explicit vector ( size_type n, const T& value= T(), const Allocator& = Allocator() );
@@ -78,12 +94,12 @@ template <class InputIterator>
 vector ( InputIterator first, InputIterator last, const Allocator& = Allocator() );
 vector ( const vector<T,Allocator>& x );
 
-explicit:是防止隐式转换, Allocator是一种内存分配模式,一般是使用默认的
+explicit: 是防止隐式转换, Allocator 是一种内存分配模式,一般是使用默认的
 ```cpp
-vector<int> A;  //创建一个空的的容器
-vector<int> B(10,100); //创建一个个元素,每个元素值为100
-vector<int> C(B.begin(),B.end()); //使用迭代器,可以取部分元素创建一个新的容器
-vector<int> D(C); //复制构造函数,创建一个完全一样的容器
+vector<int> A;  // 创建一个空的的容器
+vector<int> B(10,100); // 创建一个个元素,每个元素值为100
+vector<int> C(B.begin(),B.end()); // 使用迭代器,可以取部分元素创建一个新的容器
+vector<int> D(C); // 复制构造函数,创建一个完全一样的容器
 ```
 
 (2). 析构函数
