@@ -231,10 +231,11 @@ repeated NetState test_state = 27;
 6. 注册两个信号: 中断信号和挂起信号.  
 7. 如果是模型微调, 则将预训练模型 `.caffemodel` 指定的参数复制一份; 如果是继续训练, 则将模型参数恢复为 `.solverstate` 指定的状态.      
 8. caffe 中对于多 GPU 的实现和 ssd 中是不同的. caffe 中使用的是 `USE_NCCL`宏控制, 而 ssd 中使用的是 `P2PSync`.   
-9. 开始求解.   
+9. 调用 `solver->solve()` 开始求解.   
 
 ## TODO 其他的三个命令行参数   
 
 
+## 结语   
+按理说接下来应该是分析求解器 `Solver.cpp`, 但是在 `Solver.cpp` 中就会涉及到 `Net` 和 `Blob` 了, 因此还是暂且去分析一下 `Caffe` 中基本的组件(Blob, Net, Layer), 之后就可以回来继续分析 `Solver` 了;
 
-[求解器](./doc/solver.md)
