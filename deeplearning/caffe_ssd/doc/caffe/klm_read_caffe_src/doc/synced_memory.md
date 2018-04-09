@@ -49,40 +49,13 @@ inline void CaffeFreeHost(void* ptr, bool use_cuda) {
 ```
 3. SyncedMemory 类的实现.   
 以下是`syncedmem.hpp`的代码：    
+3.1 private 成员.   
 ```cpp
 class SyncedMemory {
-public:
-  
-  SyncedMemory();    // 简单初始化
-  explicit SyncedMemory(size_t size);  // 只设置 size，并未申请内存
-  ~SyncedMemory();
-
-  // 分别是获取 cpu，gpu 中数据的指针，需要说明的一点是，该过程会调用 to_xpu() 同步数据
-  const void* cpu_data();
-  const void* gpu_data();
-
-  // 有 get 就有 set: set_cpu_data() 和 set_gpu_data()
-  // 注意：set_xpu_data() 后就不再拥有该数据，即 own_cpu_data 或
-  // own_gpu_data 就变为 false，因为还有 data 指向该数据。
-  // 一般来说, 只有当同步后才会为 true, 也即调用 to_cpu() 或者 to_gpu() 后。
-  void set_cpu_data(void* data);   
-  void set_gpu_data(void* data);
-
-  // 获取实时更新的 cpu 数据, 并改变数据的状态为 HEAD_AT_CPU, 这样就可以保证 
-  // to_gpu() 函数同步数据到 GPU 时会重新拷贝 cpu 中的数据.  
-  void* mutable_cpu_data(); 
-  void* mutable_gpu_data();
-  
-  // SymceHead 有四种状态: [无数据, 数据在 cpu, gpu, 或者在 cpu 和 gpu 中都有]  
-  enum SyncedHead { UNINITIALIZED, HEAD_AT_CPU, HEAD_AT_GPU, SYNCED };
-  SyncedHead head() { return head_; }
-  size_t size() { return size_; }
-
-#ifndef CPU_ONLY
-  void async_gpu_push(const cudaStream_t& stream);
-#endif
-
-private:
+ public:
+  ...
+ 
+ private:
   void check_device();  // 主要是针对 GPU 设备检查. 
   
   /**
@@ -121,5 +94,43 @@ private:
    * 拷贝构造函数和"="操作符函数定义为 private, 并且只声明不实现.   
    */  
   DISABLE_COPY_AND_ASSIGN(SyncedMemory);
+};  // class SyncedMemory
+```
+3.2 Public 成员.   
+```cpp
+class SyncedMemory {
+ public:
+  
+  SyncedMemory();    // 简单初始化
+  explicit SyncedMemory(size_t size);  // 只设置 size，并未申请内存
+  ~SyncedMemory();
+
+  // 分别是获取 cpu，gpu 中数据的指针，需要说明的一点是，该过程会调用 to_xpu() 同步数据
+  const void* cpu_data();
+  const void* gpu_data();
+
+  // 有 get 就有 set: set_cpu_data() 和 set_gpu_data()
+  // 注意：set_xpu_data() 后就不再拥有该数据，即 own_cpu_data 或
+  // own_gpu_data 就变为 false，因为还有 data 指向该数据。
+  // 一般来说, 只有当同步后才会为 true, 也即调用 to_cpu() 或者 to_gpu() 后。
+  void set_cpu_data(void* data);   
+  void set_gpu_data(void* data);
+
+  // 获取实时更新的 cpu 数据, 并改变数据的状态为 HEAD_AT_CPU, 这样就可以保证 
+  // to_gpu() 函数同步数据到 GPU 时会重新拷贝 cpu 中的数据.  
+  void* mutable_cpu_data(); 
+  void* mutable_gpu_data();
+  
+  // SymceHead 有四种状态: [无数据, 数据在 cpu, gpu, 或者在 cpu 和 gpu 中都有]  
+  enum SyncedHead { UNINITIALIZED, HEAD_AT_CPU, HEAD_AT_GPU, SYNCED };
+  SyncedHead head() { return head_; }
+  size_t size() { return size_; }
+
+#ifndef CPU_ONLY
+  void async_gpu_push(const cudaStream_t& stream);
+#endif
+
+ private:
+  ...
 };  // class SyncedMemory
 ```
