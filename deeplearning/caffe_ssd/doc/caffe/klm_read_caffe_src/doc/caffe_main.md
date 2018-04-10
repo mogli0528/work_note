@@ -6,6 +6,7 @@
 /path/to/caffe.bin train --solver=solver.prototxt --weights=ResNet-50-model.caffemodel --gpu 0,1,2,3
 ```
 其实除了训练模型或微调模型之外, caffe 还包含其他的命令行参数:   
+
 - train           train or finetune a model    
 - test            score a model   
 - device_query    show GPU diagnostic information   

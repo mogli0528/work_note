@@ -1,7 +1,8 @@
-# synced_memory 同步内存的实现
+# Synced Memory 同步内存的实现
 > host 指的是宿主设备(CPU / GPU).    
 
 ## 目录   
+
 - synced_memory 的作用;  
 - synced_memory 的实现;  
 

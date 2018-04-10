@@ -56,9 +56,9 @@ static void AddCreator(const string& type, Creator creator)
 > Solver 类最终会被具体的求解器类(例如 SGDSolver)继承.   
 
 1. Solver 对应的 Action.   
-- NONE: 不做任何处理;   
-- STOP: 停止训练;   
-- SNAPSHOT: 保存一个快照之后继续训练;   
+ 1) NONE: 不做任何处理;   
+ 2) STOP: 停止训练;   
+ 3) SNAPSHOT: 保存一个快照之后继续训练;   
 2. Solver 求解器类型的默认值为 SGD; 
 3. Snapshot() 要保存两部分的数据: 一部分为网络参数数据, 另一部分为已经学习到的求解器状态参数.   
 ```cpp

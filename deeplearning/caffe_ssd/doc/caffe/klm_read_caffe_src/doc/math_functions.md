@@ -2,6 +2,7 @@
 > math_functions.cpp 属于 Caffe 中的 util, util 中包含很多有用的工具, 这里我们就只分析和求解器直接相关的工具. `Caffe` 矩阵运算使用的库是 `CBLAS`库, 其头文件为 `<cblas.h>`.   
 
 ## 目录   
+
 - cuda 的设计技巧; 
 - Caffe 中的矩阵计算函数
 
@@ -236,7 +237,7 @@ void caffe_div<double>(const int n, const double* a, const double* b,
   vdDiv(n, a, b, y);
 }
 ```
-10. 幂运算, 平方, 指数运算, 对数运算, 开方和 L1 距离.   
+10. 幂运算, 平方, 指数运算, 对数运算, 开方和绝对值.   
 功能: 同样是 element-wise 操作.  
 分别是:   
 ```

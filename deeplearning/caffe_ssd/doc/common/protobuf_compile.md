@@ -21,7 +21,7 @@ required 表示这个字段必填
 optional 可选   
 repeated 可以看作是在传递一个数组的值,并且可以为空  
 2.2 数据类型   
-![](../pictures/type.png)   
+![](../../pictures/type.png)   
 2.3 字段名称   
 `protobuf`建议以`下划线`命名而非`驼峰式`。例如`app_name`优于`appName`。   
 2.4 字段编码值   
