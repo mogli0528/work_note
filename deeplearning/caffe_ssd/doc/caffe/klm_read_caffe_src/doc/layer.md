@@ -58,25 +58,19 @@ class Layer {
   ...
  
  protected:
-  /** The protobuf that stores the layer parameters */
-  LayerParameter layer_param_;
-  /** The phase: TRAIN or TEST */
-  Phase phase_;
-  /** The vector that stores the learnable parameters as a set of blobs. */
-  vector<shared_ptr<Blob<Dtype> > > blobs_;
-  /** Vector indicating whether to compute the diff of each param blob. */
-  vector<bool> param_propagate_down_;
+  LayerParameter layer_param_;  // 保存 layer parameters 的protobuf
+  Phase phase_;   // The phase: TRAIN or TEST  
+  vector<shared_ptr<Blob<Dtype> > > blobs_;   // vector, 保存有可学习参数的一些列 blobs
+  vector<bool> param_propagate_down_;   // 是是否需要计算每一个输入 blob的 diff
 
-  /** The vector that indicates whether each top blob has a non-zero weight in
-   *  the objective function. */
-  vector<Dtype> loss_;
+  vector<Dtype> loss_;  // 指示目标函数中的每个 top blob 是否有非零权重值
 
-  /** @brief Using the CPU device, compute the layer output. */
+  /** @brief 使用 CPU 计算层的输出. */
   virtual void Forward_cpu(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top) = 0;
   /**
-   * @brief Using the GPU device, compute the layer output.
-   *        Fall back to Forward_cpu() if unavailable.
+   * @brief 使用 GPU 计算层的输出..
+   *        如果没有 GPU, 则回退到调用 Forward_cpu() 版本.
    */
   virtual void Forward_gpu(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top) {
@@ -85,16 +79,14 @@ class Layer {
   }
 
   /**
-   * @brief Using the CPU device, compute the gradients for any parameters and
-   *        for the bottom blobs if propagate_down is true.
+   * @brief 当 propagate_down = true 时, 使用 CPU 计算 bottom blobs 的参数的梯度
    */
   virtual void Backward_cpu(const vector<Blob<Dtype>*>& top,
       const vector<bool>& propagate_down,
       const vector<Blob<Dtype>*>& bottom) = 0;
   /**
-   * @brief Using the GPU device, compute the gradients for any parameters and
-   *        for the bottom blobs if propagate_down is true.
-   *        Fall back to Backward_cpu() if unavailable.
+   * @brief 当 propagate_down = true 时, 使用 GPU 计算 bottom blobs 的参数的梯度
+   *        如果没有 GPU, 则回退到调用 Backward_cpu() 版本.  
    */
   virtual void Backward_gpu(const vector<Blob<Dtype>*>& top,
       const vector<bool>& propagate_down,
@@ -104,7 +96,7 @@ class Layer {
   }
 
   /**
-   * Called by the parent Layer's SetUp to check that the number of bottom
+   * 父类 Layer 的 SetUp() 会调用这个函数来 to check that the number of bottom
    * and top Blobs provided as input match the expected numbers specified by
    * the {ExactNum,Min,Max}{Bottom,Top}Blobs() functions.
    */

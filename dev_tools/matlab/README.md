@@ -13,9 +13,8 @@
 [x. 几个有用的`ToolBox`](./doc/note/useful_toolboxs.md)    
 
 ## 提高笔记
-[1. asbh20 实例学习](./doc/note/asbhl20.md)  
+[1. aeroblk_HL20 demo](./doc/note/aeroblk_HL20.md)    
 [2. Ideal Airspeed Correction](./doc/note/ideal_airspeed_correction.md)    
-[3. aeroblk_HL20 demo](./doc/note/aeroblk_HL20.md)    
 
 ## Installation     
 [1. ubuntu 14.04 安装 flightgear ](./doc/note/flightgear.md)      
