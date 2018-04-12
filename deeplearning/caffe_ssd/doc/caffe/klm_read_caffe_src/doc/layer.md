@@ -2,6 +2,13 @@
 Layer 是 Caffe 中最庞大最繁杂的模块。由于 Caffe 强调模块化设计, 因此只允许每个 Layer完成一类特定的计算. 例如 convolution 操作、 pooling 、 非线性变换 、 内积运算 、数据加载、归一化和损失计算等.     
 Layer 这个类可以说是里面最终的一个基本类了, 深度网络呢就是一层一层的 Layer, 相互之间通过传输 Blob 数据连接起来.   
 
+## 目录    
+- Caffe 中的 Layers   
+- layer.hpp 文件的实现
+- layer.cpp 文件的实现
+- 协调使用 CPU 和 GPU 设备.   
+- Layer 相关的 Proto  
+
 ## Caffe 中的 Layers   
 Caffe 中与 Layer 相关的头文件有 7 个:    
 
@@ -314,59 +321,52 @@ class Layer {
   virtual inline const char* type() const { return ""; }  // 返回 layer 类型名
 
   /**
-   * @brief 返回 layer 需要的 bottom blobs 的准确个数,  required by the layer,
-   *        or -1 if no exact number is required.
+   * @brief 返回 layer 需要的 bottom blobs 的准确个数, 如果是 -1, 表示不需要指定确切个数
    *
-   * This method should be overridden to return a non-negative value if your
-   * layer expects some exact number of bottom blobs.
+   * 如果用户自定义的层的 bottom blobs 有确切的个数, ExactNumBottomBlobs() 函数应该被
+   * 重写并返回一个非零数.
    */
   virtual inline int ExactNumBottomBlobs() const { return -1; }
   /**
-   * @brief Returns the minimum number of bottom blobs required by the layer,
-   *        or -1 if no minimum number is required.
+   * @brief 返回 layer 需要的 bottom blobs 的最小个数, 如果是 -1, 表示不需要指定最小个数
    *
-   * This method should be overridden to return a non-negative value if your
-   * layer expects some minimum number of bottom blobs.
+   * 如果用户自定义的层的 bottom blobs 需要指定其最小数量, MinBottomBlobs() 函数应该被
+   * 重写并返回一个非零数.
    */
   virtual inline int MinBottomBlobs() const { return -1; }
   /**
-   * @brief Returns the maximum number of bottom blobs required by the layer,
-   *        or -1 if no maximum number is required.
+   * @brief 返回 layer 需要的 bottom blobs 的最大个数, 如果是 -1, 表示不需要指定最大个数
    *
-   * This method should be overridden to return a non-negative value if your
-   * layer expects some maximum number of bottom blobs.
+   * 如果用户自定义的层的 bottom blobs 需要指定其最大数量, MaxBottomBlobs() 函数应该被
+   * 重写并返回一个非零数.
    */
   virtual inline int MaxBottomBlobs() const { return -1; }
   /**
-   * @brief Returns the exact number of top blobs required by the layer,
-   *        or -1 if no exact number is required.
+   * @brief 返回 layer 需要的 top blobs 的最大个数, 如果是 -1, 表示不需要指定最大个数
    *
-   * This method should be overridden to return a non-negative value if your
-   * layer expects some exact number of top blobs.
+   * 如果用户自定义的层的 top blobs 有确切的个数, ExactNumTopBlobs() 函数应该被
+   * 重写并返回一个非零数
    */
   virtual inline int ExactNumTopBlobs() const { return -1; }
   /**
-   * @brief Returns the minimum number of top blobs required by the layer,
-   *        or -1 if no minimum number is required.
+   * @brief 返回 layer 需要的 top blobs 的最小个数, 如果是 -1, 表示不需要指定最小个数
    *
-   * This method should be overridden to return a non-negative value if your
-   * layer expects some minimum number of top blobs.
+   * 如果用户自定义的层的 top blobs 需要指定其最小数量, MinTopBlobs() 函数应该被
+   * 重写并返回一个非零数.
    */
   virtual inline int MinTopBlobs() const { return -1; }
   /**
-   * @brief Returns the maximum number of top blobs required by the layer,
-   *        or -1 if no maximum number is required.
+   * @brief 返回 layer 需要的 top blobs 的最大个数, 如果是 -1, 表示不需要指定最大个数
    *
-   * This method should be overridden to return a non-negative value if your
-   * layer expects some maximum number of top blobs.
+   * 如果用户自定义的层的 top blobs 需要指定其最大数量, MaxTopBlobs() 函数应该被
+   * 重写并返回一个非零数.
    */
   virtual inline int MaxTopBlobs() const { return -1; }
   /**
-   * @brief Returns true if the layer requires an equal number of bottom and
-   *        top blobs.
+   * @brief 如果层的 bottom 和 top blobs 的数量应该是相同的, 则返回 true.
    *
-   * This method should be overridden to return true if your layer expects an
-   * equal number of bottom and top blobs.
+   * 如果用户自定义的层的 bottom 和 top blobs 的数量应该一致, 则 EqualNumBottomTopBlobs() 
+   * 函数应该被重写并返回一个非零数.
    */
   virtual inline bool EqualNumBottomTopBlobs() const { return false; }
 
@@ -374,38 +374,35 @@ class Layer {
    * @brief Return whether "anonymous" top blobs are created automatically
    *        by the layer.
    *
-   * If this method returns true, Net::Init will create enough "anonymous" top
-   * blobs to fulfill the requirement specified by ExactNumTopBlobs() or
-   * MinTopBlobs().
+   * 如果 AutoTopBlobs() 函数返回 true, Net::Init() 将会创建足够的 "anonymous" top
+   * blobs 来填充 ExactNumTopBlobs() 或 MinTopBlobs() 函数指定的数量.  
    */
   virtual inline bool AutoTopBlobs() const { return false; }
 
   /**
-   * @brief Return whether to allow force_backward for a given bottom blob
-   *        index.
+   * @brief 返回指定索引对应的 bottom blob 是否需要强制 force_backward.    
    *
-   * If AllowForceBackward(i) == false, we will ignore the force_backward
-   * setting and backpropagate to blob i only if it needs gradient information
-   * (as is done when force_backward == false).
+   * 如果 AllowForceBackward(i) == false, 就会忽略 force_backward 的设置
+   * ,并且只有它需要 gradient 信息的时候才会反向传播到 blob i. (作用类似于 
+   * force_backward == false).
    */
   virtual inline bool AllowForceBackward(const int bottom_index) const {
     return true;
   }
 
   /**
-   * @brief Specifies whether the layer should compute gradients w.r.t. a
-   *        parameter at a particular index given by param_id.
+   * @brief 给定 param_id, 确定 layer 是否需要计算这个参数的 gradients .
    *
-   * You can safely ignore false values and always compute gradients
-   * for all parameters, but possibly with wasteful computation.
+   * 当然, 如果你不在乎多余的计算的话, 可以直接忽略那些 false 值(即总是计算所有参数的梯度) 
    */
   inline bool param_propagate_down(const int param_id) {
     return (param_propagate_down_.size() > param_id) ?
         param_propagate_down_[param_id] : false;
   }
+
   /**
-   * @brief Sets whether the layer should compute gradients w.r.t. a
-   *        parameter at a particular index given by param_id.
+   * @brief 对应于上面的 param_propagate_down() 函数. 
+   *        设置 layer 是否需要计算这个参数的 gradients.
    */
   inline void set_param_propagate_down(const int param_id, const bool value) {
     if (param_propagate_down_.size() <= param_id) {
@@ -418,202 +415,82 @@ class Layer {
  protected:
  ...
 ```
-1. 以卷积层的 Reshape() 为例进行分析.    
-TODO: 应该再开一个单独的文件分析.    
+3. 主要函数功能总结    
+1) LayerSetUp() 会尝试从 protobuf 文件读取参数。   
+2) Forward() 和 Backward() 对应前向计算和反向更新，输入都是 bottom，输出为 top，其中 Backward() 里面有个 propagate_down 参数，用来表示该 Layer 是否反向传播参数。  
+3) 在 Forward() 和 Backward() 的具体实现里, 会根据 Caffe::mode()进行对应的操作，即使用 cpu 或者 gpu 进行计算, 两个都实现了对应的接口 Forward_cpu()、Forward_gpu() 和 Backward_cpu()、Backward_gpu()，这些接口都是 virtual， 具体还是要根据 layer 的类型进行对应的计算(注意: 有些 layer 并没有 GPU 计算的实现, 所以封装时加入了 CPU 的计算作为后备).    
+4) 实现了 ToProto() 的接口，可以将 Layer 的参数写入到 protocol buffer 文件。   
+
+## layer.cpp 的实现   
+一共就一行代码.    
 ```cpp
-template <typename Dtype>
-void BaseConvolutionLayer<Dtype>::Reshape(const vector<Blob<Dtype>*>& bottom,
-      const vector<Blob<Dtype>*>& top) {
-  const int first_spatial_axis = channel_axis_ + 1;
-  CHECK_EQ(bottom[0]->num_axes(), first_spatial_axis + num_spatial_axes_)
-      << "bottom num_axes may not change.";
-  num_ = bottom[0]->count(0, channel_axis_);
-  CHECK_EQ(bottom[0]->shape(channel_axis_), channels_)
-      << "Input size incompatible with convolution kernel.";
-  // TODO: generalize to handle inputs of different shapes.
-  for (int bottom_id = 1; bottom_id < bottom.size(); ++bottom_id) {
-    CHECK(bottom[0]->shape() == bottom[bottom_id]->shape())
-        << "All inputs must have the same shape.";
-  }
-  // Shape the tops.
-  bottom_shape_ = &bottom[0]->shape();
-  compute_output_shape();
-  vector<int> top_shape(bottom[0]->shape().begin(),
-      bottom[0]->shape().begin() + channel_axis_);
-  top_shape.push_back(num_output_);
-  for (int i = 0; i < num_spatial_axes_; ++i) {
-    top_shape.push_back(output_shape_[i]);
-  }
-  for (int top_id = 0; top_id < top.size(); ++top_id) {
-    top[top_id]->Reshape(top_shape);
-  }
-  if (reverse_dimensions()) {
-    conv_out_spatial_dim_ = bottom[0]->count(first_spatial_axis);
-  } else {
-    conv_out_spatial_dim_ = top[0]->count(first_spatial_axis);
-  }
-  col_offset_ = kernel_dim_ * conv_out_spatial_dim_;
-  output_offset_ = conv_out_channels_ * conv_out_spatial_dim_ / group_;
-  // Setup input dimensions (conv_input_shape_).
-  vector<int> bottom_dim_blob_shape(1, num_spatial_axes_ + 1);
-  conv_input_shape_.Reshape(bottom_dim_blob_shape);
-  int* conv_input_shape_data = conv_input_shape_.mutable_cpu_data();
-  for (int i = 0; i < num_spatial_axes_ + 1; ++i) {
-    if (reverse_dimensions()) {
-      conv_input_shape_data[i] = top[0]->shape(channel_axis_ + i);
-    } else {
-      conv_input_shape_data[i] = bottom[0]->shape(channel_axis_ + i);
-    }
-  }
-  // The im2col result buffer will only hold one image at a time to avoid
-  // overly large memory usage. In the special case of 1x1 convolution
-  // it goes lazily unused to save memory.
-  col_buffer_shape_.clear();
-  col_buffer_shape_.push_back(kernel_dim_ * group_);
-  for (int i = 0; i < num_spatial_axes_; ++i) {
-    if (reverse_dimensions()) {
-      col_buffer_shape_.push_back(input_shape(i + 1));
-    } else {
-      col_buffer_shape_.push_back(output_shape_[i]);
-    }
-  }
-  col_buffer_.Reshape(col_buffer_shape_);
-  bottom_dim_ = bottom[0]->count(channel_axis_);
-  top_dim_ = top[0]->count(channel_axis_);
-  num_kernels_im2col_ = conv_in_channels_ * conv_out_spatial_dim_;
-  num_kernels_col2im_ = reverse_dimensions() ? top_dim_ : bottom_dim_;
-  // Set up the all ones "bias multiplier" for adding biases by BLAS
-  out_spatial_dim_ = top[0]->count(first_spatial_axis);
-  if (bias_term_) {
-    vector<int> bias_multiplier_shape(1, out_spatial_dim_);
-    bias_multiplier_.Reshape(bias_multiplier_shape);
-    caffe_set(bias_multiplier_.count(), Dtype(1),
-        bias_multiplier_.mutable_cpu_data());
-  }
-}
+#include "caffe/layer.hpp"
+
+namespace caffe {
+
+INSTANTIATE_CLASS(Layer);
+
+}  // namespace caffe
+
 ```
 
-
-
-Layer类的构造函数
-```cpp
-explicit Layer(const LayerParameter& param) : layer_param_(param)
-```
-会尝试从`protobuf`文件读取参数。其三个主要接口：
-```cpp
-virtual void SetUp(const vector<Blob<Dtype>*>& bottom, vector<Blob<Dtype>*>* top)
-inline Dtype Forward(const vector<Blob<Dtype>*>& bottom, vector<Blob<Dtype>*>* top);
-inline void Backward(const vector<Blob<Dtype>*>& top, const vector<bool>& propagate_down, const <Blob<Dtype>*>* bottom);
-```
-
-
-Forward和Backward对应前向计算和反向更新，输入统一都是bottom，输出为top，其中Backward里面有个propagate_down参数，用来表示该Layer是否反向传播参数。
-在Forward和Backward的具体实现里，会根据Caffe::mode()进行对应的操作，即使用cpu或者gpu进行计算，两个都实现了对应的接口Forward_cpu、Forward_gpu和Backward_cpu、Backward_gpu，这些接口都是virtual，具体还是要根据layer的类型进行对应的计算（注意：有些layer并没有GPU计算的实现，所以封装时加入了CPU的计算作为后备）。另外，还实现了ToProto的接口，将Layer的参数写入到protocol buffer文件中。
-
-
-## 额外的 Tricks   
-1. `device_alternate.hpp`中，通过`#ifdef CPU_ONLY`定义了一些宏来`取消GPU的调用`：   
+## 协调使用 CPU 和 GPU 设备.   
+1. device_alternate.hpp 中, 通过 #ifdef CPU_ONLY 定义了一些宏来取消 GPU 的调用：   
 ```cpp
 #define STUB_GPU(classname)
 #define STUB_GPU_FORWARD(classname, funcname)
 #define STUB_GPU_BACKWARD(classname, funcname)
 ```
 
-
-## 获取卷积层
- GetConvolutionLayer()
- 根据`engine`是否为`GPU`來获取对应的卷积层(ConvolutionLayer 或 CuDNNConvolutionLayer)。
-
-```
-shared_ptr<Layer<Dtype> > GetConvolutionLayer(
-    const LayerParameter& param) {
-  ...
-  if (engine == ConvolutionParameter_Engine_CAFFE) {
-    return shared_ptr<Layer<Dtype> >(new ConvolutionLayer<Dtype>(param));
-#ifdef USE_CUDNN
-  } else if (engine == ConvolutionParameter_Engine_CUDNN) {
-      ...
-      return shared_ptr<Layer<Dtype> >(new CuDNNConvolutionLayer<Dtype>(param));
-  } else {
-    ...
-    throw;  // Avoids missing return warning
-  }
-}
-```
-
-## 获取Pooling, LRN, ReLU, Sigmoid, TanH, Python层
- GetPoolingLayer(), GetLRNLayer(), GetReLULayer(), GetSigmoidLayer(), GetTanHLayer(), GetPythonLayer()
- 同样是根据`engine`是否为`GPU`來获取对应的层。
-```
-class Layer
-{
-    explicit Layer(const LayerParameter& param)
-      : layer_param_(param) {...}
-  
-    /* 1.检查层的输入数据和输出数据的个数是否正确；
-     * 2.在LayerSetUp()函数中为一些特别的层做特殊处理。因此该函数是应该被重载的。
-     * 3.对输出数据reshape
-     * 4.为非零权重值设置`loss`权重`multiplier`
-     */
-    void SetUp(const vector<Blob<Dtype>*>& bottom,
-      const vector<Blob<Dtype>*>& top) {...}
-   
-    /*
-     * 实现特定层的一些初始化工作;
-     * 用户自定义的层应该实现这个函数和Reshape()函数
-     */
-    virtual void LayerSetUp(const vector<Blob<Dtype>*>& bottom,
-      const vector<Blob<Dtype>*>& top) {}
-
-}
-```
-
- 用户不应该实现自己的构造函数。任何设置代码应该放在SetUp()函数中, 这个函数中提供了输入数据的维度。
-
-
-
 ## Layer 相关的 Proto   
-1. LayerParameter      
+1. LayerParameter   
+用于保存 layer 的参数.   
 ```proto
+// NOTE
+// 当你添加完毕一个自定义的 LayerParameter 之后, 记得更新下一个可用的 ID. 
+//
+// LayerParameter next available layer-specific ID: 148 (last added:
+// triplet_loss_param)
 message LayerParameter {
   optional string name = 1;   // layer 的 name
   optional string type = 2;   // layer 的 type
-  repeated string bottom = 3; // 每个 bottom blob 的 name
-  repeated string top = 4;    // 每个 top blob 的 name
+  repeated string bottom = 3; // bottom blob(s) 的 name
+  repeated string top = 4;    // top blob(s) 的 name
 
-  optional Phase phase = 10;  // TRAIN 或 TEST
+  optional Phase phase = 10;  // 网络使用阶段: TRAIN 或 TEST
 
-  // 分配给每个 top blob 的权重值的数量 
-  // 每个 layer 中都会分配一个默认值，通常给每个 top blob 分配的是 0 或 1
+  // 分配给每个 top blob 的权重值 amount 
+  // 每个 layer 中都会给 top blob 分配一个默认值，默认是 0 或 1
   repeated float loss_weight = 5;   
 
-  // 指定训练参数(全局学习常数的乘子，name和其他权重值分享的参数)
+  // 指定训练参数(全局学习常数的乘数因子, 用于参数共享的 name 域和其他域的设置)
   repeated ParamSpec param = 6; 
 
-  repeated BlobProto blobs = 7;  // 该层所有的 blobs ,其中包含数值参数
+  repeated BlobProto blobs = 7;  // blobs 中包含层的数值参数
 
-  // 指示每个 bottom 数据是否需要进行反向运算。 如果未指定， Caffe 会自动推测是够需要
-  // 进行反向运算来计算参数的梯度。 如果设置为 true ，则强制反向计算。 如果设置为 false ，
-  // 则不进行反向运算。
+  // 指示每个 bottom 数据是否需要反向运算。 如果未指定(并不是值为 false), Caffe 会自动
+  // 推测该输入是否需要进行反向运算(计算参数的梯度). 如果设置为 true , 则强制反向计算. 
+  // 如果设置为 false, 则不进行反向运算。
   //
-  // propagate_down_.size() 要么为 0 ， 要么等于 bottoms_ 的大小   
+  // propagate_down_.size() 要么为 0, 要么等于 bottoms_.size()   
   repeated bool propagate_down = 11;
 
-  // 根据当前的 NetState 控制 [是否 OR 何时] 将一个 layer 包含到一个 net 中。你可以指
-  // 定一个非零值表示的规则来 [include OR exclude]。如果没指定任何规则，那么这个 layer 
-  // 默认是被包含的。如果当前的 NetState 满足任何一个特定的规则，那么该 layer 就会被包含。  
+  // 根据当前的 NetState 判断是否(或何时)将一个 layer 包含到一个 net 中。如果 include 
+  // 为非零值, 则表示将该 layer 包含到一个 net 中, 如果 exclude 为非零值, 则表示不包含. 
+  // 但是不能同时指定 include 和 exclude. 
+  //
+  // 如果没指定任何规则，那么这个 layer 默认是被包含的.
   repeated NetStateRule include = 8;
   repeated NetStateRule exclude = 9;
 
-  optional TransformationParameter transform_param = 100; // 数据预处理参数.
+  optional TransformationParameter transform_param = 100; // 数据预处理.
+  optional LossParameter loss_param = 101;  // 在 loss 层间共享的参数
 
-  optional LossParameter loss_param = 101;  // loss layers 共享的参数
-
-  // Layer type-specific parameters.
+  // 用户自定义层的参数.
   //
-  // Note: 某些层有不止一个的计算引擎(GPUS)。这些层就会包含 Engine type 和
-  // engine parameter 来选择计算方式。 默认的 engine 实在编译阶段通过 ENGINE
-  // 开关来设置的。 
+  // Note: 层对应的计算可能有多个的计算引擎(GPUS), 那么通过 Engine type 和 engine
+  // parameter 就可以选择计算方式。 默认的 engine 是在编译阶段通过 ENGINE 开关来设置的. 
+  //
   optional AccuracyParameter accuracy_param = 102;
   optional ArgMaxParameter argmax_param = 103;
   optional BatchNormParameter batch_norm_param = 139;
@@ -662,87 +539,68 @@ message LayerParameter {
   optional WindowDataParameter window_data_param = 129;
 }
 ```
-3.2 ParamSpec 定义   
+2. ParamSpec 定义   
+用于指定 training parameters.   
 ```proto
-// 指定 training parameters 
-// 这些参数有：
-//    1. multipliers on global learning constants
-//    2. multipliers on global weight decay
-//    3. name 
-//    4. other settings used for weight sharing
+// ParamSpec 包含的参数有：
+//  1. multipliers on global learning constants
+//  2. multipliers on global weight decay
+//  3. parameter blobs 对应的 name 
+//  4. other settings used for weight sharing
 message ParamSpec {
-  // The names of the parameter blobs -- useful for sharing parameters among
-  // layers, but never required otherwise.  To share a parameter between two
-  // layers, give it a (non-empty) name.
-  optional string name = 1;
+  // name 可用于在层间共享参数. 为了在两个层之间共享一个参数, 需要给 name 一个非空值.
+  optional string name = 1;  
 
-  // Whether to require shared weights to have the same shape, or just the same
-  // count -- defaults to STRICT if unspecified.
+  // 共享的权重值是否需要有相同的 shape, 或者只是需要 count 匹配即可. 
   optional DimCheckMode share_mode = 2;
   enum DimCheckMode {
-    // STRICT (default) requires that num, channels, height, width each match.
+    // STRICT (default): num, channels, height, width 四个值需要全部指定.
     STRICT = 0;
-    // PERMISSIVE requires only the count (num*channels*height*width) to match.
+    // PERMISSIVE: 只需要指定 count(num*channels*height*width) 的值, 然后去匹配.
     PERMISSIVE = 1;
   }
 
-  // The multiplier on the global learning rate for this parameter.
-  optional float lr_mult = 3 [default = 1.0];
-
-  // The multiplier on the global weight decay for this parameter.
-  optional float decay_mult = 4 [default = 1.0];
+  optional float lr_mult = 3 [default = 1.0];  // 该参数的全局学习率的乘数因子.
+  optional float decay_mult = 4 [default = 1.0]; // 该参数的全局权重衰减的乘数因子.
 }
 
 ```
-3.3 NetStateRule 定义   
+3. NetStateRule 定义   
+用于指定 layer 是否被 include / exclude 的规则.  
 ```proto
 message NetStateRule {
-  // Set phase to require the NetState have a particular phase (TRAIN or TEST)
-  // to meet this rule.
-  optional Phase phase = 1;
+  optional Phase phase = 1;  // 设置 NetState 起作用的阶段 (TRAIN or TEST)
 
-  // Set the minimum and/or maximum levels in which the layer should be used.
-  // Leave undefined to meet the rule regardless of level.
+  // 设置 layer 会使用到的 level 的最小值和(或)最大值.  如果和 level 无关的话, 不用定义.
   optional int32 min_level = 2;
   optional int32 max_level = 3;
 
-  // Customizable sets of stages to include or exclude.
-  // The net must have ALL of the specified stages and NONE of the specified
-  // "not_stage"s to meet the rule.
-  // (Use multiple NetStateRules to specify conjunctions of stages.)
+  // 可定制的 stages (用于 include 或 exclude) 的集合.
+  // 网络应该包含所有指定的 stages (not_stage 可以赋值为 NONE).
+  // 可以使用多个 NetStateRule 来表示不同 stages 的连接.  
   repeated string stage = 4;
   repeated string not_stage = 5;
 }
 ```
-3.4 TransformationParameter  
+4. TransformationParameter  
+用于指定训练时使用什么样的数据增广方式.   
 ```proto
-// Message that stores parameters used to apply transformation
-// to the data layer's data
 message TransformationParameter {
-  // For data pre-processing, we can do simple scaling and subtracting the
-  // data mean, if provided. Note that the mean subtraction is always carried
-  // out before scaling.
+  // 在数据预处理阶段, 我们会对图像进行简单的缩放和减去均值(如果之前计算过均值)操作.
+  // Note: 减均值操作是在图像缩放之前进行的.   
   optional float scale = 1 [default = 1];
-  // Specify if we want to randomly mirror data.
-  optional bool mirror = 2 [default = false];
-  // Specify if we would like to randomly crop an image.
-  optional uint32 crop_size = 3 [default = 0];
+  optional bool mirror = 2 [default = false];   // 随机镜像
+  optional uint32 crop_size = 3 [default = 0];  // 随机裁剪
   // mean_file and mean_value cannot be specified at the same time
-  optional string mean_file = 4;
-  // if specified can be repeated once (would subtract it from all the channels)
-  // or can be repeated the same number of times as channels
-  // (would subtract them from the corresponding channel)
-  repeated float mean_value = 5;
-  // Force the decoded image to have 3 color channels.
-  optional bool force_color = 6 [default = false];
-  // Force the decoded image to have 1 color channels.
-  optional bool force_gray = 7 [default = false];
+  optional string mean_file = 4;   // 指定均值文件, 不能同时指定均值文件和均值数组
+  repeated float mean_value = 5;   // 指定均值文件和均值数组
+  optional bool force_color = 6 [default = false];  // 强制解码为彩色图像
+  optional bool force_gray = 7 [default = false];   // 强制解码为灰度图
 }
-
 ``` 
-3.5 LossParameter   
+5. LossParameter   
+保存 loss 层间会共享的参数.   
 ```proto
-// Message that stores parameters shared by loss layers
 message LossParameter {
   // If specified, ignore instances with the given label.
   optional int32 ignore_label = 1;
@@ -762,12 +620,13 @@ message LossParameter {
     // Do not normalize the loss.
     NONE = 3;
   }
-  // For historical reasons, the default normalization for
-  // SigmoidCrossEntropyLoss is BATCH_SIZE and *not* VALID.
+
+  // 由于历史原因, SigmoidCrossEntropyLoss 的默认正则化方式是 BATCH_SIZE, 而不是 VALID. 
   optional NormalizationMode normalization = 3 [default = VALID];
-  // Deprecated.  Ignored if normalization is specified.  If normalization
-  // is not specified, then setting this to false will be equivalent to
-  // normalization = BATCH_SIZE to be consistent with previous behavior.
+  
+  // 旧版本. 如果上一个参数 normalization 被指定了的话就直接忽略这个参数. 如果 
+  // normalization 没有指定, 那么 normalize = false 相当于是上一个参数 normalization 
+  // = BATCH_SIZE
   optional bool normalize = 2;
 }
 ```
