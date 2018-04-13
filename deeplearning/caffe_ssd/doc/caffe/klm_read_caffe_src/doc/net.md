@@ -73,7 +73,7 @@ class Net {
   /// 数据保存在 blobs_中)   
   vector<vector<Blob<Dtype>*> > bottom_vecs_;
   vector<vector<int> > bottom_id_vecs_;
-  vector<vector<bool> > bottom_need_backward_;
+  vector<vector<bool> > bottom_need_backward_;  // 需要对输入计算梯度并反向传播
 
   /// top_vecs bottom_vecs 保存的是包含每层输出的 vectors.   
   vector<vector<Blob<Dtype>*> > top_vecs_;
@@ -115,11 +115,11 @@ class Net {
   size_t memory_used_;    // 网络占用的内存空间
   bool debug_info_;       // 控制显示打印信息
 
-  // 回调函数
-  vector<Callback*> before_forward_;   // Callback 类是在 public 中定义的.    
-  vector<Callback*> after_forward_;
-  vector<Callback*> before_backward_;
-  vector<Callback*> after_backward_;
+  // 回调函数: Callback 类是在 public 中定义的.  
+  vector<Callback*> before_forward_;   // 在前向运算之前调用.    
+  vector<Callback*> after_forward_;    // 在前向运算之后调用.  
+  vector<Callback*> before_backward_;  // 在反向运算之前调用.  
+  vector<Callback*> after_backward_;   // 在反向运算之后调用.  
 
   DISABLE_COPY_AND_ASSIGN(Net);
 }
@@ -134,15 +134,12 @@ class Net {
       const int level = 0, const vector<string>* stages = NULL);
   virtual ~Net() {}
 
-  /// @brief Initialize a network with a NetParameter.
+  /// @brief 使用 NetParameter 初始化一个网络.
   void Init(const NetParameter& param);
 
-  /**
-   * @brief Run Forward and return the result.
-   *
-   */
-  const vector<Blob<Dtype>*>& Forward(Dtype* loss = NULL);
-  /// @brief DEPRECATED; use Forward() instead.
+  //运行 Forward 运算并返回结果.
+  const vector<Blob<Dtype>*>& Forward(Dtype* loss = NULL); 
+  /// @brief 旧版本; 推荐使用 Forward() 函数.
   const vector<Blob<Dtype>*>& ForwardPrefilled(Dtype* loss = NULL) {
     LOG_EVERY_N(WARNING, 1000) << "DEPRECATED: ForwardPrefilled() "
         << "will be removed in a future version. Use Forward().";
@@ -160,20 +157,19 @@ class Net {
   Dtype ForwardFromTo(int start, int end);
   Dtype ForwardFrom(int start);
   Dtype ForwardTo(int end);
-  /// @brief DEPRECATED; set input blobs then use Forward() instead.
+  /// @brief 旧版本; 设置好输入 blobs, 然后使用 Forward() 函数.
   const vector<Blob<Dtype>*>& Forward(const vector<Blob<Dtype>* > & bottom,
       Dtype* loss = NULL);
 
   /**
-   * @brief Zeroes out the diffs of all net parameters.
-   *        Should be run before Backward.
+   * @brief 将所有 net parameters 中的 diffs 置零.
+   *        在 Backward 运算之前调用此函数.
    */
   void ClearParamDiffs();
 
   /**
-   * The network backward should take no input and output, since it solely
-   * computes the gradient w.r.t the parameters, and the data has already been
-   * provided during the forward pass.
+   * 网络的 backward 运算没有输入和输出, 因为该函数只是单纯的计算参数的梯度. 
+   * 因为输入的 data 在 forward 运算时已经指定好了.  
    */
   void Backward();
   void BackwardFromTo(int start, int end);
@@ -181,13 +177,14 @@ class Net {
   void BackwardTo(int end);
 
   /**
-   * @brief Reshape all layers from bottom to top.
+   * @brief 从 bottom 到 top 依次 Reshape 所有的 layers.
    *
-   * This is useful to propagate changes to layer sizes without running
-   * a forward pass, e.g. to compute output feature size.
+   * 在不运行前向运算的前提下, 这个函数可用于将 layer size 的变化传播下去.  
+   * 例如计算输出特征的 size.
    */
   void Reshape();
 
+  // 完成一次完整的前向运算后反向传播   
   Dtype ForwardBackward() {
     Dtype loss;
     Forward(&loss);
@@ -195,78 +192,70 @@ class Net {
     return loss;
   }
 
-  /// @brief Updates the network weights based on the diff values computed.
+  /// @brief 根据计算得到的 diff 值更新网络的 weights.
   void Update();
+ 
   /**
-   * @brief Shares weight data of owner blobs with shared blobs.
+   * @brief 与 owner blobs 共享 weight 数据.  
    *
-   * Note: this is called by Net::Init, and thus should normally not be
-   * called manually.
+   * Note: 在 Net::Init() 中被调用, 之后不能再手动调用该函数.
    */
   void ShareWeights();
 
   /**
-   * @brief For an already initialized net, implicitly copies (i.e., using no
-   *        additional memory) the pre-trained layers from another Net.
+   * @brief 对于一个初始化的网络, 隐式拷贝(即不使用额外的内存空间)预训练 layers.  
    */
   void ShareTrainedLayersWith(const Net* other);
-  // For an already initialized net, CopyTrainedLayersFrom() copies the already
-  // trained layers from another net parameter instance.
+
   /**
-   * @brief For an already initialized net, copies the pre-trained layers from
-   *        another Net.
+   * @brief 对于一个初始化的网络, CopyTrainedLayersFrom() 从另外一个 NetParameter 
+   *        对象中拷贝已经训练过的层.
    */
   void CopyTrainedLayersFrom(const NetParameter& param);
   void CopyTrainedLayersFrom(const string trained_filename);
   void CopyTrainedLayersFromBinaryProto(const string trained_filename);
   void CopyTrainedLayersFromHDF5(const string trained_filename);
-  /// @brief Writes the net to a proto.
-  void ToProto(NetParameter* param, bool write_diff = false) const;
-  /// @brief Writes the net to an HDF5 file.
+
+  /// @brief 将网络写入 proto.
+  void ToProto(NetParameter* param, bool write_diff = false) const; 
+  /// @brief 将网络写入 HDF5 文件.
   void ToHDF5(const string& filename, bool write_diff = false) const;
 
-  /// @brief returns the network name.
-  inline const string& name() const { return name_; }
-  /// @brief returns the layer names
+  inline const string& name() const { return name_; }  // 返回网络 name
   inline const vector<string>& layer_names() const { return layer_names_; }
-  /// @brief returns the blob names
   inline const vector<string>& blob_names() const { return blob_names_; }
-  /// @brief returns the blobs
   inline const vector<shared_ptr<Blob<Dtype> > >& blobs() const {
     return blobs_;
   }
-  /// @brief returns the layers
   inline const vector<shared_ptr<Layer<Dtype> > >& layers() const {
     return layers_;
   }
-  /// @brief returns the phase: TRAIN or TEST
-  inline Phase phase() const { return phase_; }
+  inline Phase phase() const { return phase_; }  // 返回网络阶段(TRAIN 和 TEST).   
+  
+  // 
   /**
-   * @brief returns the bottom vecs for each layer -- usually you won't
-   *        need this unless you do per-layer checks such as gradients.
+   * @brief 返回每一层的 top/bottom vecs, 通常只是在层检查(比如梯度)的时候才调用这个函数.   
    */
   inline const vector<vector<Blob<Dtype>*> >& bottom_vecs() const {
     return bottom_vecs_;
   }
-  /**
-   * @brief returns the top vecs for each layer -- usually you won't
-   *        need this unless you do per-layer checks such as gradients.
-   */
   inline const vector<vector<Blob<Dtype>*> >& top_vecs() const {
     return top_vecs_;
   }
-  /// @brief returns the ids of the top blobs of layer i
+
+  /// @brief 返回 layer i 的 top/bottom blobs 的 ids.   
   inline const vector<int> & top_ids(int i) const {
     CHECK_GE(i, 0) << "Invalid layer id";
     CHECK_LT(i, top_id_vecs_.size()) << "Invalid layer id";
     return top_id_vecs_[i];
   }
-  /// @brief returns the ids of the bottom blobs of layer i
   inline const vector<int> & bottom_ids(int i) const {
     CHECK_GE(i, 0) << "Invalid layer id";
     CHECK_LT(i, bottom_id_vecs_.size()) << "Invalid layer id";
     return bottom_id_vecs_[i];
   }
+
+  /// 获取成员变量的值
   inline const vector<vector<bool> >& bottom_need_backward() const {
     return bottom_need_backward_;
   }
@@ -276,23 +265,24 @@ class Net {
   inline const vector<bool>& layer_need_backward() const {
     return layer_need_backward_;
   }
-  /// @brief returns the parameters
   inline const vector<shared_ptr<Blob<Dtype> > >& params() const {
     return params_;
   }
   inline const vector<Blob<Dtype>*>& learnable_params() const {
     return learnable_params_;
   }
-  /// @brief returns the learnable parameter learning rate multipliers
+
+  /// @brief 返回可学习的参数的学习率乘子 / weight_decay 乘子.
   inline const vector<float>& params_lr() const { return params_lr_; }
   inline const vector<bool>& has_params_lr() const { return has_params_lr_; }
-  /// @brief returns the learnable parameter decay multipliers
   inline const vector<float>& params_weight_decay() const {
     return params_weight_decay_;
   }
   inline const vector<bool>& has_params_decay() const {
     return has_params_decay_;
   }
+
+  /// 返回保存参数的 names 和 index 的 map.  
   const map<string, int>& param_names_index() const {
     return param_names_index_;
   }
@@ -300,9 +290,12 @@ class Net {
   inline const vector<string>& param_display_names() const {
     return param_display_names_;
   }
-  /// @brief Input and output blob numbers
+
+  /// @brief 输入和输出 blob 的数目
   inline int num_inputs() const { return net_input_blobs_.size(); }
   inline int num_outputs() const { return net_output_blobs_.size(); }
+  
+  /// 返回 net 的输入 / 输出 blobs.  
   inline const vector<Blob<Dtype>*>& input_blobs() const {
     return net_input_blobs_;
   }
@@ -315,6 +308,8 @@ class Net {
   inline const vector<int>& output_blob_indices() const {
     return net_output_blob_indices_;
   }
+
+  /// 通过指定 name 返回 blob 和 layer.  
   bool has_blob(const string& blob_name) const;
   const shared_ptr<Blob<Dtype> > blob_by_name(const string& blob_name) const;
   bool has_layer(const string& layer_name) const;
@@ -322,18 +317,18 @@ class Net {
 
   void set_debug_info(const bool value) { debug_info_ = value; }
 
-  // Helpers for Init.
+  /// Init() 函数的辅助函数 Helpers.
   /**
-   * @brief Remove layers that the user specified should be excluded given the current
-   *        phase, level, and stage.
+   * @brief 移除那些用户指定应该在当前 phase, level 和 stage 去掉的层.    
    */
   static void FilterNet(const NetParameter& param,
       NetParameter* param_filtered);
-  /// @brief return whether NetState state meets NetStateRule rule
+
+  /// @brief 判断 NetState 是否满足 NetStateRule.   
   static bool StateMeetsRule(const NetState& state, const NetStateRule& rule,
       const string& layer_name);
 
-  // Invoked at specific points during an iteration
+  // 在一次 iteration 期间内, 在特定时间点调用.  
   class Callback {
    protected:
     virtual void run(int layer) = 0;
@@ -362,9 +357,8 @@ class Net {
   ...
 };
 ```
-
-## net.cpp 的实现
-建立整个 net 的 layer 之间的联系.  
+## net.cpp 的实现   
+建立整个 net 的 layer 之间的联系.   
 1.    
   /** 
    * @brief 调用 Init 函数初始化网络 
@@ -1466,25 +1460,27 @@ INSTANTIATE_CLASS(Net);
 }  // namespace caffe
 ```
 
-## 3. proto 定义
+## Net 相关的 Proto 定义   
+1. NetParameter    
+网络参数定义.   
 ```proto
 message NetParameter {
-  optional string name = 1; // consider giving the network a name
-  // DEPRECATED. See InputParameter. The input blobs to the network.
+  optional string name = 1;       // network 的 name
+
+  // 旧版本. 网络的输入 blobs. 推荐使用 InputParameter.
   repeated string input = 3;
-  // DEPRECATED. See InputParameter. The shape of the input blobs.
+  // 旧版本. 输入 blobs 的 shape, 推荐使用 InputParameter.
   repeated BlobShape input_shape = 8;
 
-  // 4D input dimensions -- deprecated.  Use "input_shape" instead.
-  // If specified, for each input blob there should be four
-  // values specifying the num, channels, height and width of the input blob.
-  // Thus, there should be a total of (4 * #input) numbers.
+  // 4D 输入的维度 -- 旧版本. 推荐使用 input_shape.
+  // 如果指定了的话, 每个 input blob 应该对应有 4 个 num, channels, height 和 width.  
+  // 因此, 参数个数一共应该是 (4 * #input) 个.
   repeated int32 input_dim = 4;
 
-  // Whether the network will force every layer to carry out backward operation.
-  // If set False, then whether to carry out backward is determined
-  // automatically according to the net structure and learning rates.
+  // network 是否会强制每层去执行反向运算. 如果设置为 false, 那么是否进行反向运算取决于
+  // 网络结构和学习率.  
   optional bool force_backward = 5 [default = false];
+  
   // The current "state" of the network, including the phase, level, and stage.
   // Some layers may be included/excluded depending on this state and the states
   // specified in the layers' include and exclude fields.
@@ -1509,107 +1505,16 @@ input_[i]     表示第i个blob的名字;
 input_dim     表示 4D 输入数据的维度。如 input_dim=[12 55 66 39 20 24 48 64] 表示第一个blob的四个维数为 12 55 66 39，第二个为 20 24 48 64。  
 
 
-## 4. 成员变量   
-```cpp
-protected:
-  // Helpers for Init.
-  /// @brief Append a new top blob to the net.
-  void AppendTop(const NetParameter& param, const int layer_id,
-               const int top_id, set<string>* available_blobs,
-               map<string, int>* blob_name_to_idx);
-  /// @brief Append a new bottom blob to the net.
-  int AppendBottom(const NetParameter& param, const int layer_id,
-                 const int bottom_id, set<string>* available_blobs,
-                 map<string, int>* blob_name_to_idx);
-  /// @brief Append a new parameter blob to the net.
-  void AppendParam(const NetParameter& param, const int layer_id,
-                 const int param_id);
-
-  /// @brief Helper for displaying debug info in Forward.
-  void ForwardDebugInfo(const int layer_id);
-  /// @brief Helper for displaying debug info in Backward.
-  void BackwardDebugInfo(const int layer_id);
-  /// @brief Helper for displaying debug info in Update.
-  void UpdateDebugInfo(const int param_id);
-
-  /// @brief The network name
-  string name_;
-  /// @brief The phase: TRAIN or TEST
-  Phase phase_;
-
-  /// @brief net 中的每一个 layer
-  vector<shared_ptr<Layer<Dtype> > > layers_;
-
-  vector<string> layer_names_;
-  map<string, int> layer_names_index_;
-  vector<bool> layer_need_backward_;  // 需要进行反向传播的层
-  
-  /// @brief the blobs storing intermediate results between the layer.
-  vector<shared_ptr<Blob<Dtype> > > blobs_;
-  vector<string> blob_names_;
-  map<string, int> blob_names_index_;
-  vector<bool> blob_need_backward_;
-
-  // bottom_vecs 中保存每层的输入向量，向量中只是保存指针，不是实际的存储空间。   
-  vector<vector<Blob<Dtype>*> > bottom_vecs_;
-  vector<vector<int> > bottom_id_vecs_;   // 存每一层输入(bottom)的id
-  vector<vector<bool> > bottom_need_backward_;
-  
-  // top_vecs_ 中保存每层的输入向量，同 bottom_vecs，向量中只是保存指针。   
-  vector<vector<Blob<Dtype>*> > top_vecs_;
-  vector<vector<int> > top_id_vecs_;
-  
-  /// Vector of weight in the loss (or objective) function of each net blob,
-  /// indexed by blob_id.
-  vector<Dtype> blob_loss_weights_;
-  vector<vector<int> > param_id_vecs_;
-  vector<int> param_owners_;
-  vector<string> param_display_names_;
-  vector<pair<int, int> > param_layer_indices_;
-  map<string, int> param_names_index_;
-
-  /// Net 输入和输出的 blob indices 
-  vector<int> net_input_blob_indices_;
-  vector<int> net_output_blob_indices_;
-  vector<Blob<Dtype>*> net_input_blobs_;
-  vector<Blob<Dtype>*> net_output_blobs_;
-
-  /// network 的参数 .
-  vector<shared_ptr<Blob<Dtype> > > params_;
-  vector<Blob<Dtype>*> learnable_params_;
-
-  /**
-  * The mapping from params_ -> learnable_params_: we have
-  * learnable_param_ids_.size() == params_.size(),
-  * and learnable_params_[learnable_param_ids_[i]] == params_[i].get()
-  * if and only if params_[i] is an "owner"; otherwise, params_[i] is a sharer
-  * and learnable_params_[learnable_param_ids_[i]] gives its owner.
-  */
-  vector<int> learnable_param_ids_;
-  /// the learning rate multipliers for learnable_params_
-  vector<float> params_lr_;
-  vector<bool> has_params_lr_;
-  /// the weight decay multipliers for learnable_params_
-  vector<float> params_weight_decay_;
-  vector<bool> has_params_decay_;
-  /// The bytes of memory used by this net
-  size_t memory_used_;
-  /// Whether to compute and display debug info for the net.
-  bool debug_info_;
-  // Callbacks
-  vector<Callback*> before_forward_;
-  vector<Callback*> after_forward_;
-  vector<Callback*> before_backward_;
-  vector<Callback*> after_backward_;
-```
-
 
 ## 5. 总结   
-5.1 prototxt文件是在哪里读取的？    
+5.1 prototxt 文件是在哪里读取的？    
+在 Net 的构造函数中调用 ReadNetParamsFromTextFileOrDie() 从 prototxt 文件中读取参数到 NetParameter Proto 中.   
 ```cpp
-// 从文件解析参数到 NetParameter proto message.
 void ReadNetParamsFromTextFileOrDie(const string& param_file,
-                                    NetParameter* param);
+                                    NetParameter* param) {
+  CHECK(ReadProtoFromTextFile(param_file, param))
+      << "Failed to parse NetParameter file: " << param_file;
+  UpgradeNetAsNeeded(param_file, param);
+}
 ```
-`ReadNetParamsFromTextFileOrDie()` 函数调用 `ReadProtoFromTextFile()` 从`.prototxt` 文本文件中读取参数到 `NetParameter` 中。   
 
