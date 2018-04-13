@@ -42,7 +42,7 @@ class LayerRegistry {
   ...
  
  private:
-  // 私有成员, 说明 Layer registry 不能被实例化, 使用类中定义的 static 成员函数完成注册功能.  
+  // 定义为私有成员说明禁止实例化 Layer registry , 因为该类都是静态函数.  
   LayerRegistry() {}  
 
   // 将所有注册过的层的 type name 用逗号连接后返回.   
@@ -139,7 +139,7 @@ class LayerRegisterer {
 1. 获取卷积层
 GetConvolutionLayer() 根据 engine 是否为 GPU 來获取对应的卷积层(ConvolutionLayer 或 CuDNNConvolutionLayer).  
 TODO: dilation 用于膨胀 kernel 的因子(cudnn 中不支持扩展后的卷积运算). (Kernel dilation is sometimes referred to by its use in the algorithme à trous from Holschneider et al. 1987.)   
-```
+```cpp
 template <typename Dtype>
 shared_ptr<Layer<Dtype> > GetConvolutionLayer(
     const LayerParameter& param) {
