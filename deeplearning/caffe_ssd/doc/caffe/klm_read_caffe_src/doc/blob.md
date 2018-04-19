@@ -9,7 +9,7 @@ blob 详细描述了信息是如何在 layer 和 net 中存储和交互的.
 ## 目录   
 - blob.hpp 的实现   
 - blob.cpp 实现部分的重要代码   
-- 和  Blob 相关的 Proto    
+- Blob 相关的 Proto    
 
 ## blob.hpp 的实现     
 1. private 成员  
@@ -467,7 +467,7 @@ void Blob<Dtype>::ToProto(BlobProto* proto, bool write_diff) const {
 }  
 ```
 
-## 和 Blob 相关的 Proto  
+## Blob 相关的 Proto  
 1. BlobProto 
 用于保存为 protobuf 可以解析的二进制数据.     
 ```proto

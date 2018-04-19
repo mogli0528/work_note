@@ -12,4 +12,7 @@
 [4. Synced Memory 同步内存的实现](./doc/synced_memory.md)   
 [5. Blob 的实现](./doc/blob.md)   
 [6. Layer 的实现](./doc/layer.md)   
-[7. Caffe 中实现的所有 Layers](./doc/all_caffe_layers.md)   
+[7. layer_factory 的实现](./doc/layer_factory.md)   
+[8. Caffe 中实现的所有 Layers](./doc/all_caffe_layers.md)   
+[9. 卷积层的实现](./doc/conv_layer.md)   
+[10. Net 的实现](./doc/conv_layer.md)   
