@@ -1,5 +1,6 @@
 # Ubuntu中安装windows10
-ubuntu下使用virtualbox虚拟机安装试用win10系统...     
+ubuntu 下使用 virtualbox 虚拟机安装试用 win10 系统...     
+[Oracle_VM_VirtualBox_Extension_Pack-5.2.10.vbox-extpack](https://www.downloadcrew.com/article/20279-virtualbox_extension_pack)
  
 1. 输入如下的命令安装virtualbox虚拟机。    
 ```bash
@@ -24,16 +25,16 @@ $ sudo apt-get install virtualbox
 4.3 安装完成后，重启自己的windows10就好用多了，桌面可以自适应了。    
 5. windows 和 Ubuntu文件共享     
 5.1 设置virtualbox中主机的共享文件夹   
-![](../pictures/share_folder.png)    
+![](../../pictures/share_folder.png)    
 5.2 设置share文件夹的属性    
-![](../pictures/share_props.png)   
+![](../../pictures/share_props.png)   
 5.3 在windows中映射网络驱动器。      
 此电脑 | 映射网络驱动器, 输入下面的路径.    
 ```
 \\vboxsvr\share 
 ```  
-![](../pictures/server.png)   
+![](../../pictures/server.png)   
 到此，共享文件夹就设置好了。    
-![](../pictures/net_use.png)
+![](../../pictures/net_use.png)
 
 
