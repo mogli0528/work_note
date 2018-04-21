@@ -28,10 +28,10 @@ vector 是线性容器，它的元素严格的按照线性序列排序，可以�
 (2) 创建 vector 对象: vector<int> vec;   
 (3) 尾部插入数字：     vec.push_back(a);   
 (4) 使用下标访问元素:  cout << vec[0] << endl; 记住下标是从 `0` 开始的。   
-(5) 清空:            vec.clear()　　　|清空之后，vec.size()为０
-(6) 插入元素：        vec.insert(vec.begin()+i, a); 在第 `i` 个元素后面插入`a`;
-(7) 删除元素：        vec.erase();
-(8) 容器大小:         vec.size();
+(5) 清空:            vec.clear()　　　|清空之后，vec.size()为０  
+(6) 插入元素：        vec.insert(vec.begin()+i, a); 在第 `i` 个元素后面插入`a`;  
+(7) 删除元素：        vec.erase();  
+(8) 容器大小:         vec.size();  
 (9) 使用迭代器访问元素.   
 ```cpp
 vector<int>::iterator it;  
@@ -73,20 +73,20 @@ vec.erase(vec.begin()+i, vec.end()+j);       |删除区间[i,j-1];区间从0开�
 |vector方法|功能|
 |:--------------|:-----------|
 |c.~vector () |  销毁所有数据，释放内存|
-|operator[] | 返回容器中指定位置的一个引用|
-|swap(c1,c2) | 同上操作|
 |c.rbegin() | 传回一个逆向队列的第一个数据|
 |c.rend()   | 传回一个逆向队列的最后一个数据的下一个位置|
 |c.resize(num) | 重新指定队列的长度|
 |c.reserve()  | 保留适当的容量|
+|operator[] | 返回容器中指定位置的一个引用|
+|c.at(idx)   | 传回索引idx所指的数据，如果idx越界，抛出out_of_range|
 |c.front()  | 传回第一个数据|
+|c.back()   | 传回最后一个数据，不检查这个数据是否存在|
 |c.assign(beg,end)  | 将[beg; end)区间中的数据赋值给c|
 |c.assign(n,elem)| 将n个elem的拷贝赋值给c|
-|c.at(idx)   | 传回索引idx所指的数据，如果idx越界，抛出out_of_range|
-|c.back()   | 传回最后一个数据，不检查这个数据是否存在|
+|swap(c1,c2) | 同上操作|
 
-### 4. vector 的操作
-(1). vector 的构造和复制构造函数
+### 4. vector 的使用
+(1). vector 的初始化---构造函数和拷贝构造函数   
 ```cpp
 explicit vector ( const Allocator& = Allocator() );
 explicit vector ( size_type n, const T& value= T(), const Allocator& = Allocator() );
@@ -102,87 +102,123 @@ vector<int> C(B.begin(),B.end()); // 使用迭代器,可以取部分元素创建
 vector<int> D(C); // 复制构造函数,创建一个完全一样的容器
 ```
 
-(2). 析构函数
+(2). 析构函数   
+```cpp
 ~vector()
-销毁容器对象并回收了所有分配的内存
+```
+销毁容器对象并回收了`所有`分配的内存.    
  
-(3). 重载了`=`符号
+(3). 重载了 `=` 符号   
+`=` 运算符将其左边容器中的全部元素替换为右边容器中元素的拷贝. 如果两个容器原来大小不同, 则赋值运算后两者的大小都与右边容器的大小相同.     
+```cpp
+vector<int> B(10,100); // 创建一个个元素,每个元素值为 100
+
 vector<int> E;
-E = B; //使用=符号
-B = vector<int>(); //将B置为空容器
- 
- 
-(4). vector::begin()  返回第一个元素的迭代器
-  函数原型：
-  iterator begin ();  //返回一个可变迭代器
-const_iterator begin () const; //返回一个常量的迭代器，不可变
- 
-(5).vector::end()  返回的是越界后的第一个位置，也就是最后一个元素的下一个位置
- 
-(6).vector::rbegin() 反序的第一个元素，也就是正序最后一个元素
-(7).vector::rend() 反序的最后一个元素下一个位置，也相当于正序的第一个元素前一个位置
-(8).vector::size() 返回容器中元素个数
-(9).vector::max_size()
-  size_type max_size () const;
-  返回容器的最大可以存储的元素个数，这是个极限，当容器扩展到这个最大值时就不能再自动增大
-(10). vector::resize()
-  void resize ( size_type sz, T c = T() );
-  重新分配容器的元素个数，这个还可以改容器的容量，如果重新分配的元素个数比原来的小，将截断序列，后面的部分丢弃，如果大于原来的个数，后面的值是c的值，默认为0
-(11). vector::capacity()
-   size_type capacity () const;
-   返回vector的实际存储空间的大小，这个一般大于或等于vector元素个数，注意与size()函数的区别
-(12). vector::empty()
-   bool empty () const;
-   当元素个数为0时返回true，否则为false，根据的是元素个数而不是容器的存储空间的大小
-(13). vector::reserve()
-   void reserve ( size_type n );
-重新分配空间的大小，不过这个n值要比原来的capacity()返回的值大，不然存储空间保持不变，n值要比原来的实际存储空间大才能重新分配空间，但是最大值不可以大于max_size的值，否则会抛出异常
-(14). vector::operator[]  //重载了[]符号
-   reference  operator[] ( size_type n );
+E = B;              // 使用 = 符号
+B = vector<int>();  // 将 B 置为空容器
+```
+(4). vector::begin() 返回容器中第一个元素的迭代器   
+```
+iterator begin ();             // 返回一个可变迭代器
+const_iterator begin () const; // 返回一个常量的迭代器，不可变
+``` 
+(5).vector::end()  返回容器中越界后的第一个位置，也就是最后一个元素的下一个位置    
+(6).vector::rbegin() 反序的第一个元素，也就是正序最后一个元素   
+(7).vector::rend() 反序的最后一个元素下一个位置，也相当于正序的第一个元素前一个位置   
+(8).vector::size() 返回容器中元素个数   
+(9).vector::max_size()    
+```cpp
+size_type max_size () const;
+```
+返回容器的最大可以存储的元素个数，这是个极限，当容器扩展到这个最大值时就不能再自动增大.   
+(10). vector::resize()   
+```cpp
+void resize ( size_type sz, T c = T() );
+```
+重新分配容器的元素个数，这个还可以改容器的容量，如果重新分配的元素个数比原来的小，将截断序列，后面的部分丢弃，如果大于原来的个数，后面的值是 c 的值，默认为 0.   
+(11). vector::capacity()   
+```cpp
+size_type capacity () const;
+```
+返回 vector 不分配新内存空间的前提下可以存储元素的大小，这个一般大于或等于 vector 元素个数，注意与 size() 函数的区别.   
+(12). vector::empty()   
+```cpp
+bool empty () const;
+```
+当元素个数为 0 时返回 true, 否则为 false, 根据的是元素个数而不是容器的存储空间的大小.   
+(13). vector::reserve()   
+```cpp
+void reserve ( size_type n );
+```
+重新分配空间的大小，不过这个 n 值要比原来的 capacity() 返回的值大, 不然存储空间保持不变, n 值要比原来的实际存储空间大才能重新分配空间, 但是最大值不可以大于 max_size 的值，否则会抛出异常.   
+(14). vector::operator[]--重载了[]符号   
+```cpp
+reference  operator[] ( size_type n );
 const_reference  operator[] ( size_type n ) const;
-实现了下标访问元素
-(15). vector::at()
-   const_reference at ( size_type n ) const;
-   reference at ( size_type n );
-   在函数的操作方面和下标访问元素一样，不同的是当这个函数越界时会抛出一个异常out_of_range
-(16). vector::front()
-   reference front ( );
+```
+实现了下标访问元素.    
+(15). vector::at()   
+```cpp
+const_reference at ( size_type n ) const;
+reference at ( size_type n );
+```
+在函数的操作方面和下标访问元素一样，不同的是当这个函数越界时会抛出一个异常out_of_range.   
+(16). vector::front()   
+```cpp
+reference front ( );
 const_reference front ( ) const;
-返回第一个元素的值，与begin()函数有区别，begin()函数返回的是第一个元素的迭代器
-(17). vector::back()
-   reference back ( );
+```
+返回第一个元素的值，与 begin() 函数有区别, begin() 函数返回的是第一个元素的迭代器(而不是元素值).   
+(17). vector::back()    
+```cpp
+reference back ( );
 const_reference back ( ) const;
-同样，返回最后一个元素的值，注意与end()函数的区别
-(18). vector::assign()
-   template <class InputIterator> void assign ( InputIterator first, InputIterator last );
+```
+同样，返回最后一个元素的值，注意与 end() 函数的区别.    
+(18). vector::assign()   
+```cpp
+template <class InputIterator> void assign ( InputIterator first, InputIterator last );
 void assign ( size_type n, const T& u );
-将丢弃原来的元素然后重新分配元素，第一个函数是使用迭代器，第二个函数是使用n个元素，每个元素的值为u。
-(19). vector::push_back()
-   void push_back ( const T& x );
-   在容器的最后一个位置插入元素x,如果size值大于capacity值，则将重新分配空间
-(20). vector::pop_back()
-   void pop_back ( );
-   删除最后一个元素
-(21). vector::insert()
-   iterator insert ( iterator position, const T& x );
-   void insert ( iterator position, size_type n, const T& x );
+```
+将丢弃原来的元素然后重新分配元素, 第一个函数是使用迭代器, 第二个函数是使用 n 个元素, 每个元素的值为 u.    
+(19). vector::push_back()   
+```cpp
+void push_back ( const T& x );
+```
+在容器的最后一个位置插入元素 x, 如果 size 值大于 capacity 值，则将重新分配空间.   
+(20). vector::pop_back()   
+```cpp
+void pop_back ( );
+```
+删除最后一个元素.   
+(21). vector::insert()   
+```cpp
+iterator insert ( iterator position, const T& x );
+void insert ( iterator position, size_type n, const T& x );
 template <class InputIterator>
 void insert ( iterator position, InputIterator first, InputIterator last );
-   插入新的元素，
-第一个函数，在迭代器指定的位置前插入值为x的元素
-第二个函数，在迭代器指定的位置前插入n个值为x的元素
-第三个函数，在迭代器指定的位置前插入另外一个容器的一段序列迭代器first到last
-若插入新的元素后总得元素个数大于capacity，则重新分配空间
+```
+插入新的元素.   
+第一个函数，在迭代器指定的位置`前`插入值为 x 的元素
+第二个函数，在迭代器指定的位置`前`插入 n 个值为x的元素
+第三个函数，在迭代器指定的位置`前`插入指定的另外一个容器的迭代器范围(first 到 last)内的元素.   
+若插入新的元素后总得元素个数大于 capacity, 则重新分配空间.   
 (22). vector::erase()
-   iterator erase ( iterator position );
+```cpp
+iterator erase ( iterator position );
 iterator erase ( iterator first, iterator last );
-删除元素或一段序列
-(23). vector::swap()
-   void swap ( vector<T,Allocator>& vec );
-   交换这两个容器的内容，这涉及到存储空间的重新分配
-(24). vector::clear()
-   void clear ( );
-   将容器里的内容清空，size值为0，但是存储空间没有改变
+```
+删除元素或一段序列.   
+(23). vector::swap()   
+```cpp
+void swap ( vector<T,Allocator>& vec );
+```
+交换这两个容器的内容，这涉及到存储空间的重新分配.    
+(24). vector::clear()   
+```cpp
+void clear ();
+```
+将容器里的内容清空, size 值为 0, 但是存储空间没有改变.    
 
 3. 算法
 
@@ -212,3 +248,22 @@ bool Comp(const int &a,const int &b)
 
 5. 利用vector释放指针
  如果vector中存放的是指针，那么当vector销毁时，这些指针指向的对象不会被销毁，那么内存就不会被释放，从而引起大面积的内存泄露。这时应该在销毁`vector`之前将这些指针指向的空间释放(delete)掉。
+
+
+## 其他顺序容器的操作    
+1. array   
+(1) 与内置数组不同, 标准库 array 类型允许赋值. 
+```cpp
+array<int, 10> a1 = {0, 1,2,3,4,5,6,7,8,9};
+array<int, 8> a2 = {0};
+array<int, 10> a3 = {0};
+cout << "a2.size()=" << a2.size()<< endl;
+
+a1 = a3;         // 正确: 替换 a1 中的元素
+// a1 = a2;         // error: a1 和 a2 中的元素个数不同
+a2 = {0, 1, 2};  // 覆盖 a2 中的前 3 个元素
+// a2 = {0, 1,2,3,4,5,6,7,8,9};  // error: 初始化列表中元素个数大于 a2 中的元素个数
+cout << "a2.size()=" << a2.size()<< endl;
+```
+a) 如果是对象赋值, 赋值号两边的运算对象必须有相同的类型和大小.    
+b) 如果是初始化列表赋值, 初始化列表的大小要小于左侧对象的大小.  

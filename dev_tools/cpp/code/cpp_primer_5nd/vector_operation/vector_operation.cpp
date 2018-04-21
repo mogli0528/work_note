@@ -1,4 +1,5 @@
 #include <vector>
+#include <array>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -54,10 +55,33 @@ int main(int argc, char * argv[])
     cout << "i = " << i << endl;
     cout << "p = " << pos << endl;   // 返回表示整数的字符子串后第一个非数值字符的下标.   
 
+    // vector
+    vector<int> a(10, 3);
+    vector<int> b(3, 3);
+    cout << a.size() << endl;
+    a = b;
+    b = {0, 1, 2};
+    cout << a.size() << endl;
+
+
+
+    // array
+    array<int, 10> a1 = {0, 1,2,3,4,5,6,7,8,9};
+    array<int, 8> a2 = {0};
+    array<int, 10> a3 = {0};
+    cout << "a2.size()=" << a2.size()<< endl;
+
+    a1 = a3;         // 正确: 替换 a1 中的元素
+    // a1 = a2;         // error: a1 和 a2 中的元素个数不同
+    a2 = {0, 1, 2};  // 覆盖 a2 中的前 3 个元素
+    // a2 = {0, 1,2,3,4,5,6,7,8,9};  // error: 初始化列表中元素个数大于 a2 中的元素个数
+    cout << "a2.size()=" << a2.size()<< endl;
+
+
     return 0;
 }
 
-
+// 按照精度提取浮点数为字符串  
 string do_fraction(long double value, int decplaces = 3)
 {
     ostringstream out;
