@@ -45,6 +45,7 @@
 - [安装和使用 Docker ](./doc/advanced_issues/docker_install.md)  
 - [查看目录占用的磁盘空间](./doc/advanced_issues/disk_space_usage.md)   
 - [qt 无法使用搜狗输入法](./doc/advanced_issues/qt_sogou.md)   
+- [将 pip3 指向 python3.5](./doc/advanced_issues/pip3_5.md)   
 
 释放内存空间:   
 ```bash
