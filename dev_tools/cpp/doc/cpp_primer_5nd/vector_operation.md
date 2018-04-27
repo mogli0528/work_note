@@ -213,7 +213,7 @@ iterator erase ( iterator first, iterator last );
 ```cpp
 void swap ( vector<T,Allocator>& vec );
 ```
-交换这两个容器的内容，这涉及到存储空间的重新分配.    
+交换这两个容器的内容，这涉及到存储空间的重新分配. 注意:交换的两个容器中   
 (24). vector::clear()   
 ```cpp
 void clear ();
