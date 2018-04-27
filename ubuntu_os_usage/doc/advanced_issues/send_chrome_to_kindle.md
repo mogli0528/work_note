@@ -16,6 +16,6 @@ Deliver to:
 ## 问题总结
 1.提示：`We're sorry but we are unable to send documents to your Kindle. Please ensure that you are connected to the network and try again`.  
 ```
-解决：将Chrome改成英文界面， 在选项--高级设置里。   
+解决：将 Chrome 改成英文界面， 在选项--高级设置里。   
 方案来自网络，亲测有效。   
 ```

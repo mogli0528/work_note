@@ -6,7 +6,7 @@
 *.avi
 
 # ipython file
-*.ipynb
+#*.ipynb  上传 inotebook 文件 
 .ipynb_checkpoints/
 
 # backup files
