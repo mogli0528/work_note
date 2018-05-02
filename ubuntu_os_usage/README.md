@@ -24,6 +24,7 @@
 - [在 virtual box 中安装 windows10](./doc/system_install/install_windows_in_virtualbox.md)  
 - [在 ubuntu 中同时安装 opencv 3 和 opencv 2](./doc/system_install/install_opencv2_and_opencv3.md)  
 - [在 ubuntu 中安装 meshLab](./doc/system_install/meshlab.md)  
+- [ubuntu 清理内存](./doc/system_install/ubuntu_memory_cleanup.md)  
  
 ## 系统使用中的坑   
 - [chrome 提示无法正确打开您的个人资料](./doc/advanced_issues/chrome.md)  
