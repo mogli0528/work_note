@@ -4,7 +4,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
-src = cv2.imread("building.jpg", cv2.IMREAD_COLOR)
+src = cv2.imread("../pictures_for_code/building.jpg", cv2.IMREAD_COLOR)
 
 kernels = [
     (u'低通滤波器', np.array([[1, 1, 1], [1, 2, 1], [1, 1, 1]])*0.1), 

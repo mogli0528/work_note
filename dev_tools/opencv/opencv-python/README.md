@@ -1,3 +1,5 @@
-# opencv 的 Python 版本   
+# opencv 的 Python 接口使用      
 
-- [图像的输入和输出](./doc/input_output.md)
+- [图像的输入和输出(有个人脸检测的例子)](./doc/input_output.md)    
+
+- [[Book] practical python and opencv](./doc/practical_python_and_opencv)     
