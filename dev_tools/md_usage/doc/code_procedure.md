@@ -20,7 +20,7 @@ cond2(no)->io1
 ```
 流程图代码分两块，上面一块是创建你的流程（创建元素），然后隔一行，创建流程的走向(连接元素)
 
-创建流程（元素）：tag=>type: content:>url
+创建流程（元素）：tag=>type: content:>url    
 tag 是流程图中的标签，在第二段连接元素时会用到。名称可以任意，一般为流程的英文缩写和数字的组合。
 type 用来确定标签的类型，=>后面表示类型。由于标签的名称可以任意指定，所以要依赖type来确定标签的类型
 标签有6种类型：start end operation subroutine condition inputoutput

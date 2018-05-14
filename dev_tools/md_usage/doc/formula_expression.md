@@ -33,4 +33,13 @@ $x_{(i)}$, $y_{(i)}$
 
 ## 分数形式   
 
-$$ \frac{1}{2} \tfrac{1}{2} $$
+$$ \frac{1}{2} \tfrac{1}{2} $$     
+
+`\dfrac{}{}` 会显示大号的分式, 而 `\tfrac{}{}` 则显示小号的分式.    
+
+
+## 条件偏导数    
+
+条件偏导
+
+$\left.\frac{\partial f(x,y)}{\partial x}\right|_{x=0}$
