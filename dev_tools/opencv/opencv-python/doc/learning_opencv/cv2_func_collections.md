@@ -116,32 +116,4 @@ That is, the kernel is not mirrored around the anchor point. If you need a real 
 The function uses the DFT-based algorithm in case of sufficiently large kernels (~``11 x 11`` or larger) and the direct algorithm for small kernels.
 
 ## cv2.HoughLines() 
-- cv2.HoughLines(image, rho, theta, threshold[, lines[, srn[, stn[, min_theta[, max_theta]]]]]) → lines;    
-- rho – 累加器的距离分辨率, 单位是像素.    
-- theta – 累加器的角度分辨率, 单位是弧度.     
-- threshold – 累加器的阈值. 只有投票值大于阈值的那些直线才会被接受.   
-- lines – Output vector of lines. Each line is represented by a two-element vector  (\rho, \theta) .  \rho is the distance from the coordinate origin  (0,0) (top-left corner of the image).  \theta is the line rotation angle in radians ( 0 \sim \textrm{vertical line}, \pi/2 \sim \textrm{horizontal line} ).
-- srn – For the multi-scale Hough transform, it is a divisor for the distance resolution rho . The coarse accumulator distance resolution is rho and the accurate accumulator resolution is rho/srn . If both srn=0 and stn=0 , the classical Hough transform is used. Otherwise, both these parameters should be positive.
-- stn – For the multi-scale Hough transform, it is a divisor for the distance resolution theta.
-- min_theta – For standard and multi-scale Hough transform, minimum angle to check for lines. Must fall between 0 and max_theta.
-- max_theta – For standard and multi-scale Hough transform, maximum angle to check for lines. Must fall between min_theta and CV_PI.
-- method –
-One of the following Hough transform variants:
-
-CV_HOUGH_STANDARD 标准霍夫变换. Every line is represented by two floating-point numbers  (\rho, \theta) , where  \rho is a distance between (0,0) point and the line, and  \theta is the angle between x-axis and the normal to the line. Thus, the matrix must be (the created sequence will be) of CV_32FC2 type
-CV_HOUGH_PROBABILISTIC 概率霍夫变换 (more efficient in case if the picture contains a few long linear segments). It returns line segments rather than the whole line. Each segment is represented by starting and ending points, and the matrix must be (the created sequence will be) of the CV_32SC4 type.
-CV_HOUGH_MULTI_SCALE 多尺度变量霍夫变换. The lines are encoded the same way as CV_HOUGH_STANDARD.
-param1 –
-First method-dependent parameter:
-
-For the classical Hough transform, it is not used (0).
-For the probabilistic Hough transform, it is the minimum line length.
-For the multi-scale Hough transform, it is srn.
-param2 –
-Second method-dependent parameter:
-
-For the classical Hough transform, it is not used (0).
-For the probabilistic Hough transform, it is the maximum gap between line segments lying on the same line to treat them as a single line segment (that is, to join them).
-For the multi-scale Hough transform, it is stn.
-The function implements the standard or standard multi-scale Hough transform algorithm for line detection. See http://homepages.inf.ed.ac.uk/rbf/HIPR2/hough.htm for a good explanation of Hough transform. See also the example in HoughLinesP() description.
 
