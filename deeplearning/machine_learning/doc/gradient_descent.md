@@ -5,9 +5,10 @@
 **Notations**:    
 - $ m $: 样本的个数;    
 - $ x $: 输入变量 / 特征;   
+- $ n $: 输入变量的个数 / 特征的个数;    
 - $ y $: 输出变量 / 目标变量;   
 - ($ x, y $): 训练样本;   
-- ($ x^{(i)}, y^{(i)} $): 第 i 个训练样本, 即表示训练样本的第 i 行;   
+- ($ x^{(i)}, y^{(i)} $): 第 i 个训练样本, 即表示训练样本的第 i 行;   v
 
 ## 机器学习的流程    
 
@@ -22,7 +23,7 @@ learning_algorithm->hyperthis(right)->e
 
 ## 线性回归问题   
 1. 函数假设    
-$$ h_\theta(x) = \sum_{i=0}^{n} \theta_i x_i = \theta ^ Tx $$   
+$$ h_\theta(x^{(i)}) = \sum_{j=0}^{n} \theta_j x_j^{(i)} = \theta ^ T x^{(i)} $$   
 其中,  $ n $ 是特征的个数.    
 2. cost 函数      
 找到 $ \theta $ 使得下面的函数值最小:   
@@ -43,9 +44,19 @@ $= (h_\theta(x) - y) * \dfrac{\partial}{\partial\theta_i}(\theta_0 x_0 + \theta_
 $= (h_\theta(x) - y) * x_i $
 5. 多个样本的情形    
 梯度为:   
-$$ \dfrac{\partial}{\partial\theta_i}J(\theta) =  *\sum_{j = 1}^{m}(h_\theta(x^{(j)}) - y^{(j)})x^{(j)} $$   
+$$ \dfrac{\partial}{\partial\theta_i}J(\theta) = \sum_{j = 1}^{m}(h_\theta(x^{(j)}) - y^{(j)}) * x_i^{(j)} $$   
 6. 是否收敛的判断指标     
 (1) 比较参数在两次梯度下降之间的变化程度;    
 (2) 比较目标函数在迭代中是否变得更小;     
 7. batch gradient descent 和 stochastic gradient descent (SGD)    
 当数据集很大的时候, batch gradient descent 算法的效率很低. SGD 则是随机选取一个样本计算梯度.       
+8. 线性回归最后得到的结果    
+是 $$ \theta ^ T x $$    
+
+## Normal Equation    
+
+$$ \theta = (X^TX)^{-1}X^Ty $$   
+
+$$ \theta = \prod_{i = 0}^{m} (X^TX)^{-1}X^Ty $$   
+ 
+ 
