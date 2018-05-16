@@ -40,6 +40,48 @@ $$ \frac{1}{2} \tfrac{1}{2} $$
 
 ## 条件偏导数    
 
-条件偏导
+条件偏导   
 
-$\left.\frac{\partial f(x,y)}{\partial x}\right|_{x=0}$
+$\left.\frac{\partial f(x,y)}{\partial x}\right|_{x=0}$    
+
+## 空白间距
+
+$$ \, 3/18cm   \:  4/18cm  \; 5/18cm \quad 1cm \qquad 2m ! -3/18cm $$    
+
+## 多行公式
+
+长公式
+
+无需对齐可使用 multline, 需要对齐使用 split，用 \\ 和 & 来分行和设置对齐的位置.   
+
+$$ \begin{multline}
+    x = a+b+c+{} \\
+        d+e+f+g
+    \end{multline}  $$
+
+$$ 
+\begin{split}
+x = {} & a + b + c +{}\\
+	&d + e + f + g
+\end{split}
+$$
+
+## 公式组
+
+不需要对齐的公式组用 gather，需要对齐使用 align:        
+$$ \begin{gather} a = b+c+d\\ x=y+z \end{gather} $$ 
+ 
+$$
+\begin{align}
+a &=b+c+d \\
+x &=y+z
+\end{align}$$
+
+## 分支公式
+
+分段函数通常用 cases 次环境携程分支公式:   
+$$
+y=\begin{cases}
+-x,\quad x\leq 0\\
+x, \quad x>0
+\end{cases}$$

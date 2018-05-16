@@ -20,4 +20,3 @@
 ~/ssd/models/    
 ~/DownLoads/   
 qt5_sogou 动态库文件   
- 
