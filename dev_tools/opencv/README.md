@@ -24,5 +24,6 @@
 
 ## 实践应用    
 
-- [OpenCV 图像增强算法实现（直方图均衡化、拉普拉斯、Log、Gamma）]()
-- [OpenCV 保存各种编码器下视频文件占用空间对比](./doc/practice_apply/video_codec_size.md)
+- [OpenCV 图像增强算法实现 - 直方图均衡化、拉普拉斯、Log、Gamma ](./practice_apply/doc/basic_image_enhance.md)
+- [Retinex 图像增强算法实现](./practice_apply/doc/retinex_image_enhance.md)
+- [OpenCV 保存各种编码器下视频文件占用空间对比](./practice_apply/doc/video_codec_size.md)
