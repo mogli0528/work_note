@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8)
+project( tracking )
+find_package( OpenCV REQUIRED )
+add_executable( tracking videoprocessing.cpp videoprocessor.h foreground.cpp BGFGSegmentor.h)
+#add_executable( tracking tracking.cpp featuretracker.h videoprocessing.cpp videoprocessor.h foreground.cpp BGFGSegmentor.h)
+target_link_libraries( tracking ${OpenCV_LIBS} )

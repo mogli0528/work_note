@@ -88,8 +88,8 @@ int main_xxx()
 int main(int argc, char **argv)
 {
 	cv::Mat image = cv::imread(argv[1]);
-    cv::Mat out_bf, out_bl, out_gs;
-    int ksize = 7; 
+    cv::Mat out_bf, out_bl, out_gs, out_gs_b;
+    int ksize = 5; 
 
     cv::boxFilter(image, out_bf, -1, cv::Size(ksize, ksize)); 
     cv::blur(image, out_bl, cv::Size(ksize, ksize)); 
@@ -97,8 +97,8 @@ int main(int argc, char **argv)
 
 	cv::imshow("Origin", image);
 	cv::imshow("boxFilter", out_bf);
-	cv::imshow("blur", out_bf);
-	cv::imshow("Gaussian", out_bf);
+	cv::imshow("blur", out_bl);
+	cv::imshow("Gaussian", out_gs);
 	cv::waitKey();
 
 	return 0;
