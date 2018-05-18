@@ -5,6 +5,7 @@ R(x,y) = ∑w(exp(log(I)-log(I*F)))  多尺度
 '''
 
 import numpy as np
+import cv2
 import scipy.ndimage as image
 import scipy.fftpack as fft
 import matplotlib.pyplot as plt
@@ -65,6 +66,7 @@ def main():
     return result
 
 msrcr = main()
+cv2.imwrite("/home/klm/work/td_marco/images/coal_machine_deforg.png", msrcr)
 plt.imsave('out.jpg',msrcr)
 plt.imshow(msrcr)
 plt.show()

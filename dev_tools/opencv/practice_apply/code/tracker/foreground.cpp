@@ -27,7 +27,8 @@
 int main()
 {
 	// Open the video file
-    cv::VideoCapture capture("../bike.avi");
+    // cv::VideoCapture capture("../bike.avi");
+    cv::VideoCapture capture("/home/klm/work/td_marco/images/video/coal_machine.avi");
 	// check if video successfully opened
 	if (!capture.isOpened())
 		return 0;
@@ -67,7 +68,7 @@ int main()
 				stop= true;
 	}
 
-	// cv::waitKey();
+	cv::waitKey();
 
 	// Create video procesor instance
 	VideoProcessor processor;

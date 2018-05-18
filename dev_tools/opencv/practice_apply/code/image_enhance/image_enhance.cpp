@@ -63,6 +63,13 @@ int main(int argc, char **argv)
 	imshow("拉普拉斯算子图像增强效果", image_enhanced);
 	imshow("Log 变换图像增强效果", image_log);
 	imshow("Gamma 变换图像增强效果", image_gamma);
+
+
+	imshow("直方图均衡化图像增强效果", image_hist);
+	imshow("拉普拉斯算子图像增强效果", image_enhanced);
+	imshow("Log 变换图像增强效果", image_log);
+	imshow("Gamma 变换图像增强效果", image_gamma);
+    
 	waitKey();
 
 	return 0;
