@@ -10,8 +10,11 @@
 |string s(s2, pos2, len)| s 是 s2 从下标 pos2 开始的 len 个字符拷贝|
 
 ## substr 操作   
+
 substr 返回一个 string, 它是原始 string 的一部分或全部的拷贝.   
+
 可以传递给 substr 一个 `可选的` 开始位置和计数值.    
+
 ```cpp
 substr(pos, n)
 ```
@@ -91,8 +94,14 @@ pos 指定在哪里开始搜索, 前三个 pos 的默认值为 0, 最后一个�
 
 其中 p 用来保存 s 中第一个非数值字符的下标.   
 
-TODO-list       
+## 大小写转换   
 
-- [ ] 驾照电话
-- [ ] string 操作  
-- [ ] caffe 源码阅读
+```cpp
+string word = "Hello String!";
+
+// 全部转换为小写
+transform(word.begin(), word.end(), word.begin(), (int (*)(int))tolower);
+
+// 全部转换为大写
+transform(word.begin(), word.end(), word.begin(), (int (*)(int))toupper);
+```

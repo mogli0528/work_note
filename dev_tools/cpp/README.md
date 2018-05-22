@@ -13,6 +13,9 @@
 [2. short int 使用注意事项](./doc/shortInt.md)   
 ### C++11 标准   
 - [std::ref() 和 std::cref() 函数](./doc/c++11/ref_func.md)
+### glog 和 gflags
+- [glog 和 gflags 的使用](./doc/gflags.md)
+
 
 ### 在山寨中成长      
 - [x] convert_annoset.cpp 中的 gflag/glog 语法模仿;   
