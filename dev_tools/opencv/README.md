@@ -5,10 +5,6 @@
 - [ ubuntu 14.04 安装 opencv2410](./installation/ubuntu_opencv2410_install.md)    
 - [ VS2013 中的 opencv2411 配置属性文件](./opencv_project_properties_config)    
 
-## OpenCV C++ 接口
-- [ OpenCV 基本操作](./cookBook/doc/opencv_base_operation.md)  
-- [ OpenCV 矩形操作]- (./cookBook/doc/opencv_rectangle_operation.md)     
-- [ OpenCV 变换操作](./cookBook/doc/opencv_transform.md)    
 
 ## OpenCV Python 接口    
 - [OpenCV Python 接口的使用](./opencv-python/README.md)
@@ -19,8 +15,11 @@
 - [Learning-OpenCV-3源码](https://github.com/oreillymedia/Learning-OpenCV-3_examples)            
 - [ 图像局部与分割-背景建模](./learningOpencv3/doc/framesAbs.md)           
 
-### 2. OpenCV 2 计算机视觉——编程手册
-- [ 基于形态学运算的图像运算](./cookBook/doc/morphology_transform.md)
+### 2. OpenCV 2 计算机视觉编程手册( C++ 接口)
+- [ OpenCV 基本操作](./opencv2_cookbook/doc/base_operation.md)  
+- [ OpenCV 矩形操作](./opencv2_cookbook/doc/rectangle_operation.md)     
+- [ OpenCV 变换操作](./opencv2_cookbook/doc/transform.md)    
+- [ 基于形态学运算的图像运算](./opencv2_cookbook/doc/morphology_transform.md)
 
 ## 实践应用    
 

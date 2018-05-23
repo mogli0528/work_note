@@ -16,7 +16,6 @@ int main(int argc, char **argv)
     // int ksize = 9; 
     // GaussianBlur(image, image, Size(ksize, ksize), 0, 0); 
     // imshow("Origin_denoise", image);
-
     // 直方图均衡化   
     Mat image_rbg[3], image_hist;
     split(image, image_rbg);
@@ -24,6 +23,7 @@ int main(int argc, char **argv)
         equalizeHist(image_rbg[i], image_rbg[i]);
     }
     merge(image_rbg, 3, image_hist);
+    add()
 
     // 拉普拉斯算子, 随着缩放因子的增大, 图像亮度越高
     Mat image_enhanced;
