@@ -10,6 +10,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
+#include <cblas.h>
+
 using namespace cv;  
 using namespace std;  
 
@@ -45,8 +47,18 @@ void image_enhance(Mat &image, Mat &dst, int method, void * param);
 */
 void threshold_adaptive(Mat &src, Mat &dst);
 
+/***
+ * \@brief  完成实际的直线检测操作
+ * 
+ * \@param vec_std: 标准的直线方向: 起始值由用户指定. vec_std.size() == 2  
+*/
+void do_detection(Mat &image, vector<float> &vec_std, double y_std, string pre_savename, VideoCapture *cap = NULL);
 
-void do_detection(Mat &image, string pre_savename, VideoCapture *cap = NULL);
+
+double cosin_theta(float *vec1, float *vec2, int n);
+double cosin_theta(vector<float> &vec1, vector<float> &vec2);
+
+void on_mouse(int event, int x, int y, int flags, void *param);
 
 
 #endif

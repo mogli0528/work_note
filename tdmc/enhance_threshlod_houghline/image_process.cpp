@@ -80,20 +80,33 @@ void image_enhance(Mat& image, Mat &dst, int method, void * param)
     }
 }
 
-/***
- * \@brief  完成实际的直线检测操作
-*/
-void do_detection(Mat &image, string pre_savename, VideoCapture *cap)
+
+// vector<float> vec_std(0.0, 2);      // 标准的直线方向: 起始值由用户指定.   
+void do_detection(Mat &image, vector<float> &vec_std, double y_std, string pre_savename, VideoCapture *cap)
 {
     bool got_line = false;
+    string win_name = "Result";
     
-    // 保存处理结果为视频文件
-    float fpsInput=24; // 帧率  
+    // 输出处理结果到视频文件
+    float fpsInput=15; // 帧率  
     Size video_size = Size((*cap).get(CV_CAP_PROP_FRAME_WIDTH), (*cap).get(CV_CAP_PROP_FRAME_HEIGHT)); 
     int fourcc = CV_FOURCC('M', 'P', '4', '2');
     VideoWriter vw(pre_savename+"_out.avi", fourcc, fpsInput, video_size, true);
     
-    
+    // 保存检测出来的直线
+    Vec4i line;
+    int i = 0;
+    int delta_x, delta_y; 
+
+    // 根据斜率取舍直线   
+    vector<float> vec_detect(2, 0.0);    // 检测出的直线方向
+    double y_detect = 0.0;
+    double epsino = 0.002;              // 阈值
+    double theta = 0.0;               // 角度余弦
+    int offset = 2;
+    Point pt1_detect, pt2_detect;      // 保证直线显示不间断
+    // vector<float> vec2_curr(0.0, 2);    // 标准的直线方向
+
     do {
         if(cap){
             (*cap).read(image);
@@ -101,10 +114,14 @@ void do_detection(Mat &image, string pre_savename, VideoCapture *cap)
 
         got_line = false;  
 
-        // 图像增强处理   
+        /***
+         *  图像增强处理   
+         *     高斯模糊 -> 图像增强 -> 自适应二值化 -> 膨胀处理
+         * 
+        */
         Mat enhanced, roi;
         roi = image(Rect(image.cols/2, 0, image.cols/2, image.rows/2));
-        // 开运算
+        // 
         int ksize = 5;
         Mat element9(9,9, CV_8U, Scalar(1));
         Mat element7(7,7, CV_8U, Scalar(1));
@@ -122,8 +139,8 @@ void do_detection(Mat &image, string pre_savename, VideoCapture *cap)
         /// 自适应阈值(去掉, 因为canny 的轮廓提取边缘的效果更好)    
         Mat threshold_;
         threshold_adaptive(enhanced, enhanced);
-        // erode(enhanced, enhanced, element7);
         dilate(enhanced, enhanced, element3);
+        erode(enhanced, enhanced, element3);
 
         // 霍夫直线检测   
         Mat edges;
@@ -148,15 +165,14 @@ void do_detection(Mat &image, string pre_savename, VideoCapture *cap)
         
         // 对直线按照离原点的距离进行排序  
         for (vector<Vec4i>::iterator it = lines.begin(); it != lines.end(); it++) {
-
+        
             // 计算直线的角度
-            k = ((*it)[3]- (*it)[1]+0.0) / ((*it)[2] - (*it)[0]);
-            std::cout <<  (*it)[0] << ", " << (*it)[1] << ", " << (*it)[2] << ", " << (*it)[3] << std::endl;
+            line = *it;
+            delta_x = line[2] - line[0];
+            delta_y = line[3] - line[1];
+            k = delta_y / (float)delta_x;
 
             distance = std::abs(k * (*it)[1] - (*it)[0]) / std::sqrt(k * k + 1);
-            // line_distance_map_[*it] = distance;
-
-            std::cout << k << std::endl;
 
             // 计算直线的距离   
             if (k > 0.5 && k < 1000){
@@ -167,27 +183,101 @@ void do_detection(Mat &image, string pre_savename, VideoCapture *cap)
         sort(line_distance_vec.begin(), line_distance_vec.end(), CmpByKey()); 
 
         // 根据距离, 斜率筛选合适的直线, 并绘制到图上    
-        Vec4i line;
+        // 绘制 5 条  
         for(vector<PAIR_DISTANCE>::iterator it =  line_distance_vec.begin(); it != line_distance_vec.end(); it++){
             
             line = it->second;
+            delta_x = line[2] - line[0];
+            delta_y = line[3] - line[1];
+            k = delta_y / (float)delta_x;
+            y_detect = (- line[0]) * k + line[1];
+            
+            std::cout << "y_detect = " << y_detect << std::endl;
+            std::cout << "k = " << k << std::endl;
+            std::cout << "Line: " << line[0] << ", " << line[1] << ", " 
+                      << line[2] << ", " << line[3] << ", " << std::endl;
 
-            // 距离应该满足的条件, 经验值.   
-            if(it->first > 0.8 && it->first < 100 && abs(line[2] - line[0]) > 10){
-                got_line = true;  // 找到一条合适的直线   
-                
-                k = (line[3]- line[1]+0.0) / (line[2] - line[0]);
-                cv::line(result, Point(line[0]-line[1]/k, 0), Point(line[2], line[3]), Scalar(0,0,255), 2, CV_AA);
-                break;
+            
+            // 组成向量 保证大致方向是一致的, 避免余弦的范围过大.      
+            if (delta_x > 0){
+
+                vec_detect[0] = (float)delta_x;
+                vec_detect[1] = (float)delta_y;
+            } else {
+
+                vec_detect[0] = (float)(- delta_x);
+                vec_detect[1] = (float)(- delta_y);
             }
-        }
+            if( 2 == vec_std.size() ) {
+                  
+                theta = cosin_theta(vec_detect, vec_std);
+
+                cout << "std_vec = " << vec_std[0] << ", " << vec_std[1] << endl;
+                cout << "theta = " << theta << endl;
+            } else {
+
+                cout << "!!! User should draw a line first !!!" << endl;
+                return;
+            }
+        
+            // 距离应该满足的条件, 经验值.   
+            if(it->first > 0.8 && it->first < 100       // 斜率范围
+                && theta > 1- epsino                    // 直线角度偏离不要太大 
+                && std::abs(y_std-y_detect) < offset    // y 偏移不要太大 
+             ) 
+            {                    
+                cout << "Got a line" << endl;
+
+                // got_line = true;  // 找到一条合适的直线   
+                pt1_detect = Point(line[0]-line[1]/k, 0);
+                pt2_detect = Point(image.cols/2 - 40, k*(image.cols/2  - 40 - line[0]) + line[1]);
+                // if(got_line) 
+                {
+
+                    // got_line = false;
+
+                    cv::line(result, pt1_detect, pt2_detect, Scalar(0,0,255), 2, CV_AA);
+                    y_std = y_detect;   // 更新 y
+                    break;
+                }
+                vec_std.swap(vec_detect);  // 更新 vec_std
+            } else {
+                cv::line(result, pt1_detect, pt2_detect, Scalar(0,0,255), 2, CV_AA);
+            }
+            
+            
+
+        } // end of iterate line_distance_vec.
         
         imshow("laplace 图像增强效果", enhanced);
         imshow("edges", edges); 
-        imshow("with lines", image); 
+        imshow("result", image); 
         vw << image;
 
-        if(27 == waitKey(150))
+        if(27 == waitKey((int)(1000/fpsInput)))
             break;
     }while(cap);
 }
+
+/***
+ * 计算两个向量(直线方向)的距离 - 夹角余弦
+ * 
+*/
+double cosin_theta(float *vec1, float *vec2, int n)
+{
+    double dot = cblas_sdot(2, vec1, 1, vec2, 1);
+
+    double norm = sqrt(std::pow(vec1[0], 2) + std::pow(vec1[1], 2)) *
+                  sqrt(std::pow(vec2[0], 2) + std::pow(vec2[1], 2));
+   
+    return dot / norm;
+}
+
+double cosin_theta(vector<float> &vec1, vector<float> &vec2)
+{  
+    std::cout << "Line: " << vec1[0] << ", " << vec1[1] << ", " 
+              << vec2[0] << ", " << vec2[1] << ", " << std::endl;
+
+    return cosin_theta(&vec1[0], &vec2[0], vec1.size());
+}
+
