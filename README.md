@@ -11,7 +11,7 @@
 - [7. linux device driver ](./linux_driver/)      
 - [8. rtems os](./rtems/)         
 - [9. work plan ](./work_plan/)  
-- [10. project ](./project_platform/)  
+- [10. project ](./software_project/)  
 - [11. 面试 ](./interview/)  
 
 
