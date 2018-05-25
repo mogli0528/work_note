@@ -285,7 +285,7 @@ cv::Mat b= Mat::ones(Size(3,2), CV_32F);
 cv::Mat c= a+b;  
 cv::Mat d= a-b;
 ```
-![](../pictures/mat_add.jpg)   
+![](../snapshots/mat_add.jpg)   
 
 3.2 矩阵乘法   
 使用"*"号计算矩阵与标量相乘(矩阵元素值缩放)，矩阵与矩阵相乘（必须满足矩阵相乘的行列数对应规则）。     
@@ -302,7 +302,7 @@ cout << "\n(m1+2).*(m1+3) = \n" << (m1+1).mul(m1+3) << endl;   // .mul()方法
 // Matrix multiplication  
 cout << "\nm1*m2 = \n" << m1*m2 << endl;  
 ```
-![](../pictures/mat_multipy.jpg)    
+![](../snapshots/mat_multipy.jpg)    
 
 3.3 矩阵转置       
 矩阵转置是将矩阵的行与列顺序对调（第i行转变为第i列）形成一个新的矩阵。`OpenCV`通过`Mat`类的`t()函数`实现。    

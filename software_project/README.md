@@ -1,7 +1,9 @@
 # 项目相关
 
-## 设计模式   
+## 设计模式 
+设计模式笔记. 对应的示例 [code](./code)   
 - [Factory](./doc/design_patterns/simple_factory.md)   
+- [Srategy](./doc/design_patterns/strategy.md)   
 - [Abstract Factory](./doc/design_patterns/abstrac_factory.md)   
 - [Builder](./doc/design_patterns/builder.md)    
 

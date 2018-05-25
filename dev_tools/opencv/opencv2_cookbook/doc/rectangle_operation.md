@@ -1,5 +1,6 @@
 # OpenCV 中的矩形框操作
 
+[TOC]
 
 cvRentangle和cv::rectangle函数原型对比：
 

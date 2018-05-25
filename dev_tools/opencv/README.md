@@ -16,10 +16,11 @@
 - [ 图像局部与分割-背景建模](./learningOpencv3/doc/framesAbs.md)           
 
 ### 2. OpenCV 2 计算机视觉编程手册( C++ 接口)
-- [ OpenCV 基本操作](./opencv2_cookbook/doc/base_operation.md)  
-- [ OpenCV 矩形操作](./opencv2_cookbook/doc/rectangle_operation.md)     
-- [ OpenCV 变换操作](./opencv2_cookbook/doc/transform.md)    
-- [ 基于形态学运算的图像运算](./opencv2_cookbook/doc/morphology_transform.md)
+- [ 基本图像操作 ](./opencv2_cookbook/doc/base_operation.md)  
+- [ 矩形操作 ](./opencv2_cookbook/doc/rectangle_operation.md)     
+- [ 变换操作 ](./opencv2_cookbook/doc/transform.md)    
+- [ 基于形态学运算的图像变换 ](./opencv2_cookbook/doc/morphology_transform.md)
+- [ 直方图统计](./opencv2_cookbook/doc/hist_statistic.md)
 
 ## 实践应用    
 

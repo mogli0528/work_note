@@ -52,7 +52,7 @@ libc.printf("Testing: %s", msg)
 ```
 使用 Python 创建一个 C 数据类型很简单，可以很容易的使用由 C 或者 C++ 些的组件。 下面这张图很好的表示了映射关系。    
 
-![](../pictures/python_c_types.jpg)   
+![](../../snapshots/python_c_types.jpg)   
 
 1.1.4 定义结构和联合   
 在 C 中,这样定义:   
