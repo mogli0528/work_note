@@ -1,25 +1,27 @@
 # Builder 
 
-生成器模式是一种对象构建模式。它可以将复杂对象的建造过程抽象出来(抽象类别),使这个抽象过程的不同实现方法可以构造出不同表现(属性)的对象。  
+> 代码实例: Pizza 制作过程, 建造游戏动画小人过程.   
 
-抽象工厂模式与生成器相似,因为它也可以创建复杂对象。主要的区别是生成器模式着重于一步步构造一个复杂对象。而抽象工厂模式着重于多个系列的产品对象(简单的或是复杂的)。生成器在最后的一步返回产品,而对于抽象工厂来说,产品是立即返回的。   
+Builder 模式(也称生成器模式)是一种对象建造模式。 它可以将复杂对象的建造过程抽象出来, 利用这个抽象过程的 ``相同方法的不同实现`` 可以建造出不同表现的对象。   
 
-建造者模式包含如下角色:   
+建造者模式包含如下模块:   
 
-- Builder: 抽象建造者  
-- ConcreteBuilder: 具体建造者  
-- Director: 指挥者  
-- Product: 产品角色  
+- Builder(Abstract): 抽象建造者, 此类中的那些建造方法必须足够普遍, 以便满足各种类型的具体建造者.    
+- ConcreteBuilder: 具体建造者, 实现 Builder 接口, 负责建造各个部件.    
+- Director: 指挥者, 控制建造过程, 隔离用户对建造过程细节的关心.     
+- Product: 产品角色, 比如 Pizza, 小人... .  
 
-建造者模式主要是用于创建一些复杂的对象, 这些对象内部构建间的建造顺序是稳定的, 但是对象内部的构建通常面临着复杂的变化。   
-
-建造者模式的好处就是使得建造代码与表示代码分离, 由于建造者隐藏了该产品是如何组装的, 所以若需要改变一个产品的内部表示,只需要再定义一个具体的建造者就可以了.   
+Builder 模式与抽象工厂模式相似, 因为它也可以创建复杂对象。 主要的区别是 Builder 模式着重于`抽象出`一个复杂对象的`建造过程`, 而抽象工厂模式着重于`多个系列的产品对象`(简单的或是复杂的)。Builder 模式在最后的一步返回产品, 而抽象工厂的产品是立即返回的。   
 
 ## Intent
 
-将一个复杂对象的构造函数分离, 这样就可以充分利用这些分离后的组件了.   
+将一个复杂对象的建造函数分离, 使得同样的建造过程可以创建不同的表示, 这时就需要 Builder 模式.   
 
-解析一个复杂的表示, create one of several targets.   
+建造者模式主要是用于创建一些复杂的对象, 这些对象内部构建间的建造流程是稳定的, 但是不同对象在流程中的每一步的建造通常面临着复杂的变化。   
+
+如果使用了 Builder 模式, 用户只需指定需要建造的类型就可以了, 具体的建造过程和细节就不需要关心了.   
+
+建造者模式的好处就是使得`建造代码`与`表示代码`分离, 由于建造者隐藏了该产品是如何组装的, 所以若需要改变一个产品的内部表示, 只需要再定义一个具体的建造者就可以了.   
 
 ## Problem   
 
@@ -28,6 +30,8 @@
 An application needs to create the elements of a complex aggregate. The specification for the aggregate exists on secondary storage and one of many representations needs to be built in primary storage.
 
 ## Discussion
+
+
 
 Separate the algorithm for interpreting (i.e. reading and parsing) a stored persistence mechanism (e.g. RTF files) from the algorithm for building and representing one of many target products (e.g. ASCII, TeX, text widget). The focus/distinction is on creating complex aggregates.
 

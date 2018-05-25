@@ -2,6 +2,8 @@
 
 > 把很容易变化的地方用一个单独的类来做这个创造实例的过程,这个就是工厂.   
 
+> Factory Method 和 Abstract Factory 模式很类似, 但 Factory Method 的重点不在定义新的具体类上.   
+
 ## Intent 意图   
 
 当创建一些相关的(或者独立的)对象时, 不需要指定具体类.   

@@ -1,6 +1,7 @@
 # 项目相关
 
 ## 设计模式   
+- [Factory](./doc/design_patterns/simple_factory.md)   
 - [Abstract Factory](./doc/design_patterns/abstrac_factory.md)   
 - [Builder](./doc/design_patterns/builder.md)    
 
