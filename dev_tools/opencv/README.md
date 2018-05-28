@@ -19,8 +19,9 @@
 - [ 基本图像操作 ](./opencv2_cookbook/doc/base_operation.md)  
 - [ 矩形操作 ](./opencv2_cookbook/doc/rectangle_operation.md)     
 - [ 变换操作 ](./opencv2_cookbook/doc/transform.md)    
-- [ 基于形态学运算的图像变换 ](./opencv2_cookbook/doc/morphology_transform.md)
 - [ 直方图统计](./opencv2_cookbook/doc/hist_statistic.md)
+- [ 基于形态学运算的图像变换 ](./opencv2_cookbook/doc/morphology_transform.md)
+- [ 提取直线, 轮廓及连通区域](./opencv2_cookbook/doc/extract_edges.md)
 
 ## 实践应用    
 
