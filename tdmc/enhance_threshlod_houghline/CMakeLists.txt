@@ -1,6 +1,0 @@
-cmake_minimum_required(VERSION 2.8)
-project( topline )
-SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
-find_package( OpenCV REQUIRED )
-add_executable( topline main.cpp image_process.cpp image_process.h)
-target_link_libraries( topline ${OpenCV_LIBS} -lcblas ) 

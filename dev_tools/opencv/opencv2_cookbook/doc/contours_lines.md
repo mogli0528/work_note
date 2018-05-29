@@ -171,6 +171,74 @@ CV_RETR_TREE retrieves all of the contours and reconstructs a full hierarchy of 
 
 ## 计算连通区域的形状描述符　　　
 
+连通区域通常对应于场景中的某个物体, 为了识别这个物体, 或者将它与其他图形元素比较, 需要进行一些测量以获取它的特征.  
+
+外接矩形(也称包围盒)被定义为正好包含形状的最小矩形, 比较盒子的高度和宽度能够给出物体的垂直或水平方向(例如可以区分汽车和行人).   
+```cpp
+Rect boundingRect(InputArray points)  // cv::Rect boundingRect(cv::Mat(contours[0]));
+```
+
+多边形近似在需要操作与形状类似的更紧密的表现时很用用, 因此需要指定精确值参数以确定形状与它的简化多边形之间的最大可接受距离.
+```cpp
+void approxPolyDP( InputArray curve,        // std::vector<cv::Point> or Mat 类型的 2D 点集
+                   OutputArray approxCurve, // 近似多边形的顶点集合, std::vector<cv::Point> 类型
+                   double epsilon,          // 近似的精度(原始轮廓和近似多边形的最大距离), 可选取 5
+                   bool closed              // 首尾相连, 即同一个点, 一般设置为 true
+                 );
+```
+函数返回的是多边形的顶点, 为了绘制多边形, 需要遍历向量将相邻的点连接以绘制它们之间的直线.   
+
+最小包围圆通常用于仅需要尺寸与位置的情况.    
+```cpp
+void minEnclosingCircle(InputArray points, Point2f& center, float& radius)
+```
+函数返回最小包围圆的中心和半径.   
+
+凸包是另一种多边形近似, 是包围形状的最小凸多边, 它可以被可视化为围绕连通区域的橡皮筋形成的形状.     
+```cpp
+void convexHull( InputArray points,       // std::vector<cv::Point> or Mat 类型的 2D 点集
+                 OutputArray hull,        // 近似多边形的顶点集合, std::vector<cv::Point> 类型
+                 bool clockwise=false, 
+                 bool returnPoints=true 
+               );
+```
 
 
-　
+力矩通常用于以数学方式进行形状的结构化分析.   
+```cpp
+Moments moments(InputArray array, bool binaryImage=false );
+
+class CV_EXPORTS_W_MAP Moments
+{
+public:
+    //! the default constructor
+    Moments();
+    //! the full constructor
+    Moments(double m00, double m10, double m01, double m20, double m11,
+            double m02, double m30, double m21, double m12, double m03 );
+    //! the conversion from CvMoments
+    Moments( const CvMoments& moments );
+    //! the conversion to CvMoments
+    operator CvMoments() const;
+
+    //! spatial moments
+    CV_PROP_RW double  m00, m10, m01, m20, m11, m02, m30, m21, m12, m03;
+    //! central moments
+    CV_PROP_RW double  mu20, mu11, mu02, mu30, mu21, mu12, mu03;
+    //! central normalized moments
+    CV_PROP_RW double  nu20, nu11, nu02, nu30, nu21, nu12, nu03;
+};
+```
+返回值为 cv::Moments, 封装了计算出的力矩.   
+
+$(\bar{x}, \bar{y})$ 是质心:    
+
+$$\bar{x} = \frac{\texttt{m}_{10}}{\texttt{m}_{00}} , \; \bar{y} = \frac{\texttt{m}_{01}}{\texttt{m}_{00}}$$
+   
+## Others
+
+cv::minAreaRect() 计算最小包围旋转矩形.    
+cv::contourArea() 计算轮廓的面积, 即包含像素的个数.    
+cv::pointPolygonTest() 确定一个点是否位于轮廓内.   
+cv::matchShapes() 测量两个轮廓的相似度.    
+

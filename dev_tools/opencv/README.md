@@ -18,10 +18,10 @@
 ### 2. OpenCV 2 计算机视觉编程手册( C++ 接口)
 - [ 基本图像操作 ](./opencv2_cookbook/doc/base_operation.md)  
 - [ 矩形操作 ](./opencv2_cookbook/doc/rectangle_operation.md)     
-- [ 变换操作 ](./opencv2_cookbook/doc/transform.md)    
 - [ 直方图统计](./opencv2_cookbook/doc/hist_statistic.md)
 - [ 基于形态学运算的图像变换 ](./opencv2_cookbook/doc/morphology_transform.md)
-- [ 提取直线, 轮廓及连通区域](./opencv2_cookbook/doc/extract_edges.md)
+- [ 提取直线, 轮廓及连通区域](./opencv2_cookbook/doc/contours_lines.md)
+- [ 检测并匹配兴趣点](./opencv2_cookbook/doc/feature_detect.md)
 
 ## 实践应用    
 

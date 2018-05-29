@@ -90,3 +90,5 @@ std::vector<std::vector<cv::Point> > Contours::filterContoursByLength()
 
     return vpContours_;
 }
+
+cv::Moments moments(InputArray array, bool binaryImage=false );
