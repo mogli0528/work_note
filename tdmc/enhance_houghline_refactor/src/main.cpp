@@ -1,129 +1,58 @@
 #include "image_process.h"
 #include "line_detector.hpp"
 
+
 #define DRAW_LINE
 
 /***
  * 液压支架顶板检测   
  * 
- *   多尺度是否会有效?
- * 
  * 约束条件: 区域约束, 距离约束
- * 时间连续性
- * 
- * 对二值化的图进行膨胀后, 使用大一点的邻域来查找直线.   
  * 
  * 用户提前根据顶板指定一条线, 这样就会有先验知识;    
  * 之后的检测取舍都会以此为参考, 缓慢过渡.   
+ * 
+ * TODO:
+ *    使用多线程来分割图像结果保存, 图像正常处理
+ *
+ * 　　./topline /home/klm/work/td_marco/images/video/coal_machine.avi
 */
-
-bool draw_line = true;   // 绘制  
-bool click_once = false;   // 绘制  
-bool click_twice = false;   // 绘制  
-vector<float> vec_std(2, 0.0);      // 标准的直线方向: 起始值由用户指定.  
-Point2i point1, point2; 
-double y_std = 0.0;
-
-int main_(int argc, char **argv)
-{   
-    bool got_line = false;
-    static bool video = false;
-    VideoCapture cap;
-    Mat image, drawLine;
-    string winName = "绘制初始线";
-
-    if(argc < 2){
-        std::cout << "Usage: image_process filename " << std::endl;
-        return -1;
-    }
-
-    // 构造保存文件名
-    string filename(argv[1]);
-    size_t pos = string(filename).rfind(".");
-    string file_type(filename.begin()+pos, filename.end());
-    string pre_savename(filename.begin(), filename.begin()+pos);
-
-    // 根据图片或视频流选择不同的文件类型处理模式   
-    std::cout << "file_type: " << file_type << std::endl;
-    if(file_type == ".avi" || file_type == ".mp4"){
-        // 处理视频流
-        video = true;
-        cap = VideoCapture(filename);
-        if(cap.isOpened())
-            cap.read(image);
-    }else if (file_type == ".jpg" || file_type == ".png"){
-        // 处理单张图片
-        image = imread(filename);
-        if (image.empty()) {
-            std::cout << "Open Image Failed!" << std::endl;
-
-            return -1;
-        }
-    }
-
-    namedWindow(winName); 
-    setMouseCallback(winName, on_mouse, (void*)&image);   //鼠标操作回调函数  
-    image.copyTo(drawLine);
-    
-#ifdef DRAW_LINE
-    // 用户绘制
-    while(1)
-    {
-        if(click_twice && click_once) {
-            vec_std[0] = (float)(point2.x - point1.x);
-            vec_std[1] = (float)(point2.y - point1.y);
-            if(vec_std[0] < 0){
-                vec_std[0] = - vec_std[0];
-                vec_std[1] = - vec_std[1];
-            }
-
-            cv::line(drawLine, point1, point2, Scalar(0, 0, 255), 2);
-        } 
-
-        imshow(winName, drawLine); 
-        if (waitKey(10) == 27)//按esc跳出  
-            break;  
-    }
-    destroyAllWindows();
-#else
-    // hard code
-    vec_std[0] = 103;
-    vec_std[1] = 72;
-#endif
-    y_std = (double)(vec_std[1]) / vec_std[0];
-
-    // Main:  完成直线检测操作
-    do_detection(image, vec_std, y_std, pre_savename, &cap);
-
-    return 0;
-}
-
 
 int main(int argc, char **argv)
 {
-    if(argc < 2){
-        std::cout << "Usage: image_process filename " << std::endl;
-        return -1;
+    std::string filename;
+
+    if(argc == 2){
+        filename = std::string(argv[1]);
+        
+        LOG(INFO) << "Specify a video path or a camera index";
+    } else {
+        LOG(INFO) << "Use Default Test Video...";
+        filename = "/home/klm/work/td_marco/images/video/coal_machine.avi";
     }
+    
+    ::google::InitGoogleLogging(argv[0]);
+    // Provide a backtrace on segfault.
+    ::google::InstallFailureSignalHandler();
+    FLAGS_log_dir = "../logs";
 
     coal::TopLineDetector *td;
     cv::Mat image;
-    std::string winName = "请绘制直线";
+    std::string winName = "请绘制直线(先绘制顶梁, 后绘制摇臂), 重画请按 \"C\" ";
 
     // 根据图片或视频流选择不同的文件类型处理模式   
-    std::string filename(argv[1]);
     size_t pos = std::string(filename).rfind(".");
     string file_type(filename.begin()+pos, filename.end());
     // 构造保存文件名
     string pre_savename(filename.begin(), filename.begin()+pos);
-    std::cout << "file_type: " << file_type << std::endl;
+    LOG(INFO) << "File Type: " << file_type;
 
     if(file_type == ".avi" || file_type == ".mp4"){
         // 处理视频流
         VideoCapture cap = cv::VideoCapture(filename);
         if(!cap.isOpened()){
 
-            std::cout << "Video Open Failed!" << std::endl;
+            LOG(ERROR) << "Video Open Failed!";
             return -1;
         }
         cap.read(image);
@@ -133,24 +62,31 @@ int main(int argc, char **argv)
         image = imread(filename);
         if (image.empty()) {
 
-            std::cout << "Open Image Failed!" << std::endl;
+            LOG(ERROR) << "Open Image Failed!";
             return -1;
         }
         td = new coal::TopLineDetector(image);
     }
 
-    cv::Rect roi(image.cols/2, 0, image.cols/2, image.rows/2);
+    cv::Rect topLineRoi(image.cols/2, 0, image.cols/2, image.rows/2-20);
+    cv::Rect ArmLineRoi(image.cols/2 -20, image.rows/2 - 20, image.cols/2, image.rows/2);
+
+    td->setFps(150.);
    
     // 绘制初始化直线
     namedWindow(winName); 
     cv::setMouseCallback(winName, on_mouse, (void*)&image);   //鼠标操作回调函数  
-    td->drawInitLine(winName, roi);
+    td->drawInitTopLine(winName, topLineRoi, ArmLineRoi);
 
     // 设置 ROI 区域并检测
     td->setToSaveVideo(true);
-    
-    td->doDetection(coal::ENHANCE_LAPLACE, roi);
-
+    td->setEpsino(0.0015);
+    td->setOffset(15);
+    td->doDetection( coal::ENHANCE_LAPLACE, 
+                     topLineRoi, 
+                     ArmLineRoi,
+                     "/home/klm/work/td_marco/images/video/coal_machine_output.avi"
+                   );
     delete td;
     td = 0;
 
