@@ -7,10 +7,12 @@
 #include <cmath>
 #include <cblas.h>
 #include <glog/logging.h>
+#include <boost/date_time/posix_time/posix_time.hpp>   
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+
 
 namespace coal{
 
@@ -43,15 +45,28 @@ public:
                   pTopLineVecStd_(cv::Point2i(0, 0)), 
                   dTopLineYDetect_ (0.0), 
                   pTopLineVecDetect_(cv::Point2i(0, 0)), 
+                  dTopLineEpsino_(0.002), 
+                  dTopLineTheta_(0.0),
+                  iTopLineOffset_(2), 
                   dArmLineXStd_ (0.0), 
                   pArmLineVecStd_(cv::Point2i(0, 0)), 
                   dArmLineXDetect_ (0.0), 
                   pArmLineVecDetect_(cv::Point2i(0, 0)),
-                  dEpsino_(0.002), 
-                  dTheta_(0.0),
-                  iOffset_(2), 
-                  dFps_(23) // 帧率  
+                  dArmLineEpsino_(0.002), 
+                  dArmLineTheta_(0.0),
+                  iArmLineOffset_(2), 
+                  fElapsedMicroseconds_(0.0),
+                  iArmLineLoseFrame_(0), 
+                  iTopLineLoseFrame_(0), 
+                  bFindArmLine_(false),
+                  bFindTopLine_(false), 
+                  frames_(0),
+                  bTopLineLastDetect_(false),
+                  bArmLineLastDetect_(false)
     {
+        stop_ = boost::posix_time::microsec_clock::local_time();
+        start_ = boost::posix_time::microsec_clock::local_time();
+        dFps_ = STASTIC_FRAMES_*3; // 帧率  
         bVideoFlag_ = true;
         vCap_ = cap;
         vCap_.read(mFrame_);
@@ -70,25 +85,41 @@ public:
                   pTopLineVecStd_(cv::Point2i(0, 0)), 
                   dTopLineYDetect_ (0.0), 
                   pTopLineVecDetect_(cv::Point2i(0, 0)), 
+                  dTopLineEpsino_(0.002), 
+                  dTopLineTheta_(0.0),
+                  iTopLineOffset_(2), 
                   dArmLineXStd_ (0.0), 
                   pArmLineVecStd_(cv::Point2i(0, 0)), 
                   dArmLineXDetect_ (0.0), 
                   pArmLineVecDetect_(cv::Point2i(0, 0)),
-                  dEpsino_(0.002), 
-                  dTheta_(0.0),
-                  iOffset_(2),
-                  dFps_(10) // 帧率  
+                  dArmLineEpsino_(0.002), 
+                  dArmLineTheta_(0.0),
+                  iArmLineOffset_(2),
+                  fElapsedMicroseconds_(0.0),
+                  iArmLineLoseFrame_(0), 
+                  iTopLineLoseFrame_(0), 
+                  bFindArmLine_(false),
+                  bFindTopLine_(false), 
+                  frames_(0),
+                  bTopLineLastDetect_(false),
+                  bArmLineLastDetect_(false)
     {
+
+        dFps_ = STASTIC_FRAMES_*3; // 帧率  
+        stop_ = boost::posix_time::microsec_clock::local_time();
+        start_ = boost::posix_time::microsec_clock::local_time();
         mFrame_ = src;
     }
-    void setEpsino(const double e) { dEpsino_ = e; }
-    void setFps(const double fps) { dFps_ = fps; }
-    void setOffset(const double off) { iOffset_ = off; }
-    void setLineVecStd(const double x, const double y)
+    void setTopLineEpsino(const double e) { dTopLineEpsino_ = e; }
+    void setTopLineOffset(const double off) { iTopLineOffset_ = off; }
+    void setArmLineEpsino(const double e) { dArmLineEpsino_ = e; }
+    void setArmLineOffset(const double off) { iArmLineOffset_ = off; }
+    void setTopLineVecStd(const double x, const double y)
     {
         pTopLineVecStd_.x = x;
         pTopLineVecStd_.y = y;
     }
+    void setFps(const double fps) { dFps_ = fps; }
     void setToSaveVideo(const bool save){ bSaveToFile_ = save; }
 
     /***
@@ -124,6 +155,7 @@ public:
     void threshold_adaptive(const cv::Mat &src, cv::Mat &dst);
 
 protected:
+    void adjustOffSet();
     void setTopLineYStd(const double y){ dTopLineYStd_ = y; }
     void setArmLineXStd(const double y){ dArmLineXStd_ = y; }
     void saveToFile(const cv::Mat &image, const std::string &fname);
@@ -163,9 +195,9 @@ protected:
     cv::Point2i pTopLineVecDetect_; // 检测出的直线的方向向量
     double dTopLineYDetect_;
     double dTopLineSlopDetect_;      // 用户指定的直线斜率
-    double dEpsino_;                        // 阈值
-    double dTheta_;                         // 角度余弦
-    int iOffset_;
+    double dTopLineEpsino_;         // 阈值
+    double dTopLineTheta_;        // 角度余弦
+    int iTopLineOffset_;                 // y 或 x 偏移
 
     // armLineArea
     int iArmLineDeltaX_, iArmLineDeltaY_; 
@@ -181,9 +213,27 @@ protected:
     cv::Point2i pArmLineVecDetect_; // 检测出的直线的方向向量
     double dArmLineXDetect_;
     double dArmLineSlopDetect_;      // 用户指定的直线斜率
-    // double dEpsino_;                        // 阈值
-    double dArmLineTheta_;                         // 角度余弦
-    // int iOffset_;
+    double dArmLineEpsino_;            // 阈值
+    double dArmLineTheta_;            // 角度余弦
+    int iArmLineOffset_;
+
+    boost::posix_time::ptime start_;
+    boost::posix_time::ptime stop_;
+    float fElapsedMicroseconds_;
+
+    int iArmLineLoseFrame_;
+    int iTopLineLoseFrame_;
+
+    bool bFindArmLine_;
+    bool bFindTopLine_;
+
+    const int STASTIC_FRAMES_ = 12;
+    const int MAX_OFFSET_ = 35;
+    const int MIN_OFFSET_ = 1;
+    const int OFFSET_STEP_ = 2;
+    unsigned int frames_;
+    bool bTopLineLastDetect_;
+    bool bArmLineLastDetect_;
 };
 
 class TopLineDetector : public LineDetector {

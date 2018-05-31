@@ -26,6 +26,77 @@ void LineDetector::saveToFile(const cv::Mat &image, const std::string &fname)
 
     vw << image;
 }
+void LineDetector::adjustOffSet()
+{
+    int iExpTopLine = 0;
+    int alphaTopLine = 1;
+    int iExpArmLine = 0;
+    int alphaArmLine = 1;
+    // 动态调整阈值
+    if(!bFindTopLine_)
+        iTopLineLoseFrame_++;
+    if(!bFindArmLine_)
+        iArmLineLoseFrame_++;
+
+    if(frames_ % STASTIC_FRAMES_ == 0 ){
+
+        if( iArmLineLoseFrame_ == STASTIC_FRAMES_ 
+            && iArmLineOffset_<MAX_OFFSET_ )
+        {
+            // 没有检测到 ArmLine
+            if(!bArmLineLastDetect_)
+                iExpArmLine++;
+            alphaArmLine = std::pow(2, iExpArmLine);
+            iArmLineOffset_+ alphaArmLine*OFFSET_STEP_ > MAX_OFFSET_ ?
+                MAX_OFFSET_:iArmLineOffset_+=alphaArmLine*OFFSET_STEP_;
+            
+            bArmLineLastDetect_ = false;
+        } else if( iArmLineLoseFrame_ <= (STASTIC_FRAMES_-1) 
+                    && iArmLineOffset_>MIN_OFFSET_ )
+        {
+            bArmLineLastDetect_ = true;
+            
+            // iArmLineOffset_ > alphaArmLine*OFFSET_STEP_ ? 
+                // iArmLineOffset_-=alphaArmLine*OFFSET_STEP_:MIN_OFFSET_;
+            iArmLineOffset_ = MIN_OFFSET_;
+            iExpArmLine = 0;
+            alphaArmLine = 1;
+        }
+
+        if( iTopLineLoseFrame_ == STASTIC_FRAMES_ 
+            &&  iTopLineOffset_<MAX_OFFSET_ )
+        {
+            // 没有检测到 TopLine
+            if(!bTopLineLastDetect_)
+                iExpTopLine++;
+            alphaTopLine = std::pow(2, iExpTopLine);
+            iTopLineOffset_+ alphaTopLine*OFFSET_STEP_ > MAX_OFFSET_ ?
+                MAX_OFFSET_:iTopLineOffset_+=alphaTopLine*OFFSET_STEP_;
+            
+            bTopLineLastDetect_ = false;
+        } else if( iTopLineLoseFrame_ <= (STASTIC_FRAMES_-1) 
+                    && iTopLineOffset_>MIN_OFFSET_ )
+        {
+            bTopLineLastDetect_ = true;
+            
+            // iTopLineOffset_ > alphaTopLine*OFFSET_STEP_ ? 
+            //     iTopLineOffset_-=alphaTopLine*OFFSET_STEP_:MIN_OFFSET_;
+            iTopLineOffset_ = MIN_OFFSET_;
+            iExpTopLine = 0;
+            alphaTopLine = 1;
+        }
+
+        LOG(INFO) << "iTopLineOffset_ = " << iTopLineOffset_ << 
+            ", iTopLineLoseFrame_ = " << iTopLineLoseFrame_ << 
+            ", iExpTopLine = " << iExpTopLine;
+        LOG(INFO) << "iArmLineOffset_ = " << iArmLineOffset_ << 
+            ",   iArmLineLoseFrame_ = " << iArmLineLoseFrame_ << 
+            ", iExpArmLine = " << iExpArmLine;
+        
+        iArmLineLoseFrame_ = 0;
+        iTopLineLoseFrame_ = 0;
+    }
+}
 
 int TopLineDetector::doDetection ( const int method, 
                                    const cv::Rect &topLineRoi, 
@@ -44,8 +115,11 @@ int TopLineDetector::doDetection ( const int method,
     cv::Mat armLineArea;
     int height, width;
     cv::Mat color;
+    int fps = 0;
 
     while(mFrame_.data) {
+        frames_++;
+        start_ = boost::posix_time::microsec_clock::local_time();
 
         detectTopLine(topLineRoi, pt1TopLineDetect, pt2TopLineDetect);
         detectArmLine(armLineRoi, pt1ArmLineDetect, pt2ArmLineDetect);
@@ -69,18 +143,28 @@ int TopLineDetector::doDetection ( const int method,
         color.copyTo(armLineArea(cv::Rect(armLineAreaEnhanced_.cols+20, 0, armLineAreaEdges_.cols, armLineAreaEdges_.rows)));
         cv::cvtColor(armLineAreaThreshold_, color, cv::COLOR_GRAY2BGR);
         color.copyTo(armLineArea(cv::Rect(0, armLineAreaEnhanced_.rows+20, armLineAreaThreshold_.cols, armLineAreaThreshold_.rows)));
-
+        
+        stop_ = boost::posix_time::microsec_clock::local_time();
+        fElapsedMicroseconds_ = (stop_ - start_).total_milliseconds();
+        fps = (int)(1000. / fElapsedMicroseconds_);
+        cv::putText( mFrame_, 
+                     std::to_string(fps)+" fps", 
+                     cv::Point(20, mFrame_.rows - 20),
+                     cv::FONT_HERSHEY_PLAIN,
+                     1, cv::Scalar(255,0,0), 1, 8
+                   );
         imshow("TopLineArea", topLineArea); 
         imshow("ArmLineArea", armLineArea); 
         imshow("result", mFrame_); 
 
         if(27 == cv::waitKey((int)(1000/dFps_)))
             break;
-        
+
+        adjustOffSet();
+
         if(bVideoFlag_){
             if(bSaveToFile_)
                 saveToFile(mFrame_, videoName);
-
             vCap_.read(mFrame_);
         }
         else   
@@ -97,21 +181,25 @@ int TopLineDetector::detectTopLine(const cv::Rect &roi, cv::Point &pt1Detect, cv
     double k, distance;
     cv::Mat element3(3,3, CV_8U, cv::Scalar(1));
     cv::Mat element5(5,5, CV_8U, cv::Scalar(1));
+    cv::Mat gray;
     int ksize = 5;
+    int iLineWidth = 1;
     // setROI(roi);
     cv::Mat topLineRoi = mFrame_(roi);
     cv::GaussianBlur(topLineRoi, topLineRoi, cv::Size(ksize, ksize), 0, 0); 
-    // image_enhance(topLineRoi, topLineAreaEnhanced_, ENHANCE_HIST, NULL);
     image_enhance(topLineRoi, topLineAreaEnhanced_, ENHANCE_LAPLACE, NULL);
+    // image_enhance(topLineRoi, topLineAreaEnhanced_, ENHANCE_HIST, NULL);
+    // cv::cvtColor(topLineAreaEnhanced_, gray, cv::COLOR_BGR2GRAY);
     threshold_adaptive(topLineAreaEnhanced_, topLineAreaThreshold_);
-    cv::dilate(topLineAreaThreshold_, topLineAreaThreshold_, element3);
-    cv::erode(topLineAreaThreshold_, topLineAreaThreshold_, element3, cv::Point(-1, -1), 4);
+    // cv::threshold(gray, topLineAreaThreshold_, 40, 255, cv::THRESH_BINARY);
+    cv::dilate(topLineAreaThreshold_, topLineAreaThreshold_, element3, cv::Point(-1, -1), 1);
+    cv::erode(topLineAreaThreshold_, topLineAreaThreshold_, element3, cv::Point(-1, -1), 3);
     
     // 霍夫直线检测, 注意参数的选取   
     cv::Canny(topLineAreaThreshold_, topLineAreaEdges_, 50, 220, 3);
 
     // 霍夫直线变换函数 HoughLinesP() 的参数说明:   
-    cv::HoughLinesP(topLineAreaEdges_, topLineAreaLines_, 9, CV_PI/180, 20, 25, 20);
+    cv::HoughLinesP(topLineAreaEdges_, topLineAreaLines_, 9, CV_PI/180, 20, 20, 20);
     // 轮廓的显示需要反转黑白值  
     cv::threshold(topLineAreaEdges_, topLineAreaEdges_, 128, 255, cv::THRESH_BINARY_INV);
     
@@ -138,8 +226,9 @@ int TopLineDetector::detectTopLine(const cv::Rect &roi, cv::Point &pt1Detect, cv
                                                   line_distance_map.end() ); 
 
     std::sort( line_distance_vec.begin(), line_distance_vec.end(), CmpByKey()); 
-
+    
     // 根据距离, 斜率筛选合适的直线, 并绘制到图上  
+    bFindTopLine_ = false;
     for( auto it =  line_distance_vec.begin(); 
         it != line_distance_vec.end(); 
         it++ 
@@ -166,7 +255,7 @@ int TopLineDetector::detectTopLine(const cv::Rect &roi, cv::Point &pt1Detect, cv
         // 第一次使用时判断用户是否已经指定.
         if( bGotTopLine_ ) {
                 
-            dTheta_ = cosin_theta(pTopLineVecDetect_, pTopLineVecStd_);
+            dTopLineTheta_ = cosin_theta(pTopLineVecDetect_, pTopLineVecStd_);
 
         } else {
 
@@ -175,20 +264,21 @@ int TopLineDetector::detectTopLine(const cv::Rect &roi, cv::Point &pt1Detect, cv
         }
     
         // 距离应该满足的条件, 经验值.   
-        if( (dTopLineSlopDetect_-dTopLineSlopStd_)<10*dEpsino_ // 斜率范围
-            && (1.0-dTheta_)<dEpsino_ // 直线角度偏离不要太大 
-            && std::abs(dTopLineYDetect_-dTopLineYStd_) < iOffset_ // y 偏移不要太大 
+        if( (dTopLineSlopDetect_-dTopLineSlopStd_)<10*dTopLineEpsino_ // 斜率范围
+            && (1.0-dTopLineTheta_)<dTopLineEpsino_ // 直线角度偏离不要太大 
+            && std::abs(dTopLineYDetect_-dTopLineYStd_) < iTopLineOffset_ // y 偏移不要太大 
             ) 
-        {                    
+        {
             LOG(INFO) << "\t\tGot a good top line" << it- line_distance_vec.begin();
+            bFindTopLine_ = true;
 
             LOG(INFO) << "LineVecStd = (" << pTopLineVecStd_.x << ", " 
                         << pTopLineVecStd_.y << ")";
-            LOG(INFO) << "Theta = " << dTheta_;
+            LOG(INFO) << "Theta = " << dTopLineTheta_;
             // got_line = true;  // 找到一条合适的直线   
             pt1Detect = cv::Point((15 - topLineAreaLine_[1])/k + topLineAreaLine_[0], 15);
             pt2Detect = cv::Point(roi.width - 60, k*(roi.width - 60 - topLineAreaLine_[0]) + topLineAreaLine_[1]);
-            cv::line(topLineRoi, pt1Detect, pt2Detect, cv::Scalar(0,0,255), 2, CV_AA);
+            cv::line(topLineRoi, pt1Detect, pt2Detect, cv::Scalar(0,0,255), iLineWidth, CV_AA);
 
             // 更新 pLineXxxStd_: 注意这里的直线斜率是不用更新的, 只做判断
             dTopLineYStd_ = dTopLineYDetect_;   // 更新 y
@@ -198,7 +288,7 @@ int TopLineDetector::detectTopLine(const cv::Rect &roi, cv::Point &pt1Detect, cv
             
             break;
         } else {
-            cv::line(topLineRoi, pt1Detect, pt2Detect, cv::Scalar(0,0,255), 2, CV_AA);
+            cv::line(topLineRoi, pt1Detect, pt2Detect, cv::Scalar(0,0,255), iLineWidth, CV_AA);
         }
 
         // 不做太多的数据处理
@@ -218,13 +308,17 @@ int TopLineDetector::detectArmLine(const cv::Rect &roi, cv::Point &pt1Detect, cv
     double k, distance;
     cv::Mat element5(5,5, CV_8U, cv::Scalar(1));
     cv::Mat element3(3,3, CV_8U, cv::Scalar(1));
+    cv::Mat gray;
     int ksize = 5;
+    int iLineWidth = 1;
     // setROI(roi);
     cv::Mat armLineRoi = mFrame_(roi);
     cv::GaussianBlur(armLineRoi, armLineRoi, cv::Size(ksize, ksize), 0, 0); 
     image_enhance(armLineRoi, armLineAreaEnhanced_, ENHANCE_HIST, NULL);
 
+    // cv::cvtColor(armLineAreaEnhanced_, gray, cv::COLOR_BGR2GRAY);
     threshold_adaptive(armLineAreaEnhanced_, armLineAreaThreshold_);
+    // cv::threshold(armLineAreaThreshold_, armLineAreaThreshold_, 200, 255, cv::THRESH_BINARY);
     cv::erode(armLineAreaThreshold_, armLineAreaThreshold_, element3, cv::Point(-1, -1), 3);
     
     // 霍夫直线检测, 注意参数的选取   
@@ -236,6 +330,7 @@ int TopLineDetector::detectArmLine(const cv::Rect &roi, cv::Point &pt1Detect, cv
     cv::threshold(armLineAreaEdges_, armLineAreaEdges_, 128, 255, cv::THRESH_BINARY_INV);
     
     // 对直线按照离原点的距离进行排序  
+    bFindArmLine_ = false;
     for ( auto it = armLineAreaLines_.begin(); it != armLineAreaLines_.end(); it++ ) {
     
         // 计算直线的角度
@@ -296,19 +391,21 @@ int TopLineDetector::detectArmLine(const cv::Rect &roi, cv::Point &pt1Detect, cv
         }
     
         // 距离应该满足的条件, 经验值.   
-        if( (dArmLineSlopDetect_-dArmLineSlopStd_)<10*dEpsino_ // 斜率范围
-            && (1.0-dArmLineTheta_)<dEpsino_ // 直线角度偏离不要太大 
-            && std::abs(dArmLineXDetect_-dArmLineXStd_) < iOffset_ // y 偏移不要太大 
+        if( (dArmLineSlopDetect_-dArmLineSlopStd_)<10*dArmLineEpsino_ // 斜率范围
+            && (1.0-dArmLineTheta_)<dArmLineEpsino_ // 直线角度偏离不要太大 
+            && std::abs(dArmLineXDetect_-dArmLineXStd_) < iArmLineOffset_ // y 偏移不要太大 
         ) 
         {                    
             LOG(INFO) << "\t\tGot a good arm line" << it- line_distance_vec.begin();
+            bFindArmLine_ = true;
+            
 
             LOG(INFO) << "LineVecStd = (" << pArmLineVecStd_.x << ", " 
                         << pArmLineVecStd_.y << ")";
             LOG(INFO) << "Theta = " << dArmLineTheta_;
             pt1Detect = cv::Point((10-armLineAreaLine_[1])/k+armLineAreaLine_[0], 10);
             pt2Detect = cv::Point(80, k*(80-armLineAreaLine_[0])+armLineAreaLine_[1]);
-            cv::line(armLineRoi, pt1Detect, pt2Detect, cv::Scalar(0,0,255), 2, CV_AA);
+            cv::line(armLineRoi, pt1Detect, pt2Detect, cv::Scalar(0,0,255), iLineWidth, CV_AA);
             // cv::line(armLineRoi, cv::Point(0,0), cv::Point(roi.width/2,roi.height/2), cv::Scalar(0,0,255), 2, CV_AA);
 
             // 更新 pLineXxxStd_: 注意这里的直线斜率是不用更新的, 只做判断
@@ -319,7 +416,7 @@ int TopLineDetector::detectArmLine(const cv::Rect &roi, cv::Point &pt1Detect, cv
             
             break;
         } else {
-            cv::line(armLineRoi, pt1Detect, pt2Detect, cv::Scalar(0,0,255), 2, CV_AA);
+            cv::line(armLineRoi, pt1Detect, pt2Detect, cv::Scalar(0,0,255), iLineWidth, CV_AA);
         }
 
         // 不做太多的数据处理
@@ -334,9 +431,12 @@ int TopLineDetector::detectArmLine(const cv::Rect &roi, cv::Point &pt1Detect, cv
 
 void LineDetector::threshold_adaptive(const cv::Mat &src, cv::Mat &dst)
 {
-    cv::Mat gray(src.size(), CV_8UC1);
+    // cv::Mat gray(src.size(), CV_8UC1);
+    cv::Mat gray;
     cv::cvtColor(src, gray, cv::COLOR_BGR2GRAY);
-    cv::adaptiveThreshold(gray, dst, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, 81, 15);
+    // cv::threshold(gray, dst, 60, 255, cv::THRESH_BINARY);
+    cv::adaptiveThreshold(gray, dst, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, 91, 15);
+    // cv::adaptiveThreshold(gray, dst, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, 81, 15);
 }
 
 void LineDetector::image_enhance(cv::Mat& image, cv::Mat &dst, int method, void * param)

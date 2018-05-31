@@ -14,6 +14,7 @@
 
 # log files
 *.log
+log
 
 # dot files
 .*
