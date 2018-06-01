@@ -44,3 +44,15 @@ message TouchMessage{
 protoc touch_message.proto --cpp_out=./
 ```
 我们就能看到生成的对应的`.h`跟`.cpp`文件了。打开`.cpp`文件，我们发现其实是生成一个类，类中有着对应的方法。`SerializeWithCachedSizes`是序列化，`MergePartialFromCodedStream`是反序列化。     
+
+### DebugString() 函数   
+
+开发过程中需要经常查看数据，可以调用对象的 DebugString() 函数即可返回可读性好的数据。   
+```cpp
+NetParameter filtered_param;
+FilterNet(in_param, &filtered_param);
+...
+LOG_IF(INFO, Caffe::root_solver())
+      << "Initializing net from parameters: " << std::endl
+      << filtered_param.DebugString();
+```

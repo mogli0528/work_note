@@ -100,7 +100,7 @@ RegisterBrewFunction(test_2)
 // using Spacetwo::a;
 int a = 10;
 
-int main()  
+int main_()  
 {  
     np::print_values();  
 

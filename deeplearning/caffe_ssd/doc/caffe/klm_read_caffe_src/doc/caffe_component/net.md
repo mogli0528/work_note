@@ -1506,8 +1506,8 @@ input_dim     表示 4D 输入数据的维度。如 input_dim=[12 55 66 39 20 24
 
 
 
-## 5. 总结   
-5.1 prototxt 文件是在哪里读取的？    
+## 5. 总结 && 问答  
+### prototxt 文件是在哪里读取的？    
 在 Net 的构造函数中调用 ReadNetParamsFromTextFileOrDie() 从 prototxt 文件中读取参数到 NetParameter Proto 中.   
 ```cpp
 void ReadNetParamsFromTextFileOrDie(const string& param_file,
@@ -1517,4 +1517,37 @@ void ReadNetParamsFromTextFileOrDie(const string& param_file,
   UpgradeNetAsNeeded(param_file, param);
 }
 ```
+### include(NetStateRule)工作方式  
 
+控制该层在当前的 NetState 下是否应该被包含进来参与运算. 如果用户没有指定 include 和 exclude, 默认情况下该层是被包含的, 另外 include 和 exclude 只能指定一个. 
+
+一旦当前的 NetState 满足指定的 rules, 这个层就会被 included/excluded.   
+```cpp
+message LayerParameter {
+  ...
+  repeated NetStateRule include = 8;
+  repeated NetStateRule exclude = 9;
+  ...
+```
+
+一般是根据 TEST 或　TRAIN 阶段来判断层是否被包含. 因为有些层只能工作在 TEST 阶段, 有些层则只能工作在 TRAIN 阶段.  
+
+### solver_count 和 root_solver   
+
+solver_count 和 root_solver 比较难以理解，这涉及到分布式计算.  
+
+新版 Caffe 允许多 GPU 间并行，与 AlexNet 不同，多 GPU 模式的内涵在于：“不共享数据，却共享网络”. 所以，允许多个 solver 存在，且应用到不同的 GPU 上去。   
+
+直接使用 solver_count 的地方是 DataReader，每一个 DataLayer 都有一个 DataReader， DataReader 工作在异步线程，我们允许在一个主程序上跑多个 DataLayer，但是不可以有多个 ConvLayer。
+
+关于多GPU的介绍请看第肆章。
+
+第一个solver会成为root_solver，第二、第三个solver就会成为shared_solver。
+
+root_solver有很大一部分特权，具体有以下几点：
+
+★LOG(INFO)允许信息：显然我们不需要让几个GPU，产生几份重复的信息。
+
+★测试：只有root_solver才能测试，猜测是为了减少冗余计算？
+
+★统计结果：只有root_solver才能输出统计结果，这点同第一点。 

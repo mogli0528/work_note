@@ -11,11 +11,11 @@
 ## 2. SSD 笔记
 
 ### 2.1 SSD 理论/训练
-[1. 完整的 ssd 训练教程 ](./doc/ssd/doc/ssd_training_example.md)   
-[2. 更为安全/不间断的训练 ssd 模型 ](./doc/ssd/doc/train_ssd_models_safely.md)  
-[3. ssd 训练 python 脚本源码分析 ](./doc/ssd/doc/read_ssd_training_script.md)   
+[1. 完整的 ssd 训练教程 ](./doc/caffe/ssd/doc/ssd_training_example.md)   
+[2. 更为安全/不间断的训练 ssd 模型 ](./doc/caffe/ssd/doc/train_ssd_models_safely.md)  
+[3. ssd 训练 python 脚本源码分析 ](./doc/caffe/ssd/doc/read_ssd_training_script.md)   
 [4. ssd 训练 python 脚本中使用到的 skills ](../../dev_tools/python/doc/note/skills_in_ssd_training_script.md) 
-[5. ssd 论文阅读 ](./doc/ssd/doc/ssd_paper_read.md)   
+[5. ssd 论文阅读 ](./doc/caffe/ssd/doc/ssd_paper_read.md)   
   
 `-------------------------------我是分割线------------------------------------`
 ## 3. 从 caffe 到 ssd  
@@ -28,10 +28,9 @@
 
 `-------------------------------我是分割线------------------------------------`
 ## 4. caffe/ssd 通用功能    
-[1. 编译 caffe/ssd 源码中提供的文档 ](./doc/common/build_docs_of_caffe_or_ssd.md)   
-[2. caffe/ssd 中的脚本列表 ](./doc/common/scripts_of_ssd.md)   
-[3. caffe/ssd 中的术语 ](./doc/common/terms_in_caffe_or_ssd.md)   
-[4. protobuf 使用方法](./doc/common/protobuf_compile.md)  
-[5. datum 和 blob 的区别](./doc/common/datum_blob.md)  
+[1. 编译 caffe/ssd 源码中提供的文档 ](./doc/caffe/common_with_ssd/build_docs_of_caffe_or_ssd.md)   
+[2. caffe/ssd 中的脚本列表 ](./doc/caffe/common_with_ssd/scripts_of_ssd.md)   
+[3. caffe/ssd 中的术语 ](./doc/caffe/common_with_ssd/terms_in_caffe_or_ssd.md)   
+[4. datum 和 blob 的区别](./doc/caffe/common_with_ssd/datum_blob.md)  
 
-[1. layers 官方文档](./doc/common/official_layers.md)  
+[1. layers 官方文档](./doc/caffe/common_with_ssd/official_layers.md)  

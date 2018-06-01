@@ -1,12 +1,30 @@
 # Synced Memory 同步内存的实现
-> host 指的是宿主设备(CPU / GPU).    
 
-## 目录   
+> 不要尝试以默认的C++代码去访问显存空间，除非你把它们复制回内存空间上。否则，就是一个毫无提示的程序崩溃问题（准确来说，是被CPU硬件中断了)
 
-- synced_memory 的作用;  
-- synced_memory 的实现;  
+## 为什么要进行主存同步?
 
-## synced_memory 内存的作用    
+在传统的 CUDA 程序设计里，我们往往经历这样一个步骤：
+
+```cpp
+// 计算前
+cudaMalloc(....)          【分配显存空间】
+cudaMemset(....)　　 【显存空间置0】
+cudaMemcpy(....)　   【将数据从内存复制到显存】
+// 计算后
+cudaMemcpy(....)       【将数据从显存复制回内存】
+```
+
+这些步骤相当得繁琐，你不仅需要反复敲打，而且如果忘记其中一步，就是毁灭性的灾难。   
+
+这还仅仅是 GPU 程序设计，如果考虑到 CPU/GPU 异构设计，那么就更麻烦了。   
+
+于是，聪明的人类就发明了主存管理自动机，按照按照一定逻辑设计状态转移代码。   
+
+这是 Caffe 非常重要的部分，称之为 SyncedMemory(同步存储体)。
+
+## synced_memory 作用    
+
 Caffe 中内存分配和底层数据的切换(cpu 模式和 gpu 模式)需要用到内存同步模块. 这类个类的代码比较少, 但是作用是非常明显的.   
 
 ## synced_memory 的实现    
@@ -135,3 +153,20 @@ class SyncedMemory {
   ...
 };  // class SyncedMemory
 ```
+
+## 总结 && 问题   
+### 1. set_cpu_data() 和 set_gpu_data() 的作用
+
+共享标记：own_cpu_data、 own_gpu_data    
+
+共享函数：void set_cpu_data(void *data)、void set_gpu_data(void *data)   
+
+值得注意的是，两个共享函数以及共享标记不属于自动机范围。   
+
+共享函数的`唯一用处`是用于局部主存的共享，只用于 DataLayer 的 Transformer 中。   
+
+
+### root_solver 实现
+
+> class P2PSync
+> /home/klm/work/gitwork/ssd/src/caffe/parallel.cpp
