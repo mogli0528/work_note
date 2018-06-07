@@ -22,9 +22,3 @@
 - [ 基于形态学运算的图像变换 ](./opencv2_cookbook/doc/morphology_transform.md)
 - [ 提取直线, 轮廓及连通区域](./opencv2_cookbook/doc/contours_lines.md)
 - [ 检测并匹配兴趣点](./opencv2_cookbook/doc/feature_detect.md)
-
-## 实践应用    
-
-- [OpenCV 图像增强算法实现 - 直方图均衡化、拉普拉斯、Log、Gamma ](./practice_apply/doc/basic_image_enhance.md)
-- [Retinex 图像增强算法实现](./practice_apply/doc/retinex_image_enhance.md)
-- [OpenCV 保存各种编码器下视频文件占用空间对比](./practice_apply/doc/video_codec_size.md)

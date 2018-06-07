@@ -8,12 +8,15 @@
 # ipython file
 #*.ipynb  上传 inotebook 文件 
 .ipynb_checkpoints/
+.ipynb_checkpoints
+*.npy
 
 # backup files
 *~
 
 # log files
 *.log
+logs
 log
 
 # dot files

@@ -10,9 +10,11 @@
 - [ C++ Primer 5nd 知识点总结](./doc/cpp_primer_5nd/cpp_primer_5nd.md)       
 - [ 模板的使用 ](./doc/cpp_primer_5nd/template.md)       
 - [ 命名空间的使用 ](./doc/cpp_primer_5nd/namespace.md)       
+- [ 类成员函数作为线程函数使用 ](./doc/thread_class_method.md)       
 ### boost 库使用
-[1. boost 使用教程](./doc/boost/boost_api_in_ssd.md)   
-[2. short int 使用注意事项](./doc/shortInt.md)   
+- [boost 常用 API](./doc/boost/boost_api_in_ssd.md)   
+- [boost time 库](./doc/boost/time.md)   
+- [boost thread 编程指南](./doc/boost/thread.md)   
 ### C++11 标准   
 - [std::ref() 和 std::cref() 函数](./doc/c++11/ref_func.md)
 ### glog 和 gflags
@@ -32,13 +34,13 @@
 [3. shared_ptr 使用实例](./code/cpp_primer_5nd/shared_ptr/shared_ptr.cpp)    
 [4. 默认参数使用实例](./code/cpp_primer_5nd/default_paramter/default_paramter.cpp)    
 
-
 /work/gitwork/work_note/dev_tools/cpp/code/cpp_primer_5nd/shared_ptr
 
 ## 工程化 cpp 项目       
 [让自己的 cpp 工程更加"工程化" ](./doc/projective_cpp.md)
 
 ## 老杜培训
+[2. short int 使用注意事项](./doc/shortInt.md)   
 1. 结构体中的字节对齐；
 progma(push);
 progma();

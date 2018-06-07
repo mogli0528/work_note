@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+project( noise_erase )
+find_package( OpenCV REQUIRED )
+add_executable( noise_erase src/noise_erase.cpp)
+target_link_libraries( noise_erase ${OpenCV_LIBS} )

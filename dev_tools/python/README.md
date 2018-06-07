@@ -20,12 +20,12 @@
 [2. `python` 和 C/C++ 相互调用](./doc/call_c_func.md)  
 
 ### 4. << Python 科学计算 >>     
-- [jupyter-notebook 中的工具](./doc/science_compute/chapter1.md)  
 - [ndarray 对象](./doc/science_compute/chapter2.md)  
 [numpy 的使用](./doc/numpy.md)  
 
 ### 5. jupyter-notebook 用法    
-[1. jupyter-notebook 中的快捷键](./doc/jupyter-notebook/iPython_key_bindings.md)       
+- [jupyter-notebook 中的神奇功能](./doc/iPython/magic_functions.md)  
+- [jupyter-notebook 中的快捷键](./doc/iPython/key_bindings.md)       
 
 ## code   
 1. 爬虫   

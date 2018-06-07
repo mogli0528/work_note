@@ -6,14 +6,14 @@
 - [2. PX4 ](./px4/)         
 - [3. Deep Learning ](./deeplearning/)           
 - [4. ubuntu os usage ](./ubuntu_os_usage/)        
-- [5. auto control ](./auto_control_system/)       
+- [5. image porcess ](./image_porcess/)       
 - [6. algorithms ](./algorithms/)       
 - [7. linux device driver ](./linux_driver/)      
 - [8. rtems os](./rtems/)         
 - [9. work plan ](./work_plan/)  
 - [10. project ](./software_project/)  
 - [11. 面试 ](./interview/)  
-
+- [12. auto control ](./auto_control_system/)  
 
 私人数据目录:    
 ~/work/    

@@ -259,7 +259,7 @@ class Blob {
   void set_gpu_data(Dtype* data);
   const Dtype* cpu_diff() const;
   const Dtype* gpu_diff() const;
-  Dtype* mutable_cpu_data();   // mutable 是可变的, 即需要随时更新的
+  Dtype* mutable_cpu_data();   // mutable 是可变的, 它不是常量成员函数   
   Dtype* mutable_gpu_data();
   Dtype* mutable_cpu_diff();
   Dtype* mutable_gpu_diff();
@@ -492,3 +492,16 @@ message BlobShape {
   repeated int64 dim = 1 [packed = true];
 }
 ```
+
+## 总结 && 问题   
+
+### Blob 的巧妙设计  
+
+reshape() 为 SyncedMemory 准备了 capacity*sizeof(Dtype) 个字节单元。   
+
+同时，你需要回忆一下，SyncedMemory(size)并不会立刻启动状态转移自动机申请内存/显存。   
+
+只有执行 Blob:: cpu_data/gpu_data/mutable_cpu_data/mutable_gpu_data，才会申请。   
+
+这有点像函数式编程里的 Lazy 思想，胡乱写 Blob 其实问题不大，只要该 Blob 没有使用，就不会有内存空间损耗。     
+

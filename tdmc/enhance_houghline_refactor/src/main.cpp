@@ -1,6 +1,4 @@
-#include "image_process.h"
 #include "line_detector.hpp"
-
 
 #define DRAW_LINE
 
@@ -42,14 +40,14 @@ int main(int argc, char **argv)
 
     // 根据图片或视频流选择不同的文件类型处理模式
     size_t pos = std::string(filename).rfind(".");
-    string file_type(filename.begin()+pos, filename.end());
+    std::string file_type(filename.begin()+pos, filename.end());
     // 构造保存文件名
-    string pre_savename(filename.begin(), filename.begin()+pos);
+    std::string pre_savename(filename.begin(), filename.begin()+pos);
     LOG(INFO) << "File Type: " << file_type;
 
     if(file_type == ".avi" || file_type == ".mp4"){
         // 处理视频流
-        VideoCapture cap = cv::VideoCapture(filename);
+        cv::VideoCapture cap = cv::VideoCapture(filename);
         if(!cap.isOpened()){
 
             LOG(ERROR) << "Video Open Failed!";
@@ -59,7 +57,7 @@ int main(int argc, char **argv)
         td = new coal::TopLineDetector(cap);
     }else if (file_type == ".jpg" || file_type == ".png"){
         // 处理单张图片
-        image = imread(filename);
+        image = cv::imread(filename);
         if (image.empty()) {
 
             LOG(ERROR) << "Open Image Failed!";
@@ -74,7 +72,7 @@ int main(int argc, char **argv)
     // td->setFps(999.);   // 只是为了测试极限帧率
 
     // 绘制初始化直线
-    namedWindow(winName);
+    cv::namedWindow(winName);
     cv::setMouseCallback(winName, on_mouse, (void*)&image);   //鼠标操作回调函数
     td->drawInitTopLine(winName, topLineRoi, ArmLineRoi);
 
