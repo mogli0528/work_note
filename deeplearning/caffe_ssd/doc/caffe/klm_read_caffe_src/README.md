@@ -6,21 +6,22 @@
 
 搞清楚流程之后再深入细节.   
 ## caffe 组件 
-[0. protobuf 的使用](./doc/caffe_component/protobuf.md)   
-[1. Caffe 的入口](./doc/caffe_component/caffe_main.md)   
-[2. Caffe 中的矩阵计算](./doc/caffe_component/math_functions.md)  
-[3. Solver 求解器的实现](./doc/caffe_component/solver.md)   
-[4. Synced Memory 同步内存的实现](./doc/caffe_component/synced_memory.md)   
-[5. Blob 的实现](./doc/caffe_component/blob.md)   
-[6. Layer 的实现](./doc/caffe_component/layer.md)   
-[7. layer_factory 的实现](./doc/caffe_component/layer_factory.md)   
-[8. Caffe 中实现的所有 Layers](./doc/caffe_component/all_caffe_layers.md)   
-[9. 卷积层的实现](./doc/caffe_component/conv_layer.md)   
-[10. Net 的实现](./doc/caffe_component/conv_layer.md)   
-
-
+### 1. 基本组件  
+- [ protobuf 的使用](./doc/caffe_component/protobuf.md)   
+- [ Caffe 的入口](./doc/caffe_component/caffe_main.md)   
+- [ Caffe 中的矩阵计算](./doc/caffe_component/math_functions.md)  
+- [ Solver 求解器的实现](./doc/caffe_component/solver.md)   
+- [ Synced Memory 同步内存的实现](./doc/caffe_component/synced_memory.md)   
+- [ Blob 的实现](./doc/caffe_component/blob.md)   
+- [ Layer 的实现](./doc/caffe_component/layer.md)   
+- [ layer_factory 的实现](./doc/caffe_component/layer_factory.md)   
+- [ Caffe 中实现的所有 Layers](./doc/caffe_component/all_caffe_layers.md)   
+- [ 卷积层的实现](./doc/caffe_component/conv_layer.md)   
+- [ Net 的实现](./doc/caffe_component/conv_layer.md)   
+### 2. 线程管理    
+- [ 线程系统 - Internal Thread ](./doc/caffe_component/thread/internal_thread.md)   
+- [ 全局线程管理器 ](./doc/caffe_component/thread/global_thread_management.md)  
 
 ## caffe 对于泛化工程的作用   
-
-[1. 算法运行时间统计](./doc/caffe_for_other_projects/time_consume.md)   
-[2. C++ 禁用拷贝构造函数和赋值运算符](./doc/caffe_for_other_projects/disable_copy-assignment_operator.md)   
+- [ 算法运行时间统计](./doc/caffe_for_other_projects/time_consume.md)   
+- [ C++ 禁用拷贝构造函数和赋值运算符](./doc/caffe_for_other_projects/disable_copy-assignment_operator.md)   

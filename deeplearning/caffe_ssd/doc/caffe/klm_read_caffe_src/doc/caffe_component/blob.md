@@ -1,4 +1,8 @@
-# blob 的实现   
+## BlobFlow  
+
+> 听说Google出了TensorFlow，那么Caffe应该叫什么？
+>　　　　　　　　　　　　　　　　　　　　　　　　　　——BlobFlow
+
  
 Caffe 中贯穿整个网络中的数据都用 blob 存储. 例如交换和处理网络中正向和反向迭代时的数据和导数信息。  
 blob 是 Caffe 的标准数组结构，它提供了一个统一的内存接口.    
@@ -327,6 +331,7 @@ void Blob<Dtype>::ShareDiff(const Blob& other) {
   diff_ = other.diff();  
 }  
 ```
+
 2. Update()   
 Update() 函数实现的就是学习过程中的参数更新过程. 即参数的更新(包括 weight，bias), 更新的方式就是梯度下降法(减去对应的导数).     
 另外需要注意的是, 它只更新 CPU 或 GPU 上的数据.    

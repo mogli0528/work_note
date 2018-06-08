@@ -17,8 +17,8 @@
 2. 用`VS2013`打开`Caffe.sln`(就到刚刚那个文件夹里面)   
 3. 打开`CommenSetting.probs`.   
 按照下图进行修改设置：   
-![](pictures/CommonSettings1.jpg)   
-![](pictures/CommonSettings2.jpg)   
+![](../snapshots/CommonSettings1.jpg)   
+![](../snapshots/CommonSettings2.jpg)   
 4. 选择编译类型为`release,x64`:   
    关闭视警告为错误(即设置为No)如果不设置的话在编译boost库的时候会由于文字编码的警告而报错.然后载开始编译,(先编译的是`libcaffe`).等啊等.....编译成功后
 在`caffe-master`文件夹下就应该出现一个名叫`Build\X64\Relase`的文件夹, 前面已经提示是先编译的`libcaffe`,在`solution`上面右击选择属性（`properties`）可以发现默认选择的是单任务，所以只编译`libcaffe`。    
