@@ -24,6 +24,7 @@ log
 
 # git
 !.gitignore
+!.vscode
 
 # make file
 *~

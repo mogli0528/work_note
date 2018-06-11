@@ -12,7 +12,7 @@
 - [ Caffe 中的矩阵计算](./doc/caffe_component/math_functions.md)  
 - [ Solver 求解器的实现](./doc/caffe_component/solver.md)   
 - [ Synced Memory 同步内存的实现](./doc/caffe_component/synced_memory.md)   
-- [ Blob 的实现](./doc/caffe_component/blob.md)   
+- [ BlobFlow ](./doc/caffe_component/blob.md)   
 - [ Layer 的实现](./doc/caffe_component/layer.md)   
 - [ layer_factory 的实现](./doc/caffe_component/layer_factory.md)   
 - [ Caffe 中实现的所有 Layers](./doc/caffe_component/all_caffe_layers.md)   

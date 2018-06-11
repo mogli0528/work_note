@@ -1,323 +1,342 @@
-## BlobFlow  
+# BlobFlow  
 
 > 听说Google出了TensorFlow，那么Caffe应该叫什么？
 >　　　　　　　　　　　　　　　　　　　　　　　　　　——BlobFlow
 
  
-Caffe 中贯穿整个网络中的数据都用 blob 存储. 例如交换和处理网络中正向和反向迭代时的数据和导数信息。  
-blob 是 Caffe 的标准数组结构，它提供了一个统一的内存接口.    
-Layer 是 Caffe 模型和计算的基本单元， Net是一系列 layers 和其连接的集合.   
-blob 详细描述了信息是如何在 layer 和 net 中存储和交互的.     
+Caffe 中贯穿整个网络中的数据都用 Blob 存储. 例如网络中正向和反向迭代时的数据和导数信息。  
+
+Layer 是 Caffe 模型和计算的基本单元， Net 是一系列 layers 和其连接的集合. Blob 详细描述了信息是如何在 layer 和 net 中存储和交互的.   
 
 > Blob 实现的头文件是`caffe/include/caffe/blob.hpp`.    
-## 目录   
-- blob.hpp 的实现   
-- blob.cpp 实现部分的重要代码   
-- Blob 相关的 Proto    
+ 
+## 神经网络时代的传播数据结构  
 
-## blob.hpp 的实现     
-1. private 成员  
+### 1. 我的代码   
+
+我最早手写神经网络的时候, Flow 结构是这样的：   
+
 ```cpp
-class Blob {
- public:
-  ...
-
- protected:
-  shared_ptr<SyncedMemory> data_;       // 是前向传递的数据, 指针类型是 shared_ptr 
-  shared_ptr<SyncedMemory> diff_;       // 是反向传播中的梯度
-  shared_ptr<SyncedMemory> shape_data_; // 保存 shape_ 数据, 这些数据可能会在 GPU 中使用
-  vector<int> shape_;    // Blob 的形状
-  int count_;     // 表示 Blob 的 size，也就是 n*c*h*w,  
-  int capacity_;  // 表示当前的元素个数, 因为 Blob 可能会 Reshape  
-
-  DISABLE_COPY_AND_ASSIGN(Blob);
+struct Data
+{
+    vector<double> feature;
+    int y;
+    Data(vector<double> feature,int y):feature(feature),y(y) {}
 };
+vector<double> u_i, v_i, u_j, v_j;
 ```
-2. public 成员  
+
+很简陋的结构, 主要功能就是利用 vector 存一下每层正向传播的值。   
+
+### 2. Word2Vec  
+
+后来我看了 Google 的 Mikolov 大神的 Word2Vec 的源码, 它的 Flow 结构是这样的:   
+```cpp
+real *neu1 = (real *)calloc(doc->layer1_size, sizeof(real));
+```
+然后我吐槽了一下, 这功能不是比我还弱么, vector 起码还能提供 STL 的基础功能.  注： Word2Vec 源码是以 CPU 多线程和内存操作快而著称的, 简陋但速度快）.   
+
+### 3. Theano
+
+再后来, 我学习了 Theano, 它的 Flow 结构是这样的:   
+```python
+input=theano.tensor.matrix('x')
+
+class DataLayer(object):
+    def __init__(self,input,batch_size,size):
+        self.batch_size=batch_size
+        self.size=size
+        self.input=input
+        self.params=None
+
+    def get_output(self):
+        output=self.input
+        if type(self.size) is tuple: # Mode: 2D
+            output=output.reshape((self.batch_size,self.size[2],self.size[1],self.size[0]))
+        else: #Mode: 1D
+            output=output.reshape((self.batch_size,self.size))
+        
+        return output
+```
+Bengio 组模仿物理学的张量(Tensor)的概念, 创建了 Theano 的 Tensor 系统。Dim 为 0 的叫常量, Dim 为 1 的叫向量, Dim = 2的叫矩阵, Dim > 2 就没名字了, 且 Dim 可以无限扩大。  
+
+Tensor 的出现,  很好地规避了机器学习研究者不会写代码的问题（比如上节出现的简陋结构）。同时, 随着 mini-batch, conv 等方法在深度学习中的大规模使用, 我们的 Flow 结构显然需要多维化。   
+
+由于是操作多维空间, 经常需要维度切换, reshape() 函数自然成了 Tensor 的核心函数(reshape 的概念最早应该来自 Python 的科学计算库 numpy, Theano 的 Tensor 系统, 很大程度上在重写 numpy）.   
+
+### 4. TensorFlow
+
+再后来 Google 把 Andrew Ng 开发的一代深度学习框架 DistBelief 给换掉了, 第二代叫 TensorFlow. 按照官方的说法, 取名TensorFlow(2015) 的原因是因为系统里主要是 Tensor 在 Flow. 
+
+推测一下 DistBelief(2011) 和 Theano(NIPS2012) 的公布时间, 我们大概推测, DistBelief 的 Flow 结构估计相当 Low. 按照Caffe(2013) 作者贾大神的说法, 他参与了 TensorFlow 的主体开发。所以, TensorFlow 里的 Tensor 结构, 不难看出来, 是借鉴了 Theano(2012) 和 Caffe(2013) 的综合体。   
+
+### 5. 符号系统
+
+尽管 Caffe(2013) 具有类似 Tensor 的 Blob 结构, 但是和 Theano(2012), TensorFlow(2015) 的 Tensor 相比, 还是比较弱的。核心原因是, Tensor 的出发点是建立在符号系统上的, 而 Caffe(2013) 只是最暴力的执行代码。  
+
+按照 MXNet 的陈天奇大神在 MS 研究院内部的讲座说法：   
+- Caffe(2013) 属于 Imperative Programme(命令程序), 白盒模式;   
+- Theano(2012), TensorFlow(2015), MXNet(2015) 属于 Declaretive Programme(声明程序), 黑盒模式;  
+
+符号系统需要内建一套数学式语法解析结构, 针对原始的命令语句做一个深度的 Wrapper, 从白盒变成黑盒。其难度和代码量还是有的。与之相比,  Blob 读起来, 还是要比 Tensor 简单地多。
+
+## 浅析Blob设计原理  
+
+### 1. 存储性质  
+
+无论是 `正向传播的输出`,  还是 `反向传播的残差`, 还是 `神经元参数`, 这些都需要不同的结构去存储。  
+
+Blob 广义上极力规避设计多种结构的问题, 这点上是参考 Tensor 的。你可以自由规划 1D, 2D, 3D, 4D 甚至 nD 的多维数组存储空间, 这种存储具有相当不错的灵活性。  
+
+### 2. 功能性质
+
+不幸的是, 操作多维数组在编程中是件麻烦事。朴素 C 语言提供的多维数组, 功能很弱, 比如你想获知大小(size)就是一件难事。使用 STL 是一个不错的选择, 嵌套 STL, 从数据结构角度就变成了广义表。 尽管广义表的功能较朴素 C 语言多维数组要多, 不过看起来也不尽如人意。   
+
+另外, 最恼人的是 CUDA 不推荐 GPU 操作多维数组, 最多可以申请到 3 维数组的显存优化。如果不使用 CUDA 提供的多维数组内存对齐优化, 那么 IO 指令取址将会非常频繁, 导致 IO 速度严重退化。从内存角度理解, 显然线性内存空间访问便捷, nD 内存空间就十分糟糕了。   
+
+从 SyncedMemory 的设计中, 几乎就可以推测 Caffe 为了速度, 完全使用线性内存/显存。因而, 为使线性内存模拟出 nD 内存, 就需要在内存访问上做点偏移(Offset)计算。  
+
+Blob 的大部分功能, 便是扩展线性 SyncedMemory 的逻辑功能, 使其变成逻辑上的多维数组。   
+
+### 3. 张量·轴设计
+
+在早期神经网络编程中, 通常采用的是 1D 空间, 每个样本拥有一个输入向量。 上个世纪末, LeCun 等人倡导在 SGD 中, 替代单样本为mini-batch, 才使得轴设计得以派上用场。  
+
+axis=0 用于 batch_size, batch 中每个样本的向量移到 axis=1。这种空间在今天的神经网络 NLP（NNNLP）任务中, 仍然被主要采用。  
+
+上个世纪 90 年代初, LeCun 将 Fukushima 的神经机结合导师 Hinton 的 BP 算法, 演化成可以训练的 CNN, 使得轴进一步扩展。CNN 所扩展的轴, 称之为空间轴(spatial axes), 放置于 axis=2, ... 之后。   
+
+原神经网络的 axis=1 轴, 结合图像文件的通道(channels)概念, CNN 的特征图概念, 被替换成 channels axis。这样在 Blob 中, 就构成了使用最频繁的 4 轴空间(batch_size, channels, height, width）。   
+
+在 Caffe 中, batch_size 用 num 替代, 这个名字理解起来更泛性一点. 各轴都具有一定的轴长, 描述轴空间需要 shape 功能, 轴空间变形则需要 reshape 功能。   
+
+## 代码实战
+
+从 Blob 开始, 为了便于阅读, 代码将在不同章逐步扩展, 以下仅提供适用于本章的精简代码。  
+
+建立blob.hpp
+
+### 1. 数据结构
+
 ```cpp
 template <typename Dtype>
-class Blob {
- public:
-  Blob() : data_(), diff_(), count_(0), capacity_(0) {}  // 默认构造函数  
-
-  /// @brief 旧版本; 推荐使用 Blob(const vector<int>& shape).
-  /// explicit 关键字的作用是禁止构造函数的参数隐式转换  
-  explicit Blob(const int num, const int channels, const int height,
-      const int width);
-  explicit Blob(const vector<int>& shape);
-
-  /// @brief 旧版本; 推荐使用 Reshape(const vector<int>& shape).
-  /// Reshape() 将 'num,channels,height,width' 传递给 'vector shape_', 然后调用
-  /// 推荐版本的 Reshape(const vector<int>& shape) 函数.   
-  void Reshape(const int num, const int channels, const int height,
-      const int width);
-  /**
-   * @brief 改变 blob 的维度. 因为数据总维度可能也会变, 所以可能会产生内存分配
-   *
-   * 这个函数既可以在创建初始化内存的时候使用, 也可以在 Layer::Reshape() 
-   * 或 Layer::Forward() 中调用以调整 top blob 的维度.  当改变 blob 的维度时, 
-   * 如果没有内存, 则会重新分配内存. 然而如果有多余的内存, 那么多余的内存也不会被 free.   
-   *
-   * Note: 如果在对一个 input blob 调用 Reshape() 之后立即调用 Net::Backward()
-   * 将会引发 error; 况且将新的 input shape 传递到更高的层时并不需要调用 Net::Forward()
-   * 或 Net::Reshape() 函数.   
-   * 
-   * 初始化 shape_ 和 shape_data_, 同时为 data_ 和 diff_ 分配空间.
-   * 
-   */
-  void Reshape(const vector<int>& shape); 
-  void Reshape(const BlobShape& shape);
-  void ReshapeLike(const Blob& other);
-  
-  /// 以 string 形式获取 shape_ ( 格式为 n c w h(count) ). 
-  inline string shape_string() const {
-    ostringstream stream;
-    for (int i = 0; i < shape_.size(); ++i) {
-      stream << shape_[i] << " ";
-    }
-    stream << "(" << count_ << ")";
-    return stream.str();
-  }
-  inline const vector<int>& shape() const { return shape_; }   /// 获取 shape_    
-  
-  /**
-   * @brief 返回第 index 条轴上的维度(如果 index 为负数，则从 end 端开始计数)
-   *
-   * @param 轴的 index, 因为是按照规范化设计, 因此可以是负值. 但是不能越界访问.     
-   */ 
-  inline int shape(int index) const {
-    return shape_[CanonicalAxisIndex(index)];
-  }
-
-  inline int num_axes() const { return shape_.size(); } // 获取 blob 的维度 
-  inline int count() const { return count_; }  // 获取当前 data 的大小  
-
-  /**
-   * @brief 计算 blob 的一个切片的 volume (切片区间为左闭右开)
-   *        也就是在给定轴间范围内维度的乘积;
-   *
-   * @param start_axis slice 的起始轴(包含在内).
-   * @param end_axis slice 的结束轴(不包含在内).
-   */
-  inline int count(int start_axis, int end_axis) const {
-    CHECK_LE(start_axis, end_axis);
-    CHECK_GE(start_axis, 0);
-    CHECK_GE(end_axis, 0);
-    CHECK_LE(start_axis, num_axes());
-    CHECK_LE(end_axis, num_axes());
-
-    int count = 1;
-    for (int i = start_axis; i < end_axis; ++i) {
-      count *= shape(i);
-    }
-    return count;
-  }
-
-  /**
-   * @brief 给定切片的起始轴, 计算其到结束轴维度的 volume
-   *
-   * @param start_axis 切片的起始轴.
-   */
-  inline int count(int start_axis) const {  
-    return count(start_axis, num_axes());
-  }
-
-  /**
-   * @brief 返回用户指定轴的规范化版本,允许轴的 index 是负值, 可以对负数的索引进行转换.  
-   *        (e.g., -1 表示最后一条轴).
-   *
-   * @param axis_index 轴的索引.
-   *        如果 0 <= index < num_axes(), 直接返回 index.
-   *        如果 -num_axes <= index <= -1, 返回 (num_axes() - (-index)),
-   *        e.g., 最后一条轴的 index: (num_axes() - 1) ==> index == -1,
-   */
-  inline int CanonicalAxisIndex(int axis_index) const {
-    CHECK_GE(axis_index, -num_axes())
-        << "axis " << axis_index << " out of range for " << num_axes()
-        << "-D Blob with shape " << shape_string();
-    CHECK_LT(axis_index, num_axes())
-        << "axis " << axis_index << " out of range for " << num_axes()
-        << "-D Blob with shape " << shape_string();
-    if (axis_index < 0) {
-      return axis_index + num_axes();
-    }
-    return axis_index;
-  }
-
-  /**
-   * 以下是 Blob 中的 4 个基本变量 num, channel, height, width 
-   *
-   * @brief 旧版本, 推荐使用 shape(0) 访问 num.
-   * @brief 旧版本, 推荐使用 shape(1) 访问 channels.
-   * @brief 旧版本, 推荐使用 shape(2) 访问 height.
-   * @brief 旧版本, 推荐使用 shape(3) 访问 width.
-   */
-  inline int num() const { return LegacyShape(0); }
-  inline int channels() const { return LegacyShape(1); }
-  inline int height() const { return LegacyShape(2); }
-  inline int width() const { return LegacyShape(3); }
-
-  // @brief 旧版本, data_ 维数不大于 4 时才能使用, 功能同 shape() 类似。
-  inline int LegacyShape(int index) const {
-    CHECK_LE(num_axes(), 4)
-        << "Cannot use legacy accessors on Blobs with > 4 axes.";
-    CHECK_LT(index, 4);
-    CHECK_GE(index, -4);
+class Blob{
+public:
+    Blob():data_(),diff_(),count_(0), capacity_(0) {}
+    Blob(const vector<int>& shape) :count_(0),capacity_(0) { reshape(shape); }
     
-    if (index >= num_axes() || index < -num_axes()) {
-      // Axis is out of range, but still in [0, 3] (or [-4, -1] for reverse
-      // indexing) -- this special case simulates the one-padding used to fill
-      // extraneous axes of legacy blobs.
-      return 1;
+    void reshape(int num, int channels, int height, int width);
+    void reshape(vector<int> shape);
+    void reshape(const BlobShape& blob_shape);
+    void reshapeLike(const Blob& blob);
+    
+    const Dtype* cpu_data() const;
+    const Dtype *gpu_data() const;
+    const Dtype* cpu_diff() const;
+    const Dtype* gpu_diff() const;
+    // mutable 是可变的, 它不是常量成员函数 
+    Dtype *mutable_cpu_data();  
+    Dtype *mutable_gpu_data();
+    Dtype *mutable_cpu_diff();
+    Dtype *mutable_gpu_diff();
+
+    int num() const { return shape(0); }
+    int channels() const { return shape(1); }
+    int height() const { return shape(2); }
+    int width() const { return shape(3); }
+    int count() const{ return count_; }
+    int count(int start_axis, int end_axis) const {
+        CHECK_GE(start_axis, 0);
+        CHECK_LE(start_axis, end_axis);
+        CHECK_LE(start_axis, num_axes());
+        CHECK_LE(end_axis, num_axes());
+        int cnt = 1;
+        for (int i = start_axis; i < end_axis; i++) cnt *= shape(i);
+        return cnt;
+    }
+    int count(int start_axis) const{ return count(start_axis, num_axes()); }
+    const vector<int> &shape() const{ return shape_; }
+    int shape(int axis) const{ return shape_[canonicalAxisIndex(axis)]; }
+    int offset(const int n, const int c = 0, const int h = 0,
+        const int w = 0){
+        CHECK_GE(n, 0);
+        CHECK_LE(n, num());
+        CHECK_GE(channels(), 0);
+        CHECK_LE(c, channels());
+        CHECK_GE(height(), 0);
+        CHECK_LE(h, height());
+        CHECK_GE(width(), 0);
+        CHECK_LE(w, width());
+        return ((n * channels() + c) * height() + h) * width() + w;
+    }
+    int num_axes() const { return shape_.size(); }
+
+    // idx ranges [-axes,axes), idx(-1) means the last axis
+    int canonicalAxisIndex(int axis) const{
+        CHECK_GE(axis, -num_axes());
+        CHECK_LT(axis, num_axes());
+        if (axis < 0) return axis + num_axes();
+        else return axis;
     }
 
-    return shape(index);
-  }
-
-  /**
-   * offset 计算的方式也支持两种方式: 
-   *    一种是指定 n,c,h,w   
-   *    另一种是用 vector 指定 n,c,h,w   
-   * 对应的偏移量 offset = ( (n * channels() + c) * height() + h ) * width() + w  
-   *   
-   * Note: 需要清楚内存中是按照什么轴序来排列的.  
-   */
-  inline int offset(const int n, const int c = 0, const int h = 0,
-      const int w = 0) const {
-    CHECK_GE(n, 0);
-    CHECK_LE(n, num());
-    CHECK_GE(channels(), 0);
-    CHECK_LE(c, channels());
-    CHECK_GE(height(), 0);
-    CHECK_LE(h, height());
-    CHECK_GE(width(), 0);
-    CHECK_LE(w, width());
-
-    return ((n * channels() + c) * height() + h) * width() + w;
-  }
-
-  inline int offset(const vector<int>& indices) const {
-    CHECK_LE(indices.size(), num_axes());
-    int offset = 0;
-    for (int i = 0; i < num_axes(); ++i) {
-      offset *= shape(i);
-      if (indices.size() > i) {
-        CHECK_GE(indices[i], 0);
-        CHECK_LT(indices[i], shape(i));
-        offset += indices[i];
-      }
+    const boost::shared_ptr<SyncedMemory>& data() const { return data_; }
+    const boost::shared_ptr<SyncedMemory>& diff() const { return diff_; }
+    
+    // change the shared_ptr object and will recycle the memory if need
+    void shareData(const Blob& blob) {
+        CHECK_EQ(count(), blob.count());
+        data_ = blob.data(); 
     }
-    return offset;
-  }
+    void shareDiff(const Blob& blob) {
+        CHECK_EQ(count(), blob.count());
+        diff_ = blob.diff();
+    }
 
-  /**
-   * @brief 从一个 source Blob 拷贝数据到 gpu_data 或 cpu_data 
-   *
-   * @param source Blob
-   * @param 如果 copy_diff = false 拷贝 data_; 反之拷贝 diff_
-   * @param reshape if false, require this Blob to be pre-shaped to the shape
-   *        of other (and die otherwise); if true, Reshape this Blob to other's
-   *        shape if necessary
-   */
-  void CopyFrom(const Blob<Dtype>& source, bool copy_diff = false,
-      bool reshape = false);
+    void FromProto(const BlobProto& proto, bool need_reshape = true);
+    void ToProto(BlobProto* proto, bool write_diff = false);
 
-  /**
-   * 下面这些函数可以通过给定的位置访问数据, 根据位置计算与数据起始地址之间的 
-   * 的偏差 offset, 再通过 cpu_data* 指针获得地址 
-   */  
-  inline Dtype data_at(const int n, const int c, const int h,
-      const int w) const {
-    return cpu_data()[offset(n, c, h, w)];
-  }
-  inline Dtype diff_at(const int n, const int c, const int h,
-      const int w) const {
-    return cpu_diff()[offset(n, c, h, w)];
-  }
+    void Update();  // 即 data_ -= diff_;
 
-  inline Dtype data_at(const vector<int>& index) const {
-    return cpu_data()[offset(index)];
-  }
-  inline Dtype diff_at(const vector<int>& index) const {
-    return cpu_diff()[offset(index)];
-  }
+    /// @brief 计算 data_ 数据的绝对值之和(L1 norm).
+    /// @brief 计算 diff_ 数据的绝对值之和(L1 norm).
+    /// @brief 计算 data_ 数据的平方和(L2 norm squared).
+    /// @brief 计算 diff_ 数据的平方和(L2 norm squared).
+    Dtype asum_data() const;
+    Dtype asum_diff() const;
+    Dtype sumsq_data() const;
+    Dtype sumsq_diff() const;
 
-  // 获取 data_ 指针
-  inline const shared_ptr<SyncedMemory>& data() const {
-    CHECK(data_);
-    return data_;
-  }
+    /// @brief 使用常数因子对 data_ 和 diff_ 缩放.
+    void scale_data(Dtype scale_factor);
+    void scale_diff(Dtype scale_factor);
 
-  // 获取 diff_ 指针 
-  inline const shared_ptr<SyncedMemory>& diff() const {
-    CHECK(diff_);
-    return diff_;
-  }
+    bool ShapeEquals(const BlobProto& other);
 
-  ///
-  // data 存储前向传递的数据, 而 diff 存储的是反向传播中的梯度   
-  const Dtype* cpu_data() const;
-  void set_cpu_data(Dtype* data);
-  const int* gpu_shape() const;
-  const Dtype* gpu_data() const;
-  void set_gpu_data(Dtype* data);
-  const Dtype* cpu_diff() const;
-  const Dtype* gpu_diff() const;
-  Dtype* mutable_cpu_data();   // mutable 是可变的, 它不是常量成员函数   
-  Dtype* mutable_gpu_data();
-  Dtype* mutable_cpu_diff();
-  Dtype* mutable_gpu_diff();
-  
-  void Update();  // 即 data_ -= diff_;
-
-  // 从 BlobProto 中恢复到 data_ 指向的 Blob 对象中 
-  void FromProto(const BlobProto& proto, bool reshape = true); 
-  // 将 data_ 指向的 Blob 序列化为 BlobProto, 编译保存为二进制文件   
-  void ToProto(BlobProto* proto, bool write_diff = false) const; 
-
-  /// @brief 计算 data_ 数据的绝对值之和(L1 norm).
-  /// @brief 计算 diff_ 数据的绝对值之和(L1 norm).
-  Dtype asum_data() const;
-  Dtype asum_diff() const;
-  /// @brief 计算 data_ 数据的平方和(L2 norm squared).
-  /// @brief 计算 diff_ 数据的平方和(L2 norm squared).
-  Dtype sumsq_data() const;
-  Dtype sumsq_diff() const;
-
-  /// @brief 使用常数因子对 data_ 和 diff_ 缩放.
-  void scale_data(Dtype scale_factor);
-  void scale_diff(Dtype scale_factor);
-
-  /**
-   * @brief 设置智能指针 data_ 指向 other Blob 中保存的数据内存空间(data_), 
-   *        主要用于前向运算时 Layers 之间的拷贝操作.
-   *
-   * ShareData () 会释放 data_ 指针指向的内存空间, 因为对 data_ 智能指针使用 
-   * "=" 赋值运算符会递减左侧指针的引用计数(递减后引用计数变为 0, 调用析构函数).  
-   */
-  void ShareData(const Blob& other);  // 本Blob共享other的data_  
-  
-  /**
-   * @brief 设置智能指针 diff_ 指向 other Blob 中保存的数据内存空间(diff_), 
-   *        主要用于前向运算时 Layers 之间的拷贝操作.
-   *
-   * ShareData () 会释放 diff_ 指针指向的内存空间, 因为对 diff_ 智能指针使用 
-   * "=" 赋值运算符会递减左侧指针的引用计数(递减后引用计数变为 0, 调用析构函数).  
-   */
-  void ShareDiff(const Blob& other); // 本Blob共享other的diff_  
-
-  bool ShapeEquals(const BlobProto& other);
-
- protected:
-  ...
-
-};  // class Blob
+protected:
+    boost::shared_ptr<SyncedMemory> data_, diff_;
+    vector<int> shape_;
+    int count_, capacity_;
+};
 ```
 
-## blob.cpp 实现部分的重要代码    
-对一些使用到的 tricks, 有难度的原理实现贴出其代码.   
-1. ShareData(const Blob& other)   
-智能指针的使用, 赋值之后, 左侧指针原先指向的内存空间被释放.   
+先说说几个成员变量：  
+- count, capacity 用于 reshape() 中的计算, 前者是新 reshape 的大小, 后者是历史 reshape 大小。Blob 的任何构造函数中, 一定要将这两个值置 0, 否则 reshape() 会失败。   
+- 线性内存空间以 shared_ptr 绑定, 因此 Blob 不需要析构函数, Blob 销毁后, 指针空间会被自动回收。   
+- 默认有2个线性内存空间, data, diff, 分别用于存储"前向数据/反向残差"。  
+- TODO: shape_data_ 和 shape 的区别是什么?  
+- vector<int> shape 用于存各个轴的轴长。  
+
+然后看轴相关函数：
+- num(), channels(), height(), width(), count(), shape() 都是简单的封装, 注意设成常量成员函数, 由于 Blob 会作为const 引用的参数, 比如 sharedData/sharedDiff, 这些访问接口必须保证 this 指针属性一致。   
+- count() 和 shape() 都是重载函数, 提供不同的访问方式。  
+- 轴访问 canonicalAxisIndex() 函数上, 借鉴了 Python 的负轴访问方式, 如果你没有 Python 的习惯, 可以写简单点。   
+
+然后看 data 相关函数：
+cpu_data(), gpu_data(), cpu_diff(), gpu_diff(), mutable_cpu_data(), mutable_gpu_data(), mutable_cpu_diff(), mutable_gpu_diff() 是对 SyncedMemory 中相应接口的封装, 主要目的是将 void* 型内存(SyncedMemory 中定义的)转换为计算类型(float / double 类型)的内存。  
+
+void* 型内存以数组下标方式访问时, 每个单元占用 8 Bit（1字节）, 这种单元内存是不能直接使用的. 因为一个 int/float 单元占 32Bit(4字节), 一个 double 单元占 64Bit(8字节). C/C++通过对数组首元素指针的强制转换, 可以改变下标索引的单元访问模式。  
+
+reshape() 函数看起来重载了很多, 实际上主体设在 `void reshape(vector<int> shape)` 里。
+
+`offset()` 函数是非常重要的, 它目的是计算相对偏移量, 将 1D 空间结构形成逻辑上的 nD 多维空间结构。  
+
+在 DataLayer 中, 由 Datum 组织 Blob 一个例子如下：   
+```cpp
+Dtype* top_data = batch->data_.mutable_cpu_data();  // blob 首地址  
+...
+for (int item_id = 0; item_id < batch_size; ++item_id) {
+    // get a datum
+    Datum& datum = *(reader_.full().pop("Waiting for data"));
+    // 遍历所有的 batch, Apply data transformations (mirror, scale, crop...)
+    int offset = batch->data_.offset(item_id);  
+    this->transformed_data_.set_cpu_data(top_data + offset);
+    this->data_transformer_->Transform(datum, &(this->transformed_data_));
+    // Copy label.
+    if (this->output_labels_) {
+      top_label[item_id] = datum.label();
+    }
+
+    reader_.free().push(const_cast<Datum*>(&datum));
+}
+```
+
+在这里, 对 batch 里的每一个样本, 每次偏移 `channels*height*width` 个单位, 就会立刻跳转到下一张图的首元素。更一般的, 令 `offset = batch->data_.offset(0,1)`,  就跳转到了下一个 channel 的首元素。由于线性空间是连续的, 这种偏移仅仅需要加法器一次运算, 就能模拟出多维空间, 十分廉价。  
+
+两个 share 函数用于直接替换掉 data_, diff_,  由于使用了 shared_ptr, data_, diff_ 之前指向的 SyncedMemory 空间会自动释放。共享数据的场景可以是: 当神经网络需要交叉验证时,  没有必要从训练网络 copy 参数到测试网络, 此时只要将训练网络的全部参数的 Blob, 一一对应 share 给测试网络即可。   
+
+FromProto() 和 ToProto() 用于反序列化/序列化至 protobuf 格式。唯一用处是对神经网络的参数 Blob 进行 snapshot(截图), 以便继续训练或者离线测试。   
+
+### 2. 实现
+
+给出几个比较重要的实现。  
+
+```cpp
+template <typename Dtype>  
+void Blob<Dtype>::Update() {  
+  switch (data_->head()) {  
+  case SyncedMemory::HEAD_AT_CPU:
+    caffe_axpy<Dtype>(count_, Dtype(-1),  
+        static_cast<const Dtype*>(diff_->cpu_data()),  
+        static_cast<Dtype*>(data_->mutable_cpu_data()));  
+    break;  
+  case SyncedMemory::HEAD_AT_GPU:  
+  case SyncedMemory::SYNCED:  
+#ifndef CPU_ONLY
+    caffe_gpu_axpy<Dtype>(count_, Dtype(-1),  
+        static_cast<const Dtype*>(diff_->gpu_data()),  
+        static_cast<Dtype*>(data_->mutable_gpu_data()));  
+#else  
+    NO_GPU;  
+#endif  
+    break;  
+  default:  
+    LOG(FATAL) << "Syncedmem not initialized.";  
+  }  
+}  
+```
+Update() 函数负责学习模型过程中的参数的更新(包括 weight，bias), 更新的方式就是梯度下降法(减去对应的梯度值).     
+
+```cpp
+template<typename Dtype>
+void Blob<Dtype>::reshape(vector<int> shape){
+    count_ = 1;
+    shape_.resize(shape.size());
+    for (int i = 0; i < shape.size(); ++i) {
+        count_ *= shape[i];
+        shape_[i] = shape[i];
+    }
+    if (count_ > capacity_) {
+        capacity_ = count_;
+        data_.reset(new SyncedMemory(capacity_ * sizeof(Dtype)));
+        diff_.reset(new SyncedMemory(capacity_ * sizeof(Dtype)));
+    }
+}
+```
+
+可以看到, reshape() 为 SyncedMemory 准备了 capacity*sizeof(Dtype) 个字节单元。同时, 你需要回忆一下,  SyncedMemory(size) 并不会立刻启动状态转移自动机申请内存/显存。只有在执行 Blob:: cpu_data()/gpu_data()/mutable_cpu_data()/mutable_gpu_data() 时才会申请。   
+
+这有点像函数式编程里的 Lazy 思想, 胡乱写 Blob 其实问题不大, 只要该 Blob 没有使用, 就不会有内存空间损耗。     
+
+```cpp
+template<typename Dtype>
+void Blob<Dtype>::ToProto(BlobProto* proto, bool write_diff){
+    proto->clear_shape();
+    proto->clear_data();
+    proto->clear_diff();
+    //do not use proto->shape() cause it is a const method
+    for (int i = 0; i < shape_.size(); i++)  proto->mutable_shape()->add_dim(shape_[i]);
+    const Dtype *data = cpu_data();
+    const Dtype *diff = cpu_diff();
+    for (int i = 0; i < count_; i++)  proto->add_data(data[i]);
+    if (write_diff)
+        for (int i = 0; i < count_; i++)  proto->add_diff(diff[i]);
+}
+```
+
+ToProto 里, 首次出现了如何向 protobuf 结构写数据的例子。以 proto->mutable_shape() 为例, 切记不要写成 proto->shape(), 因为 proto->shape() 是常量成员函数, 其内部不能修改. 这点同 Blob::cpu_data()/mutable_cpu_data() 的原理是一致的。  
+
+对于 message 的 repeated 类型, 使用 add_xxx() 函数可以填充数组数据。   
+
 ```cpp 
 template <typename Dtype>  
 void Blob<Dtype>::ShareData(const Blob& other) {  
@@ -331,44 +350,9 @@ void Blob<Dtype>::ShareDiff(const Blob& other) {
   diff_ = other.diff();  
 }  
 ```
+智能指针的使用, 赋值之后, 左侧指针原先指向的内存空间被释放.   
 
-2. Update()   
-Update() 函数实现的就是学习过程中的参数更新过程. 即参数的更新(包括 weight，bias), 更新的方式就是梯度下降法(减去对应的导数).     
-另外需要注意的是, 它只更新 CPU 或 GPU 上的数据.    
-```cpp
-/***
- *   Blobs 的参数是以 Blob<float> 或 Blob<double> 的数据形式存储的, 因此 
- *   我们不再定义 Blob<int> 或 Blob<unsigned int>.  
- */
-template <typename Dtype>  
-void Blob<Dtype>::Update() {  
-  // 更新当前活动设备的 data_.  
-  switch (data_->head()) {  
-  case SyncedMemory::HEAD_AT_CPU:
-    // 数据在 CPU 上，则在 CPU 上进行计算  
-    caffe_axpy<Dtype>(count_, Dtype(-1),  
-        static_cast<const Dtype*>(diff_->cpu_data()),  
-        static_cast<Dtype*>(data_->mutable_cpu_data()));  
-    break;  
-  case SyncedMemory::HEAD_AT_GPU:  
-  case SyncedMemory::SYNCED:  
-#ifndef CPU_ONLY
-    // 数据在 GPU 上，则在 GPU 上进行计算  
-    caffe_gpu_axpy<Dtype>(count_, Dtype(-1),  
-        static_cast<const Dtype*>(diff_->gpu_data()),  
-        static_cast<Dtype*>(data_->mutable_gpu_data()));  
-#else  
-    NO_GPU;  
-#endif  
-    break;  
-  default:  
-    LOG(FATAL) << "Syncedmem not initialized.";  
-  }  
-}  
-```
-3. sumsq_data()   
-计算 data_ 的元素平方和, 使用向量的内积实现.    
-注意: `caffe_cpu_dot()` 和 `caffe_gpu_dot()` 函数的返回值类型是不同的.  
+
 ```cpp
 template <typename Dtype>  
 Dtype Blob<Dtype>::sumsq_data() const {  
@@ -397,16 +381,14 @@ Dtype Blob<Dtype>::sumsq_data() const {
   return sumsq;  
 }  
 ```
-4. LegacyShape(int )   
-返回 Blob 的维度值(n, c, h, w).    
-**Note**:   
-因为如果对于一维向量或者二维矩阵, 这维度的值就会小于 4. 当 Blob 的维度小于 4 时, 位于左边的维度被自动填充为 1.   
-例如 bias Blob shape (1 x 1 x 1 x N), InnerProduct 的 weight Blob shape (1 x 1 x M x N). 
+计算 data_ 的元素平方和, 使用向量的内积实现. 注意: `caffe_cpu_dot()` 和 `caffe_gpu_dot()` 函数的返回值类型是不同的.  
+
+
 ```cpp
-// @brief 旧版本, data_ 维数不大于 4 时才能使用, 功能同 shape() 类似。
+// @brief 旧版本, data_ 维数不大于 4 时才能使用, 功能同 shape() 类似。 
 inline int LegacyShape(int index) const {
   CHECK_LE(num_axes(), 4)
-      << "Cannot use legacy accessors on Blobs with > 4 axes.";
+            << "Cannot use legacy accessors on Blobs with > 4 axes.";
   CHECK_LT(index, 4);
   CHECK_GE(index, -4);
   
@@ -420,8 +402,8 @@ inline int LegacyShape(int index) const {
   return shape(index);
 }
 ```
-5. ShapeEquals(const BlobProto& )
-检查两个 Blob 的维度是否相等. 注意调用的是 `LegacyShape()` 函数.     
+LegacyShape(int) 返回 Blob 的维度值(n, c, h, w). 对于一维向量或者二维矩阵, 维度的轴的个数小于 4. 但是为了保持计算接口的统一性, 如果 Blob 维度的轴数小于 4 时, 位于左边的维度被自动填充为 1. 例如 bias Blob shape (1 x 1 x 1 x N), InnerProduct 的 weight Blob shape (1 x 1 x M x N).   
+
 ```cpp
 // BlobProto 在 caffe.proto 中定义为一个 message，其字段有 
 // data, diff, shape, num, channels, height, width  
@@ -429,12 +411,7 @@ template <typename Dtype>
 bool Blob<Dtype>::ShapeEquals(const BlobProto& other) {  
   if (other.has_num() || other.has_channels() ||  
       other.has_height() || other.has_width()) {  
-    // 使用旧版本的 4D Blob 维度函数 --  
-    // shape 是 (num, channels, height, width).  
-    // Note: 不要使用 Blob::num(), Blob::channels()等这些方法, 因为它们的 index 是
-    // 从 blob shape 的 beginning 开始计算的, 而 legacy 版本的 index 是从 blob shape 
-    // 的 end 开始计算 shape 的. (e.g., bias Blob shape (1 x 1 x 1 x N),  
-    // IP layer weight Blob shape (1 x 1 x M x N)).  
+ 
     return shape_.size() <= 4 &&  
            LegacyShape(-4) == other.num() &&  
            LegacyShape(-3) == other.channels() &&  
@@ -448,65 +425,10 @@ bool Blob<Dtype>::ShapeEquals(const BlobProto& other) {
   return shape_ == other_shape;  
 }
 ```
-6. ToProto(BlobProto* , bool ) const    
-protobuf 的使用. 比如如何向一个 `repeated` 修饰的变量中添加值.   
-```
-template <typename Dtype>  
-void Blob<Dtype>::ToProto(BlobProto* proto, bool write_diff) const {  
-  proto->clear_shape();  
-  for (int i = 0; i < shape_.size(); ++i) {  
-    proto->mutable_shape()->add_dim(shape_[i]);  
-  }  
-  proto->clear_data();  
-  proto->clear_diff();  
-  const Dtype* data_vec = cpu_data();  
-  for (int i = 0; i < count_; ++i) {  
-    proto->add_data(data_vec[i]);    // 将 data 写入 proto  
-  }  
-  if (write_diff) {  
-    const Dtype* diff_vec = cpu_diff();  
-    for (int i = 0; i < count_; ++i) {  
-      proto->add_diff(diff_vec[i]);  // 将 diff 写入 proto  
-    }  
-  }  
-}  
-```
+检查两个 Blob 的维度是否相等. 注意调用的是 `LegacyShape()` 函数.     
 
-## Blob 相关的 Proto  
-1. BlobProto 
-用于保存为 protobuf 可以解析的二进制数据.     
-```proto
-message BlobProto {
-  optional BlobShape shape = 7;
-  repeated float data = 5 [packed = true];
-  repeated float diff = 6 [packed = true];
-  repeated double double_data = 8 [packed = true];
-  repeated double double_diff = 9 [packed = true];
 
-  // 4D dimensions -- deprecated.  Use "shape" instead.
-  optional int32 num = 1 [default = 0];
-  optional int32 channels = 2 [default = 0];
-  optional int32 height = 3 [default = 0];
-  optional int32 width = 4 [default = 0];
-}
-```
-2. BlobShape   
-用于指定一个 Blob 的 shape (dimensions).   
-```proto
-message BlobShape {
-  repeated int64 dim = 1 [packed = true];
-}
-```
-
-## 总结 && 问题   
-
-### Blob 的巧妙设计  
-
-reshape() 为 SyncedMemory 准备了 capacity*sizeof(Dtype) 个字节单元。   
-
-同时，你需要回忆一下，SyncedMemory(size)并不会立刻启动状态转移自动机申请内存/显存。   
-
-只有执行 Blob:: cpu_data/gpu_data/mutable_cpu_data/mutable_gpu_data，才会申请。   
-
-这有点像函数式编程里的 Lazy 思想，胡乱写 Blob 其实问题不大，只要该 Blob 没有使用，就不会有内存空间损耗。     
+## Caffe 可做的精简   
+- 移除 SyncedMemory 形式的 shape_data, 与 vector<int> shape_ 作用重复
+- 移除基本没什么用的 CopyFrom 函数
 
