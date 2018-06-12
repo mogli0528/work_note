@@ -6,7 +6,7 @@ using namespace cv;
 
 int main(int argc, char **argv)
 {
-	Mat image = imread(argv[1]);
+    Mat image = imread(argv[1]);
     if (image.empty()) {
         std::cout << "Open Image Failed!" << std::endl;
 
@@ -59,18 +59,12 @@ int main(int argc, char **argv)
     normalize(image_gamma, image_gamma, 0, 255, CV_MINMAX);  
     // 转换成 8 bit图像显示    
     convertScaleAbs(image_gamma, image_gamma);  
-	imshow("直方图均衡化图像增强效果", image_hist);
-	imshow("拉普拉斯算子图像增强效果", image_enhanced);
-	imshow("Log 变换图像增强效果", image_log);
-	imshow("Gamma 变换图像增强效果", image_gamma);
+    imshow("直方图均衡化图像增强效果", image_hist);
+    imshow("拉普拉斯算子图像增强效果", image_enhanced);
+    imshow("Log 变换图像增强效果", image_log);
+    imshow("Gamma 变换图像增强效果", image_gamma);
 
+    waitKey();
 
-	imshow("直方图均衡化图像增强效果", image_hist);
-	imshow("拉普拉斯算子图像增强效果", image_enhanced);
-	imshow("Log 变换图像增强效果", image_log);
-	imshow("Gamma 变换图像增强效果", image_gamma);
-    
-	waitKey();
-
-	return 0;
+    return 0;
 }

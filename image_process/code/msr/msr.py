@@ -1,25 +1,18 @@
 #coding=utf-8
 '''
-msr，msrcr算法的实现
-R(x,y) = ∑w(exp(log(I)-log(I*F)))  多尺度
+author:you2mu: https://github.com/you2mu/msrcr
+
+msr，msrcr 算法的实现:
+    R(x,y) = ∑w(exp(log(I)-log(I*F)))  多尺度
 '''
 
 import numpy as np
-import cv2
 import scipy.ndimage as image
 import scipy.fftpack as fft
 import matplotlib.pyplot as plt
 import argparse
 
-ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--image",  required=True, help="input image") 
-args = vars(ap.parse_args())
-print(args["image"])
-
-img = image.imread(args["image"])
-img = np.double(img)
-
-def gaussian(r,c,sigma):  #r为高斯半径，sigma为高斯核
+def gaussian(r,c,sigma):  # r为高斯半径，sigma 为高斯核
     x, y = np.mgrid[-(r-1)/2:(r-1)/2+1,-(c-1)/2:(c-1)/2+1]
     gauss = (1/(2*np.pi*sigma**2))*np.exp(-(x**2+y**2)/(2*sigma))
     return gauss
@@ -34,17 +27,17 @@ def msr(i,kernel):
     R = np.log(i + 1) - np.log(R - min1 + 1)
     return R
 
-def main():
+def main(img):
     result = []
     r, c, _ = img.shape
     gauss15 = gaussian(r, c, 15)
-    # gauss80 = gaussian(r, c, 80)
-    gauss80 = gaussian(r, c, 120)
+    gauss80 = gaussian(r, c, 80)
+    # gauss80 = gaussian(r, c, 120)
     gauss250 = gaussian(r, c, 250)
     mg = img[:,:,0] + img[:,:,1] + img[:,:,2] 
-    for i in range(3):
+    for i in range(img.shape[2]):
         t = img[:,:,i]  
-        t = np.double(t)
+        t = t.astype(np.double)
         g = (np.log(125 * t + 1) - np.log(mg + 1)) * 46
         result15 = msr(t, gauss15)
         result80 = msr(t, gauss80)
@@ -63,10 +56,22 @@ def main():
        
         result.append(r)
     result = np.dstack((result[0], result[1], result[2]))
+    
     return result
 
-msrcr = main()
-cv2.imwrite("/home/klm/work/td_marco/images/coal_machine_deforg.png", msrcr)
-plt.imsave('out.jpg',msrcr)
-plt.imshow(msrcr)
-plt.show()
+
+if __name__ == "__main__":
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-i", "--image",  required=True, help="input image") 
+    args = vars(ap.parse_args())
+    print(args["image"])
+
+    img = image.imread(args["image"])
+    img = np.double(img)
+
+    msrcr = main(img)
+
+    plt.imsave('output.png', msrcr)
+    plt.imshow(msrcr)
+    plt.show()
