@@ -11,7 +11,7 @@
 - [nohup 的使用](./doc/nohup.md)   
  
 ## 安装系统必备    
-- [更换 ubuntu 软件下载源(163)](./doc/system_install/sourceslist.md)  
+- [Ubuntu 1404 更换软件下载源](./doc/system_install/sourceslist.md)  
 - [修改系统默认启动 ubuntu 或 windows](./doc/system_install/default_grub.md)  
 - [pip install 更换源](./doc/system_install/pip_install_source.md)  
 - [搜狗输入法的安装和卸载](./doc/system_install/sogou_install.md)  

@@ -37,7 +37,7 @@ def main(img):
     mg = img[:,:,0] + img[:,:,1] + img[:,:,2] 
     for i in range(img.shape[2]):
         t = img[:,:,i]  
-        t = t.astype(np.double)
+        t = t.astype(np.float64)
         g = (np.log(125 * t + 1) - np.log(mg + 1)) * 46
         result15 = msr(t, gauss15)
         result80 = msr(t, gauss80)
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     print(args["image"])
 
     img = image.imread(args["image"])
-    img = np.double(img)
+    img = np.float64(img)
 
     msrcr = main(img)
 
