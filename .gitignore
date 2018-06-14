@@ -60,3 +60,11 @@ build-*Default/
 build-*/
 build/
 *.user
+
+# image_process
+output.png
+out.png
+output.jpg
+out.jpg
+de*.jpg
+de*.png

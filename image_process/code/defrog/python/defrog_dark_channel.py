@@ -1,8 +1,13 @@
 #coding=utf-8
 '''
-何凯明博士的去雾文章和算法实现已经漫天飞了，我今天也就不啰里啰唆，直接给出自己 python 实现的完整版本，全部才 60 多行代码，简单易懂，并有简要注释，去雾效果也很不错。
+何凯明博士的去雾文章和算法实现已经漫天飞了，我今天也就不啰里啰唆， 
+直接给出自己 python 实现的完整版本，全部才 60 多行代码，简单易懂，
+并有简要注释，去雾效果也很不错。
 
-在这个 python 版本中，计算量最大的就是最小值滤波，纯 python 写的，慢，可以进一步使用 C优化，其他部分都是使用 numpy 和 opencv 的现成东东，效率还行。
+在这个 python 版本中，计算量最大的就是最小值滤波，纯 python 写的，
+慢，可以进一步使用 C 优化，其他部分都是使用 numpy 和 opencv 的现
+成东东，效率还行。
+
 '''
 
 import cv2
@@ -28,8 +33,9 @@ def zmMinFilterGray(src, r=7):
     return zmMinFilterGray(res, r-1)  
  
 def guidedfilter(I, p, r, eps):
-    '''引导滤波，直接参考网上的 matlab 代码'''
-    height, width = I.shape
+    '''
+        引导滤波，直接参考网上的 matlab 代码
+    '''
     m_I = cv2.boxFilter(I, -1, (r,r))
     m_p = cv2.boxFilter(p, -1, (r,r))
     m_Ip = cv2.boxFilter(I*p, -1, (r,r))
@@ -45,31 +51,50 @@ def guidedfilter(I, p, r, eps):
     m_b = cv2.boxFilter(b, -1, (r,r))
     return m_a*I+m_b
  
-def getV1(m, r, eps, w, maxV1):  #输入rgb图像，值范围[0,1]
-    '''计算大气遮罩图像 V1 和光照值 A, V1 = 1-t/A'''
-    V1 = np.min(m,2)                                         #得到暗通道图像
-    V1 = guidedfilter(V1, zmMinFilterGray(V1,7), r, eps)     #使用引导滤波优化
+def getV1(src, r, eps, w, maxV1):  #输入rgb图像，值范围[0,1]
+    ''' 
+        计算大气遮罩图像(透视率图) V1 和光照值 A, V1 = 1 - t/A
+    '''
+    
+    # 得到暗通道图像
+    V1 = np.min(src, 2) 
+    
+    # 使用引导滤波优化
+    V1 = guidedfilter(V1, zmMinFilterGray(V1,7), r, eps) 
+    
+    # 计算大气光照 A
     bins = 2000
-    ht = np.histogram(V1, bins)                              #计算大气光照A
-    d = np.cumsum(ht[0])/float(V1.size)
+    ht = np.histogram(V1, bins)    
+    d = np.cumsum(ht[0])/float(V1.size) # V1 的均值
     for lmax in range(bins-1, 0, -1):
-        if d[lmax]<=0.999:
+        if d[lmax] <= 0.999:   # 从暗通道图中按照亮度的大小取前 0.1% 的像素。
             break
-    A  = np.mean(m,2)[V1>=ht[1][lmax]].max()
+    print (np.cumsum(ht[0])[:20])
+    print(ht[0])
+    A  = np.mean(src, 2)[V1>=ht[1][lmax]].max() # np.mean(src, 2) 是每个像素点三个通道的均值
          
-    V1 = np.minimum(V1*w, maxV1)                   # 对值范围进行限制
+    V1 = np.minimum(V1*w, maxV1)  # 对值范围进行限制
      
-    return V1,A
+    return V1, A
  
-def deHaze(m, r=81, eps=0.001, w=0.95, maxV1=0.80, bGamma=False):
-    Y = np.zeros(m.shape)
-    V1,A = getV1(m, r, eps, w, maxV1)     # 得到遮罩图像和大气光照
+def deHaze(src, r=81, eps=0.001, w=0.95, maxV1=0.80, bGamma=False):
+    '''
+        图像被归一化到 [0-1] 之间.  
+        去雾公式 J(x) = ( I(x) - V1 ) / ( 1 - V1/A ) 
+    '''
+
+    dst = np.zeros(src.shape)
+    V1, A = getV1(src, r, eps, w, maxV1)     # 得到遮罩图像(透视率图)和大气光照
+    
     for k in np.arange(3):
-        Y[:,:,k] = (m[:,:,k]-V1)/(1-V1/A) # 颜色校正
-    Y =  np.clip(Y, 0, 1)
+        dst[:,:,k] = (src[:,:,k] - V1)/(1-V1/A)  # 颜色校正
+
+    dst =  np.clip(dst, 0, 1)
+
     if bGamma:
-        Y = Y**(np.log(0.5)/np.log(Y.mean()))  # gamma校正,默认不进行该操作
-    return Y
+        dst = dst**(np.log(0.5)/np.log(dst.mean()))  # gamma校正,默认不进行该操作
+    
+    return dst
  
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()
@@ -84,5 +109,6 @@ if __name__ == '__main__':
     result = deHaze(cv2.imread(image)/255.0)*255
     cv2.imwrite(output, result)
     cv2.imshow("result", result.astype(np.uint8))
-    cv2.waitKey(0)
+    if cv2.waitKey(0):
+        cv2.destroyAllWindows()
     # cv2.imwrite(image[:image.rfind('.')]+"_out.png", result)
