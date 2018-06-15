@@ -9,6 +9,26 @@
 ## 图像去雾算法   
 - [ 暗通道先验去雾算法原理及C++代码实现 - 何凯明](./doc/defrog/haze_dark_channel.md)   
 
+@article{JHKIM_JVCI_2013, 
+author = {Jin-Hwan Kim and Won-Dong Jang and Jae-Young Sim and Chang-Su Kim}, 
+title = {Optimized contrast enhancement for real-time image and video dehazing}, 
+journal = {J. Vis. Commun. Image R.}, 
+volume = {24}, 
+number = {3}, 
+pages = {410--425}, 
+month = Feb, 
+year = {2013} 
+}
+
+1: 只处理24位图像。    
+2: Src和Dest可以相同，相同和不同时速度无差异。    
+3: 采用了下采样优化算法，在保留去雾效果的同时，提高了算法的实时性。    
+4: 下采样参数不易小于0.5，否则用于缩放所占用的时间可能会比小图计算透射率带来的时间收益还大，建议取值0.25。     
+
+- [OpenCV implementation of "A Fast Semi-Inverse Approach to Detect and Remove the Haze from a Single Image - ACCV 2010", Restorration works almost perfectly, it ends up being a little darker in places due to the nature of the blending I used](https://github.com/eokeeffe/FastSemiInverse-Dehazing)   
+- [A cross-platform image dehazing/defogging mobile app implemented with React Native, Djinni and OpenCV, based on dark channel prior and fast guided filter.](https://github.com/yenshih/Dehaze)   
+- [This MATLAB code is an implementation of the single image dehazing algorithm proposed in the paper "A Fast Single Image Haze Removal Algorithm using Color Attenuation Prior" by Qingsong Zhu, Jiaming Mai and Ling Shao](https://github.com/JiamingMai/Color-Attenuation-Prior-Dehazing)     
+
 ## 图像增强   
 - [OpenCV 图像增强算法实现 - 直方图均衡化、拉普拉斯、Log、Gamma ](./doc/enhance/enhance_opencv.md)  
 - [Retinex 图像增强算法实现](./doc/enhance/enhance_retinex.md)  

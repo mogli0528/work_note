@@ -63,8 +63,11 @@ build/
 
 # image_process
 output.png
-out.png
+output.avi
 output.jpg
+out.png
+out.avi
 out.jpg
 de*.jpg
 de*.png
+de*.avi

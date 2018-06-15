@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
-project( haze-remove )
-
+project( dehazing_korea )
 SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2  -std=c++11" )
+
 SET( CMAKE_BUILD_TYPE Release )
 
 set(LINKER_LIBS "")  
@@ -18,5 +18,5 @@ message("source files: ${SRCS}")
 message("LINKER_LIBS: ${LINKER_LIBS}")
 
 # Target
-add_executable( haze-remove ${SRCS})
-target_link_libraries( haze-remove ${LINKER_LIBS}) 
+add_executable( dehazing_korea ${SRCS})
+target_link_libraries( dehazing_korea ${LINKER_LIBS}) 

@@ -1,8 +1,21 @@
-原文：[博客文章地址](http://loliko.me/archives/single-image-haze-removal-using-dark-channel-prior.html/)
+# 基于暗通道先验的去雾算法  
+
+> opencv 库版本有 2.4.10 
+
+linux 版本 , windows 应该也可以直接使用, 没有用平台相关的东西.  
+
+程序中使用了默认路径, 但是 windows 和 linux 的路径分隔符不同, 用户应该在命令行自己指定一个图片路径. 
+
+Example
+
+./haze-remove /home/image/beijing.jpg 
+
+
+## 原文：[博客文章地址](http://loliko.me/archives/single-image-haze-removal-using-dark-channel-prior.html/)
 
 > 用的 opencv 库版本有 2.89 和 3.10 (理论上来说代码一定是能编译能过的)。  
  
-#前言
+## 前言
 
 目前的图像去雾算法很多，思路基本上两条：   
 
@@ -19,7 +32,8 @@
 上式经过化简之后可得到：![][3]  
 其实就是已知I(x)，然后通过分析I(x)，算出J(x)。
 
-##暗通道
+## 暗通道
+
 首先看什么是暗通道，在何的论文中，对于暗通道的定义是：在无雾图像中，在大多数局部区域内，其中的一些像素会在某个通道内含有非常低的像素值(换句话说也就是，在某个区域内，所有像素的各个通道的最小值的像素值非常小（0~16）)。这些像素值的产生主要是由于阴影（shadow）, 彩色物体（colorful object）（某一个通道的值太大，导致其他通道的值小）, 黑色物体等。  
 
 而在含雾图像中，因为雾气的存在，暗通道并不是全黑，比如下图：   
