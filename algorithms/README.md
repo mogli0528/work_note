@@ -4,6 +4,7 @@
 ## 算法优化   
 - [SEE 指令集优化算法](./doc/note/run_fast/sse.md)    
 - [常用的算法优化方法](./doc/note/run_fast/optimize_method.md)    
+- [算法优化 - 让你的软件飞起来](./doc/note/run_fast/make_your_app_flys.md)    
 
 ## tutorials
 [1. 扩展卡尔曼滤波——飞控应用资料_英文版](./doc/note/kalman_tutorial/EKF_Tutorial.html)   

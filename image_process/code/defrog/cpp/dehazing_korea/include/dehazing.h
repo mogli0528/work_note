@@ -85,9 +85,9 @@ private:
 	float*	m_pfGuidedLUT;		//Guided filter 내의 gaussian weight를 위한 LUT
 	float	m_fGSigma;			//Guided filter 내의 gaussian weight에 대한 sigma
 
-	int		m_anAirlight[3];	// atmospheric light value
-	uchar	m_pucGammaLUT[256];	//감마 보정을 위한 LUT
-	float	m_pfExpLUT[256];	//Transmission 계산시, 픽셀 차이에 대한 weight용 LUT
+	int		m_anAirlight[3];	// A, atmospheric light value
+	uchar	m_pucGammaLUT[256];	// Gamma 校正 LUT
+	float	m_pfExpLUT[256];	// Transmission 계산시, 픽셀 차이에 대한 weight용 LUT
 
 	int		m_nAirlight;		//안개값(grey)
 	

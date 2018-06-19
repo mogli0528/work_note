@@ -1,15 +1,14 @@
-﻿/*
-	The main function is an example of video dehazing 
-	The core algorithm is in "dehazing.cpp," "guidedfilter.cpp," and "transmission.cpp". 
-	You may modify the code to improve the results.
-
-	The detailed description of the algorithm is presented
-	in "http://mcl.korea.ac.kr/projects/dehazing". See also 
-	J.-H. Kim, W.-D. Jang, Y. Park, D.-H. Lee, J.-Y. Sim, C.-S. Kim, "Temporally
-	coherent real-time video dehazing," in Proc. IEEE ICIP, 2012.
-
-	Last updated: 2013-02-14
-	Author: Jin-Hwan, Kim.
+﻿/**
+ * The main function is an example of video dehazing 
+ * 
+ * The core algorithm is in "dehazing.cpp," "guidedfilter.cpp," and 
+ * "transmission.cpp".  You may modify the code to improve the results.    
+ * 
+ * The detailed description of the algorithm is presented
+ * in "http://mcl.korea.ac.kr/projects/dehazing".     
+ * 
+ * Last updated: 2013-02-14
+ * Author: Jin-Hwan, Kim.
  */
 
 #include "dehazing.h"

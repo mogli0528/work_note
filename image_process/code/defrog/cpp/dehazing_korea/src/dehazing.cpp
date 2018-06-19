@@ -1,23 +1,19 @@
-﻿/*
-    This source file contains dehazing construnctor, destructor, and 
-    dehazing functions. 
+﻿/**
+ *   This source file contains dehazing construnctor, destructor, and 
+ *   dehazing functions. 
 
-    The detailed description of the algorithm is presented
-    in "http://mcl.korea.ac.kr/projects/dehazing". See also 
-    J.-H. Kim, W.-D. Jang, Y. Park, D.-H. Lee, J.-Y. Sim, C.-S. Kim, "Temporally
-    coherent real-time video dehazing," in Proc. IEEE ICIP, 2012.
+ *   The detailed description of the algorithm is presented
+ *   in "http://mcl.korea.ac.kr/projects/dehazing".  
 
-    Last updated: 2013-02-06
-    Author: Jin-Hwan, Kim.
+ *   Last updated: 2013-02-06
+ *   Author: Jin-Hwan, Kim.
  */
 #include "dehazing.h"
 
 dehazing::dehazing(){}
 
 /* 
-    Constructor: dehazing constructor
-
-    Parameters: 
+    \param: 
         nW - width of input image
         nH - height of input image
         bPrevFlag - boolean for temporal cohenrence of video dehazing
@@ -25,60 +21,57 @@ dehazing::dehazing(){}
 */
 dehazing::dehazing(int nW, int nH, bool bPrevFlag, bool bPosFlag)
 {
-    m_nWid			= nW;
-    m_nHei			= nH;
+    m_nWid = nW;
+    m_nHei = nH;
 
     // Flags for temporal coherence & post processing
-    m_bPreviousFlag	= bPrevFlag;
-    m_bPostFlag		= bPosFlag;
+    m_bPreviousFlag = bPrevFlag;
+    m_bPostFlag = bPosFlag;
 
-    m_fLambda1		= 5.0f;
-    m_fLambda2		= 1.0f;
+    m_fLambda1 = 5.0f;
+    m_fLambda2 = 1.0f;
 
     // Transmission estimation block size
-    m_nTBlockSize		= 40;
+    m_nTBlockSize = 40;
 
     // Guided filter block size, step size(sampling step), & LookUpTable parameter
-    m_nGBlockSize		= 40;
-    m_nStepSize			= 2;
-    m_fGSigma			= 10.0f;
+    m_nGBlockSize = 40;
+    m_nStepSize = 2;
+    m_fGSigma = 10.0f;
 
     // to specify the region of atmospheric light estimation
-    m_nTopLeftX		= 0;
-    m_nTopLeftY		= 0;
-    m_nBottomRightX	= m_nWid;
-    m_nBottomRightY	= m_nHei;
+    m_nTopLeftX = 0;
+    m_nTopLeftY = 0;
+    m_nBottomRightX = m_nWid;
+    m_nBottomRightY = m_nHei;
 
-    m_pfSmallTransP	= new float [320*240]; // previous trans. (video only)
-    m_pfSmallTrans	= new float [320*240]; // init trans.
-    m_pfSmallTransR	= new float [320*240]; // refined trans.
-    m_pnSmallYImg	= new int [320*240];   	
-    m_pnSmallYImgP	= new int [320*240];
-    m_pfSmallInteg	= new float[320*240];
-    m_pfSmallDenom	= new float[320*240];
-    m_pfSmallY		= new float[320*240];
+    m_pfSmallTransP = new float [320*240]; // previous trans. (video only)
+    m_pfSmallTrans = new float [320*240];  // init trans.
+    m_pfSmallTransR = new float [320*240]; // refined trans.
+    m_pnSmallYImg = new int [320*240];    
+    m_pnSmallYImgP = new int [320*240];
+    m_pfSmallInteg = new float[320*240];
+    m_pfSmallDenom = new float[320*240];
+    m_pfSmallY = new float[320*240];
 
-    m_pfTransmission	= new float [m_nWid*m_nHei];
-    m_pfTransmissionR	= new float[m_nWid*m_nHei];
-    m_pfTransmissionP	= new float[m_nWid*m_nHei];
-    m_pnYImg			= new int [m_nWid*m_nHei];
-    m_pnYImgP			= new int [m_nWid*m_nHei];
-    m_pfInteg			= new float[m_nWid*m_nHei];
-    m_pfDenom			= new float[m_nWid*m_nHei];
-    m_pfY				= new float[m_nWid*m_nHei];
+    m_pfTransmission = new float [m_nWid*m_nHei];
+    m_pfTransmissionR = new float[m_nWid*m_nHei];
+    m_pfTransmissionP = new float[m_nWid*m_nHei];
+    m_pnYImg = new int [m_nWid*m_nHei];
+    m_pnYImgP = new int [m_nWid*m_nHei];
+    m_pfInteg = new float[m_nWid*m_nHei];
+    m_pfDenom = new float[m_nWid*m_nHei];
+    m_pfY  = new float[m_nWid*m_nHei];
 
-    m_pfSmallPk_p		= new float[m_nGBlockSize*m_nGBlockSize];
-    m_pfSmallNormPk		= new float[m_nGBlockSize*m_nGBlockSize];
-    m_pfPk_p			= new float[m_nGBlockSize*m_nGBlockSize];
-    m_pfNormPk			= new float[m_nGBlockSize*m_nGBlockSize];	
-    m_pfGuidedLUT		= new float[m_nGBlockSize*m_nGBlockSize];	
+    m_pfSmallPk_p = new float[m_nGBlockSize*m_nGBlockSize];
+    m_pfSmallNormPk = new float[m_nGBlockSize*m_nGBlockSize];
+    m_pfPk_p = new float[m_nGBlockSize*m_nGBlockSize];
+    m_pfNormPk = new float[m_nGBlockSize*m_nGBlockSize]; 
+    m_pfGuidedLUT = new float[m_nGBlockSize*m_nGBlockSize]; 
 }
 
-
 /* 
-    Constructor: dehazing constructor using various options
-
-    Parameters: 
+    \param: 
         nW - width of input image
         nH - height of input image
         nTBLockSize - block size for transmission estimation 
@@ -90,71 +83,71 @@ dehazing::dehazing(int nW, int nH, bool bPrevFlag, bool bPosFlag)
 */
 dehazing::dehazing(int nW, int nH, int nTBlockSize, bool bPrevFlag, bool bPosFlag, float fL1, float fL2, int nGBlock)
 {
-    m_nWid			= nW;
-    m_nHei			= nH;
+    m_nWid = nW;
+    m_nHei = nH;
 
     // Flags for temporal coherence & post processing
-    m_bPreviousFlag	= bPrevFlag;
-    m_bPostFlag		= bPosFlag;
+    m_bPreviousFlag = bPrevFlag;
+    m_bPostFlag = bPosFlag;
 
     // parameters for each cost (loss cost, temporal coherence cost)
-    m_fLambda1		= fL1;
-    m_fLambda2		= fL2;
+    m_fLambda1 = fL1;
+    m_fLambda2 = fL2;
 
     // block size for transmission estimation
-    m_nTBlockSize		= nTBlockSize;
+    m_nTBlockSize = nTBlockSize;
 
     // Guided filter block size, step size(sampling step), & LookUpTable parameter
-    m_nGBlockSize		= nGBlock;
-    m_nStepSize			= 2;	
-    m_fGSigma			= 10.0f;
+    m_nGBlockSize = nGBlock;
+    m_nStepSize = 2; 
+    m_fGSigma = 10.0f;
 
     // to specify the region of atmospheric light estimation
-    m_nTopLeftX		= 0;
-    m_nTopLeftY		= 0;
-    m_nBottomRightX	= m_nWid;
-    m_nBottomRightY	= m_nHei;
+    m_nTopLeftX = 0;
+    m_nTopLeftY = 0;
+    m_nBottomRightX = m_nWid;
+    m_nBottomRightY = m_nHei;
 
-    m_pfSmallTransP		= new float [320*240];
-    m_pfSmallTrans		= new float [320*240];
-    m_pfSmallTransR		= new float [320*240];
-    m_pnSmallYImg		= new int [320*240];
-    m_pnSmallYImgP		= new int [320*240];
+    m_pfSmallTransP = new float [320*240];
+    m_pfSmallTrans = new float [320*240];
+    m_pfSmallTransR = new float [320*240];
+    m_pnSmallYImg = new int [320*240];
+    m_pnSmallYImgP = new int [320*240];
 
-    m_pnSmallRImg		= new int [320*240];
-    m_pnSmallRImgP		= new int [320*240];
-    m_pnSmallGImg		= new int [320*240];
-    m_pnSmallGImgP		= new int [320*240];
-    m_pnSmallBImg		= new int [320*240];
-    m_pnSmallBImgP		= new int [320*240];
+    m_pnSmallRImg = new int [320*240];
+    m_pnSmallRImgP = new int [320*240];
+    m_pnSmallGImg = new int [320*240];
+    m_pnSmallGImgP = new int [320*240];
+    m_pnSmallBImg = new int [320*240];
+    m_pnSmallBImgP = new int [320*240];
 
-    m_pfSmallInteg		= new float[320*240];
-    m_pfSmallDenom		= new float[320*240];
-    m_pfSmallY			= new float[320*240];
+    m_pfSmallInteg = new float[320*240];
+    m_pfSmallDenom = new float[320*240];
+    m_pfSmallY = new float[320*240];
 
-    m_pfTransmission	= new float [m_nWid*m_nHei];
-    m_pfTransmissionR	= new float[m_nWid*m_nHei];
-    m_pfTransmissionP	= new float[m_nWid*m_nHei];
-    m_pnYImg			= new int [m_nWid*m_nHei];
-    m_pnYImgP			= new int [m_nWid*m_nHei];
+    m_pfTransmission = new float [m_nWid*m_nHei];
+    m_pfTransmissionR = new float[m_nWid*m_nHei];
+    m_pfTransmissionP = new float[m_nWid*m_nHei];
+    m_pnYImg = new int [m_nWid*m_nHei];
+    m_pnYImgP = new int [m_nWid*m_nHei];
 
-    m_pnRImg			= new int [m_nWid*m_nHei];
-    m_pnGImg			= new int [m_nWid*m_nHei];
-    m_pnBImg			= new int [m_nWid*m_nHei];
+    m_pnRImg = new int [m_nWid*m_nHei];
+    m_pnGImg = new int [m_nWid*m_nHei];
+    m_pnBImg = new int [m_nWid*m_nHei];
 
-    m_pnRImgP			= new int [m_nWid*m_nHei];
-    m_pnGImgP			= new int [m_nWid*m_nHei];
-    m_pnBImgP			= new int [m_nWid*m_nHei];
+    m_pnRImgP = new int [m_nWid*m_nHei];
+    m_pnGImgP = new int [m_nWid*m_nHei];
+    m_pnBImgP = new int [m_nWid*m_nHei];
 
-    m_pfInteg			= new float[m_nWid*m_nHei];
-    m_pfDenom			= new float[m_nWid*m_nHei];
-    m_pfY				= new float[m_nWid*m_nHei];
+    m_pfInteg = new float[m_nWid*m_nHei];
+    m_pfDenom = new float[m_nWid*m_nHei];
+    m_pfY  = new float[m_nWid*m_nHei];
 
-    m_pfSmallPk_p		= new float[m_nGBlockSize*m_nGBlockSize];
-    m_pfSmallNormPk		= new float[m_nGBlockSize*m_nGBlockSize];
-    m_pfPk_p			= new float[m_nGBlockSize*m_nGBlockSize];
-    m_pfNormPk			= new float[m_nGBlockSize*m_nGBlockSize];	
-    m_pfGuidedLUT		= new float[m_nGBlockSize*m_nGBlockSize];	
+    m_pfSmallPk_p = new float[m_nGBlockSize*m_nGBlockSize];
+    m_pfSmallNormPk = new float[m_nGBlockSize*m_nGBlockSize];
+    m_pfPk_p = new float[m_nGBlockSize*m_nGBlockSize];
+    m_pfNormPk = new float[m_nGBlockSize*m_nGBlockSize]; 
+    m_pfGuidedLUT = new float[m_nGBlockSize*m_nGBlockSize]; 
 }
 
 dehazing::~dehazing(void)
@@ -231,60 +224,62 @@ dehazing::~dehazing(void)
     if(m_pfGuidedLUT != NULL)
         delete [] m_pfGuidedLUT;
 
-    m_pfSmallTransP		= NULL;
-    m_pfSmallTrans		= NULL;
-    m_pfSmallTransR		= NULL;
-    m_pnSmallYImg		= NULL;
-    m_pnSmallYImgP		= NULL;
+    m_pfSmallTransP = NULL;
+    m_pfSmallTrans = NULL;
+    m_pfSmallTransR = NULL;
+    m_pnSmallYImg = NULL;
+    m_pnSmallYImgP = NULL;
 
-    m_pnSmallRImg		= NULL;
-    m_pnSmallRImgP		= NULL;
-    m_pnSmallGImg		= NULL;
-    m_pnSmallGImgP		= NULL;
-    m_pnSmallBImg		= NULL;
-    m_pnSmallBImgP		= NULL;
+    m_pnSmallRImg = NULL;
+    m_pnSmallRImgP = NULL;
+    m_pnSmallGImg = NULL;
+    m_pnSmallGImgP = NULL;
+    m_pnSmallBImg = NULL;
+    m_pnSmallBImgP = NULL;
 
-    m_pfSmallInteg		= NULL;
-    m_pfSmallDenom		= NULL;
-    m_pfSmallY			= NULL;
+    m_pfSmallInteg = NULL;
+    m_pfSmallDenom = NULL;
+    m_pfSmallY = NULL;
 
-    m_pfTransmission	= NULL;
-    m_pfTransmissionR	= NULL;
-    m_pfTransmissionP	= NULL;
-    m_pnYImg			= NULL;
-    m_pnYImgP			= NULL;
+    m_pfTransmission = NULL;
+    m_pfTransmissionR = NULL;
+    m_pfTransmissionP = NULL;
+    m_pnYImg = NULL;
+    m_pnYImgP = NULL;
 
-    m_pnRImg			= NULL;
-    m_pnGImg			= NULL;
-    m_pnBImg			= NULL;
+    m_pnRImg = NULL;
+    m_pnGImg = NULL;
+    m_pnBImg = NULL;
 
-    m_pnRImgP			= NULL;
-    m_pnGImgP			= NULL;
-    m_pnBImgP			= NULL;
+    m_pnRImgP = NULL;
+    m_pnGImgP = NULL;
+    m_pnBImgP = NULL;
 
-    m_pfInteg			= NULL;
-    m_pfDenom			= NULL;
-    m_pfY				= NULL;
+    m_pfInteg = NULL;
+    m_pfDenom = NULL;
+    m_pfY  = NULL;
 
-    m_pfSmallPk_p		= NULL;
-    m_pfSmallNormPk		= NULL;
-    m_pfPk_p			= NULL;
-    m_pfNormPk			= NULL;	
-    m_pfGuidedLUT		= NULL;	
+    m_pfSmallPk_p = NULL;
+    m_pfSmallNormPk = NULL;
+    m_pfPk_p = NULL;
+    m_pfNormPk = NULL; 
+    m_pfGuidedLUT = NULL; 
 }
 
 /*
-    Function: AirlightEstimation
-    Description: estimate the atmospheric light value in a hazy image.
-                 it divides the hazy image into 4 sub-block and selects the optimal block, 
-                 which has minimum std-dev and maximum average value.
-                 *Repeat* the dividing process until the size of sub-block is smaller than 
-                 pre-specified threshold value. Then, We select the most similar value to
-                 the pure white.
-                 IT IS A RECURSIVE FUNCTION.
-    Parameter: 
+    \brief: estimate the atmospheric light value in a hazy image.
+            
+            It divides the hazy image into 4 sub-block and selects the optimal block, 
+            which has minimum std-dev and maximum average value.
+
+            *Repeat* the dividing process until the size of sub-block is smaller than 
+            pre-specified threshold value. Then, We select the most similar value to
+            the pure white.
+            
+            IT IS A RECURSIVE FUNCTION.
+    \param: 
         imInput - input image (cv iplimage)
-    Return:
+    \return:
         m_anAirlight: estimated atmospheric light value
  */
 void dehazing::AirlightEstimation(IplImage* imInput)
@@ -454,11 +449,10 @@ void dehazing::AirlightEstimation(IplImage* imInput)
 
 
 /*
-    Function: RestoreImage
-    Description: Dehazed the image using estimated transmission and atmospheric light.
-    Parameter: 
+    \brief: Dehazed the image using estimated transmission and atmospheric light.
+    \param: 
         imInput - Input hazy image.
-    Return:
+    \return:
         imOutput - Dehazed image.
  */
 void dehazing::RestoreImage(IplImage* imInput, IplImage* imOutput)
@@ -484,9 +478,9 @@ void dehazing::RestoreImage(IplImage* imInput, IplImage* imOutput)
         for(nY=0; nY<m_nHei; nY++)
         {
             for(nX=0; nX<m_nWid; nX++)
-            {			
+            { 
                 // (3) Gamma correction using LUT
-                imOutput->imageData[nY*nStep+nX*3]	 = (uchar)m_pucGammaLUT[(uchar)CLIP((((float)((uchar)imInput->imageData[nY*nStep+nX*3+0])-fA_B)/CLIP_Z(m_pfTransmissionR[nY*m_nWid+nX]) + fA_B))];
+                imOutput->imageData[nY*nStep+nX*3]  = (uchar)m_pucGammaLUT[(uchar)CLIP((((float)((uchar)imInput->imageData[nY*nStep+nX*3+0])-fA_B)/CLIP_Z(m_pfTransmissionR[nY*m_nWid+nX]) + fA_B))];
                 imOutput->imageData[nY*nStep+nX*3+1] = (uchar)m_pucGammaLUT[(uchar)CLIP((((float)((uchar)imInput->imageData[nY*nStep+nX*3+1])-fA_G)/CLIP_Z(m_pfTransmissionR[nY*m_nWid+nX]) + fA_G))];
                 imOutput->imageData[nY*nStep+nX*3+2] = (uchar)m_pucGammaLUT[(uchar)CLIP((((float)((uchar)imInput->imageData[nY*nStep+nX*3+2])-fA_R)/CLIP_Z(m_pfTransmissionR[nY*m_nWid+nX]) + fA_R))];
             }
@@ -496,10 +490,10 @@ void dehazing::RestoreImage(IplImage* imInput, IplImage* imOutput)
 
 /*
     Function: PostProcessing
-    Description: deblocking for blocking artifacts of mpeg video sequence.
-    Parameter: 
+    \brief: deblocking for blocking artifacts of mpeg video sequence.
+    \param: 
         imInput - Input hazy frame.
-    Return:
+    \eturn:
         imOutput - Dehazed frame.
  */
 void dehazing::PostProcessing(IplImage* imInput, IplImage* imOutput)
@@ -520,21 +514,21 @@ void dehazing::PostProcessing(IplImage* imInput, IplImage* imOutput)
     for(nY=0; nY<m_nHei; nY++)
     {
         for(nX=0; nX<m_nWid; nX++)
-        {			
+        { 
             // (1)  I' = (I - Airlight)/Transmission + Airlight
-            imOutput->imageData[nY*nStep+nX*3]	 = (uchar)m_pucGammaLUT[(uchar)CLIP((((float)((uchar)imInput->imageData[nY*nStep+nX*3+0])-fA_B)/CLIP_Z(m_pfTransmissionR[nY*m_nWid+nX]) + fA_B))];
+            imOutput->imageData[nY*nStep+nX*3]  = (uchar)m_pucGammaLUT[(uchar)CLIP((((float)((uchar)imInput->imageData[nY*nStep+nX*3+0])-fA_B)/CLIP_Z(m_pfTransmissionR[nY*m_nWid+nX]) + fA_B))];
             imOutput->imageData[nY*nStep+nX*3+1] = (uchar)m_pucGammaLUT[(uchar)CLIP((((float)((uchar)imInput->imageData[nY*nStep+nX*3+1])-fA_G)/CLIP_Z(m_pfTransmissionR[nY*m_nWid+nX]) + fA_G))];
             imOutput->imageData[nY*nStep+nX*3+2] = (uchar)m_pucGammaLUT[(uchar)CLIP((((float)((uchar)imInput->imageData[nY*nStep+nX*3+2])-fA_R)/CLIP_Z(m_pfTransmissionR[nY*m_nWid+nX]) + fA_R))];
 
             // if transmission is less than 0.4, we apply post processing because more dehazed block yields more artifacts
             if( nX > nDisPos+nNumStep && m_pfTransmissionR[nY*m_nWid+nX-nDisPos] < 0.4 )
             {
-                nAD0 = (float)((int)((uchar)imOutput->imageData[nY*nStep+(nX-nDisPos)*3])	- (int)((uchar)imOutput->imageData[nY*nStep+(nX-nDisPos-1)*3]));
-                nAD1 = (float)((int)((uchar)imOutput->imageData[nY*nStep+(nX-nDisPos)*3+1])	- (int)((uchar)imOutput->imageData[nY*nStep+(nX-nDisPos-1)*3+1]));
-                nAD2 = (float)((int)((uchar)imOutput->imageData[nY*nStep+(nX-nDisPos)*3+2])	- (int)((uchar)imOutput->imageData[nY*nStep+(nX-nDisPos-1)*3+2]));
+                nAD0 = (float)((int)((uchar)imOutput->imageData[nY*nStep+(nX-nDisPos)*3]) - (int)((uchar)imOutput->imageData[nY*nStep+(nX-nDisPos-1)*3]));
+                nAD1 = (float)((int)((uchar)imOutput->imageData[nY*nStep+(nX-nDisPos)*3+1]) - (int)((uchar)imOutput->imageData[nY*nStep+(nX-nDisPos-1)*3+1]));
+                nAD2 = (float)((int)((uchar)imOutput->imageData[nY*nStep+(nX-nDisPos)*3+2]) - (int)((uchar)imOutput->imageData[nY*nStep+(nX-nDisPos-1)*3+2]));
                 
                 if(std::max(std::max(abs(nAD0),abs(nAD1)),abs(nAD2)) < 20 
-                    &&	 abs((uchar)imOutput->imageData[nY*nStep+(nX-nDisPos-1)*3+0]-(uchar)imOutput->imageData[nY*nStep+(nX-nDisPos-1-nNumStep)*3+0])
+                    &&  abs((uchar)imOutput->imageData[nY*nStep+(nX-nDisPos-1)*3+0]-(uchar)imOutput->imageData[nY*nStep+(nX-nDisPos-1-nNumStep)*3+0])
                     +abs((uchar)imOutput->imageData[nY*nStep+(nX-nDisPos-1)*3+1]-(uchar)imOutput->imageData[nY*nStep+(nX-nDisPos-1-nNumStep)*3+1])
                     +abs((uchar)imOutput->imageData[nY*nStep+(nX-nDisPos-1)*3+2]-(uchar)imOutput->imageData[nY*nStep+(nX-nDisPos-1-nNumStep)*3+2])
                     +abs((uchar)imOutput->imageData[nY*nStep+(nX-nDisPos)*3+0]-(uchar)imOutput->imageData[nY*nStep+(nX-nDisPos-1+nNumStep)*3+0])
@@ -555,13 +549,12 @@ void dehazing::PostProcessing(IplImage* imInput, IplImage* imOutput)
 
 
 /*
-    Function: HazeRemoval
-    Description: haze removal process
+    \brief: haze removal process
 
-    Parameter:
+    \param:
         imInput - input image
         nFrame - frame number
-    Return:
+    \return:
         imOutput - output image
  */
 void dehazing::HazeRemoval(IplImage* imInput, IplImage* imOutput, int nFrame)
@@ -582,7 +575,7 @@ void dehazing::HazeRemoval(IplImage* imInput, IplImage* imOutput, int nFrame)
         
         AirlightEstimation(imAir);
 
-        // Y value of atmosperic light
+        // Y value of A(atmosperic light)
         m_nAirlight = (((int)(uchar)m_anAirlight[0]*25 + (int)(uchar)m_anAirlight[1]*129 + (int)(uchar)m_anAirlight[2]*66 +128) >>8) + 16;
 
         cvReleaseImage(&imAir);
@@ -618,11 +611,11 @@ void dehazing::HazeRemoval(IplImage* imInput, IplImage* imOutput, int nFrame)
 
 /*
     Function: ImageHazeRemoval
-    Description: haze removal process for a single image
+    \brief: haze removal process for a single image
 
-    Parameter:
+    \param:
         imInput - input image
-    Return:
+    \return:
         imOutput - output image
  */
 void dehazing::ImageHazeRemoval(IplImage* imInput, IplImage* imOutput)
@@ -646,7 +639,7 @@ void dehazing::ImageHazeRemoval(IplImage* imInput, IplImage* imOutput)
     cvReleaseImage(&imAir);
     cvResetImageROI(imInput);
     
-    // iplimage to int
+    // iplimage to intimage to int
     IplImageToIntColor(imInput);
         
     TransmissionEstimationColor(m_pnRImg, m_pnGImg, m_pnBImg, m_pfTransmission, m_pnRImg, m_pnGImg, m_pnBImg, m_pfTransmission, 0, m_nWid, m_nHei);
@@ -667,45 +660,37 @@ void dehazing::ImageHazeRemoval(IplImage* imInput, IplImage* imOutput)
 }
 
 /*
-    Function:GetAirlight
-    Return: air light value 
+    \return: air light value 
  */
 int* dehazing::GetAirlight()
 {
-    // (1) airlight값 주소 리턴
     return m_anAirlight;
 }
 
 /*
-    Function:GetYImg
-    Return: get y image array
+    \return: get y image array
  */
 int* dehazing::GetYImg()
 {
-    // (1) Y영상 주소 리턴
     return m_pnYImg;
 }
 
 /*
-    Function:GetTransmission
-    Return: get refined transmission array
+    \return: get refined transmission array
  */
 float* dehazing::GetTransmission()
 {
-    // (1) 전달량 주소 리턴
     return m_pfTransmissionR;
 }
 
 /*
-    Function:LambdaSetting
-        chnage labmda values
-    Parameter:
+    \brief: chnage labmda values
+    \param:
         fLambdaLoss - new weight coefficient for loss cost
-        fLambdaTemp - new weight coefficient for temp cost
+        fLambdaTemp - new weight coefficient for temporal cost
  */
 void dehazing::LambdaSetting(float fLambdaLoss, float fLambdaTemp)
 {
-    // (1) 람다값을 재정의 할 때 사용하는 함수
     m_fLambda1 = fLambdaLoss;
     if(fLambdaTemp>0)
         m_fLambda2 = fLambdaTemp;
@@ -714,60 +699,47 @@ void dehazing::LambdaSetting(float fLambdaLoss, float fLambdaTemp)
 }
 
 /*
-    Function:PreviousFlag
-        change boolean value
-    Parameter
+    \brief: change boolean value
+    \param
         bPrevFlag - flag
  */
 void dehazing::PreviousFlag(bool bPrevFlag)
 {
-    // (1) 이전 데이터 사용 유무 결정
     m_bPreviousFlag = bPrevFlag;
 }
 
-/*
-    Function:TransBlockSize
-        change the block size of transmission estimation
-    Parameter: 
-        nBlockSize - new block size
- */
 void dehazing::TransBlockSize(int nBlockSize)
 {
-    // (1) 전달량 계산의 블록 크기 결정
     m_nTBlockSize = nBlockSize;
 }
 
 /*
-    Function:FilterBlockSize
-        change the block size of guided filter
-    Parameter: 
+    \brief: change the block size of guided filter
+    \param: 
         nBlockSize - new block size
  */
 void dehazing::FilterBlockSize(int nBlockSize)
 {
-    // (1) 전달량 계산의 블록 크기 결정
     m_nGBlockSize = nBlockSize;
 }
 
 /*
-    Function:SetFilterStepSize
-        change the step size of guided filter
-    Parameter:
+    \brief: change the step size of guided filter
+    \param:
         nStepSize - new step size
  */
 void dehazing::SetFilterStepSize(int nStepSize)
 {
-    // (1) guided filter의 step size 수정
     m_nStepSize = nStepSize;
 }
 
 /*
     Function: AirlightSearchRange
-    Description: Specify searching range (block shape) by user
-    Parameter:
+    \brief: Specify searching range (block shape) by user
+    \param:
         pointTopLeft - the top left point of searching block
         pointBottomRight - the bottom right point of searching block.
-    Return:
+    \return:
         m_nTopLeftX - integer x point
         m_nTopLeftY - integer y point
         m_nBottomRightX - integer x point
@@ -783,8 +755,8 @@ void dehazing::AirlightSerachRange(Point pointTopLeft, Point pointBottomRight)
 
 /*
     Function: FilterSigma
-    Description: change the gaussian sigma value 
-    Parameter:
+    \brief: change the gaussian sigma value 
+    \param:
         nSigma
  */
 void dehazing::FilterSigma(float nSigma)
@@ -794,14 +766,14 @@ void dehazing::FilterSigma(float nSigma)
 
 /*
     Function: Decision
-    Description: Decision function for re-estimation of atmospheric light
+    \brief: Decision function for re-estimation of atmospheric light
         in this file, we just implement the decision function and don't 
         apply the decision algorithm in the dehazing function.
-    Parameter:
+    \param:
         imSrc1 - first frame 
         imSrc2 - second frame
         nThreshold - threshold value
-    Return:
+    \return:
         boolean value 
  */
 bool dehazing::Decision(IplImage* imSrc1, IplImage* imSrc2, int nThreshold)
