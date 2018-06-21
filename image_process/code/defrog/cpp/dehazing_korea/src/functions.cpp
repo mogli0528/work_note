@@ -86,9 +86,9 @@ void dehazing::DownsampleImage()
     fRatioX = (float)m_nWid/(float)320;
     fRatioY = (float)m_nHei/(float)240;
 
-    for(nY=0; nY<240; nY++) {
-        for(nX=0; nX<320; nX++) {
-            m_pnSmallYImg[nY*320+nX] = m_pnYImg[(int)(nY*fRatioY)*m_nWid+(int)(nX*fRatioX)];
+    for( nY = 0; nY < 240; nY++ ) {
+        for( nX = 0; nX < 320; nX++ ) {
+            m_pnSmallYImg[nY * 320 + nX] = m_pnYImg[(int)(nY*fRatioY)*m_nWid+(int)(nX*fRatioX)];
         }
     }
 }
@@ -134,15 +134,14 @@ void dehazing::UpsampleTransmission()
 {
     int nX, nY;
 
-    float fRatioY, fRatioX;
     // width and height scale factor 
+    float fRatioY, fRatioX;
     fRatioX = (float)320/(float)m_nWid;
     fRatioY = (float)240/(float)m_nHei;
 
-    for(nY=0; nY<m_nHei; nY++)
-    {
-        for(nX=0; nX<m_nWid; nX++)
-        {
+    for( nY = 0; nY < m_nHei; nY++ ) {
+        for( nX = 0; nX < m_nWid; nX++ ) {
+
             // restore transmission m_pfSmallTrans from downSample transmission
             m_pfTransmission[nY*m_nWid+nX] = m_pfSmallTrans[(int)(nY*fRatioY)*320+(int)(nX*fRatioX)];
         }
@@ -151,6 +150,7 @@ void dehazing::UpsampleTransmission()
 
 /* 
     \brief: Make a Look Up Table(LUT) for applying information in previous frame.
+            \sigma^2 = 10.0
 
     \return:
         m_pfExpLUT - output table 

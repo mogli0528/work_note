@@ -1,5 +1,8 @@
 # 图像处理   
 
+## 计算机视觉基础   
+- [计算机视觉基础1 - 视差与深度信息](./doc/computer_vision_basement/disparity_depth.md)  
+
 ## 图像去噪   
 - [图像去噪算法总结](./doc/denoise/denoise_sum.md)   
 - [双边滤波算法原理及实现](./doc/denoise/denoise_bilaterFilter.md)   

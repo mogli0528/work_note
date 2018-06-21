@@ -13,7 +13,6 @@
 
 #include "dehazing.h"
 #include <ctime>
-// #include <conio.h>
 
 using namespace std;
 
@@ -31,6 +30,7 @@ int main(int argc, char** argv)
 
 	int nFrame;
 
+	// \lambda_L = 5, \lambda_T = 1
 	dehazing dehazingImg(nWid, nHei, 16, false, false, 5.0f, 1.0f, 40);
 
 	time_t start_t = clock();
@@ -45,7 +45,6 @@ int main(int argc, char** argv)
 	}
 	int frames = atoi(argv[3]);
 	cout << nFrame <<" frames " << (float)(clock()-start_t)/CLOCKS_PER_SEC << "secs" <<endl;
-	cout << 1 <<" frame " << (float)(clock()-start_t)/CLOCKS_PER_SEC/frames << "secs" <<endl;
 
 	cvReleaseCapture(&cvSequence); 
  	cvReleaseImage(&imOutput);

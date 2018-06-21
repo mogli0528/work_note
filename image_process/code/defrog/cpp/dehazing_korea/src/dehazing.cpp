@@ -12,13 +12,6 @@
 
 dehazing::dehazing(){}
 
-/* 
-    \param: 
-        nW - width of input image
-        nH - height of input image
-        bPrevFlag - boolean for temporal cohenrence of video dehazing
-        bPosFlag - boolean for postprocessing.
-*/
 dehazing::dehazing(int nW, int nH, bool bPrevFlag, bool bPosFlag)
 {
     m_nWid = nW;
@@ -70,17 +63,6 @@ dehazing::dehazing(int nW, int nH, bool bPrevFlag, bool bPosFlag)
     m_pfGuidedLUT = new float[m_nGBlockSize*m_nGBlockSize]; 
 }
 
-/* 
-    \param: 
-        nW - width of input image
-        nH - height of input image
-        nTBLockSize - block size for transmission estimation 
-        bPrevFlag - boolean for temporal cohenrence of video dehazing
-        bPosFlag - boolean for postprocessing
-        fL1 - information loss cost parameter (regulating)
-        fL2 - temporal coherence paramter
-        nGBlock - guided filter block size
-*/
 dehazing::dehazing(int nW, int nH, int nTBlockSize, bool bPrevFlag, bool bPosFlag, float fL1, float fL2, int nGBlock)
 {
     m_nWid = nW;
@@ -266,22 +248,6 @@ dehazing::~dehazing(void)
     m_pfGuidedLUT = NULL; 
 }
 
-/*
-    \brief: estimate the atmospheric light value in a hazy image.
-            
-            It divides the hazy image into 4 sub-block and selects the optimal block, 
-            which has minimum std-dev and maximum average value.
-
-            *Repeat* the dividing process until the size of sub-block is smaller than 
-            pre-specified threshold value. Then, We select the most similar value to
-            the pure white.
-            
-            IT IS A RECURSIVE FUNCTION.
-    \param: 
-        imInput - input image (cv iplimage)
-    \return:
-        m_anAirlight: estimated atmospheric light value
- */
 void dehazing::AirlightEstimation(IplImage* imInput)
 {
     int nMinDistance = 65536;
@@ -300,7 +266,6 @@ void dehazing::AirlightEstimation(IplImage* imInput)
 
     int nWid = imInput->width;
     int nHei = imInput->height;
-
     int nStep = imInput->widthStep;
 
     // 4 sub-block
@@ -324,15 +289,15 @@ void dehazing::AirlightEstimation(IplImage* imInput)
     cvCopyImage(imInput, iplLowerRight);
 
     // compare to threshold(200) --> bigger than threshold, divide the block
-    if(nHei*nWid > 200)
-    {
+    if(nHei*nWid > 200) {
         // compute the mean and std-dev in the sub-block
         // upper left sub-block
-        cvCvtPixToPlane(iplUpperLeft, iplR, iplG, iplB, 0);
+        cvCvtPixToPlane(iplUpperLeft, iplR, iplG, iplB, 0);  // cvSplit()
 
         cvMean_StdDev(iplR, dpMean, dpStds);
         cvMean_StdDev(iplG, dpMean+1, dpStds+1);
         cvMean_StdDev(iplB, dpMean+2, dpStds+2);
+        
         // dpScore: mean - std-dev
         dpScore[0] = dpMean[0]-dpStds[0];
         dpScore[1] = dpMean[1]-dpStds[1];
@@ -356,8 +321,7 @@ void dehazing::AirlightEstimation(IplImage* imInput)
 
         afScore[1] = (float)(dpScore[0]+dpScore[1]+dpScore[2]);
         
-        if(afScore[1] > nMaxScore)
-        {
+        if(afScore[1] > nMaxScore) {
             nMaxScore = afScore[1];
             nMaxIndex = 1;
         }
@@ -375,8 +339,7 @@ void dehazing::AirlightEstimation(IplImage* imInput)
 
         afScore[2] = (float)(dpScore[0]+dpScore[1]+dpScore[2]);
         
-        if(afScore[2] > nMaxScore)
-        {
+        if(afScore[2] > nMaxScore) {
             nMaxScore = afScore[2];
             nMaxIndex = 2;
         }
@@ -394,8 +357,7 @@ void dehazing::AirlightEstimation(IplImage* imInput)
 
         afScore[3] = (float)(dpScore[0]+dpScore[1]+dpScore[2]);
 
-        if(afScore[3] > nMaxScore)
-        {
+        if(afScore[3] > nMaxScore) {
             nMaxScore = afScore[3];
             nMaxIndex = 3;
         }
@@ -412,20 +374,17 @@ void dehazing::AirlightEstimation(IplImage* imInput)
         case 3:
             AirlightEstimation(iplLowerRight); break;
         }
-    }
-    else
-    {
-        // select the atmospheric light value in the sub-block
-        for(nY=0; nY<nHei; nY++)
-        {
-            for(nX=0; nX<nWid; nX++)
-            {
+    } else {
+        // select the atmospheric light value in the sub-block according to
+        // || (I_r(p), I_g(p), I_b(p)) - (255, 255, 255)||
+        for(nY = 0; nY < nHei; nY++) {
+            for(nX = 0; nX < nWid; nX++) {
                 // 255-r, 255-g, 255-b
                 nDistance = int(sqrt(float(255-(uchar)imInput->imageData[nY*nStep+nX*3])*float(255-(uchar)imInput->imageData[nY*nStep+nX*3])
                     +float(255-(uchar)imInput->imageData[nY*nStep+nX*3+1])*float(255-(uchar)imInput->imageData[nY*nStep+nX*3+1])
                     +float(255-(uchar)imInput->imageData[nY*nStep+nX*3+2])*float(255-(uchar)imInput->imageData[nY*nStep+nX*3+2])));
-                if(nMinDistance > nDistance)
-                {
+
+                if(nMinDistance > nDistance) {
                     nMinDistance = nDistance;
                     m_anAirlight[0] = (uchar)imInput->imageData[nY*nStep+nX*3];
                     m_anAirlight[1] = (uchar)imInput->imageData[nY*nStep+nX*3+1];
@@ -434,6 +393,7 @@ void dehazing::AirlightEstimation(IplImage* imInput)
             }
         }
     }
+
     cvReleaseImage(&iplUpperLeft);
     cvReleaseImage(&iplUpperRight);
     cvReleaseImage(&iplLowerLeft);
@@ -444,17 +404,6 @@ void dehazing::AirlightEstimation(IplImage* imInput)
     cvReleaseImage(&iplB);
 }
 
-
-
-
-
-/*
-    \brief: Dehazed the image using estimated transmission and atmospheric light.
-    \param: 
-        imInput - Input hazy image.
-    \return:
-        imOutput - Dehazed image.
- */
 void dehazing::RestoreImage(IplImage* imInput, IplImage* imOutput)
 {
     int nStep = imInput->widthStep;
@@ -467,18 +416,13 @@ void dehazing::RestoreImage(IplImage* imInput, IplImage* imOutput)
     fA_R = (float)m_anAirlight[2];
 
     // post processing flag
-    if(m_bPostFlag == true)
-    {
+    if(m_bPostFlag == true) {
         PostProcessing(imInput,imOutput);
-    }
-    else
-    {
+    } else {
 #pragma omp parallel for
         // (2) I' = (I - Airlight)/Transmission + Airlight
-        for(nY=0; nY<m_nHei; nY++)
-        {
-            for(nX=0; nX<m_nWid; nX++)
-            { 
+        for(nY=0; nY<m_nHei; nY++) {
+            for(nX=0; nX<m_nWid; nX++) { 
                 // (3) Gamma correction using LUT
                 imOutput->imageData[nY*nStep+nX*3]  = (uchar)m_pucGammaLUT[(uchar)CLIP((((float)((uchar)imInput->imageData[nY*nStep+nX*3+0])-fA_B)/CLIP_Z(m_pfTransmissionR[nY*m_nWid+nX]) + fA_B))];
                 imOutput->imageData[nY*nStep+nX*3+1] = (uchar)m_pucGammaLUT[(uchar)CLIP((((float)((uchar)imInput->imageData[nY*nStep+nX*3+1])-fA_G)/CLIP_Z(m_pfTransmissionR[nY*m_nWid+nX]) + fA_G))];
@@ -488,14 +432,6 @@ void dehazing::RestoreImage(IplImage* imInput, IplImage* imOutput)
     }
 }
 
-/*
-    Function: PostProcessing
-    \brief: deblocking for blocking artifacts of mpeg video sequence.
-    \param: 
-        imInput - Input hazy frame.
-    \eturn:
-        imOutput - Dehazed frame.
- */
 void dehazing::PostProcessing(IplImage* imInput, IplImage* imOutput)
 {
     const int nStep = imInput->widthStep;
@@ -547,16 +483,6 @@ void dehazing::PostProcessing(IplImage* imInput, IplImage* imOutput)
     }
 }
 
-
-/*
-    \brief: haze removal process
-
-    \param:
-        imInput - input image
-        nFrame - frame number
-    \return:
-        imOutput - output image
- */
 void dehazing::HazeRemoval(IplImage* imInput, IplImage* imOutput, int nFrame)
 {
     if(nFrame == 0)
@@ -575,21 +501,23 @@ void dehazing::HazeRemoval(IplImage* imInput, IplImage* imOutput, int nFrame)
         
         AirlightEstimation(imAir);
 
-        // Y value of A(atmosperic light)
+        // Y value of A (atmosperic light) in YUY Color Space
         m_nAirlight = (((int)(uchar)m_anAirlight[0]*25 + (int)(uchar)m_anAirlight[1]*129 + (int)(uchar)m_anAirlight[2]*66 +128) >>8) + 16;
 
         cvReleaseImage(&imAir);
         cvResetImageROI(imInput);
     }
     
+    // Convert To YUV sapce, we only use Y componment here.
     IplImageToInt(imInput);
-    // down sampling to fast estimation
+   
+    // down sampling to fast Transmission estimation
     DownsampleImage();
     
     // trnasmission estimation
     TransmissionEstimation(m_pnSmallYImg,m_pfSmallTrans, m_pnSmallYImgP, m_pfSmallTransP, nFrame, 320, 240);
         
-    // store a data for temporal coherent processing
+    // store Previous image data for temporal coherent processing
     memcpy(m_pfSmallTransP, m_pfSmallTrans, 320*240);
     memcpy(m_pnSmallYImgP, m_pnSmallYImg, 320*240);
     
@@ -605,19 +533,10 @@ void dehazing::HazeRemoval(IplImage* imInput, IplImage* imOutput, int nFrame)
     */
     FastGuidedFilter();
 
-    // (9) 영상 복원 수행
+    // Restore the Hazy Image
     RestoreImage(imInput, imOutput);
 }
 
-/*
-    Function: ImageHazeRemoval
-    \brief: haze removal process for a single image
-
-    \param:
-        imInput - input image
-    \return:
-        imOutput - output image
- */
 void dehazing::ImageHazeRemoval(IplImage* imInput, IplImage* imOutput)
 {
     IplImage* imAir;
@@ -659,36 +578,21 @@ void dehazing::ImageHazeRemoval(IplImage* imInput, IplImage* imOutput)
     cvReleaseImage(&imSmallInput);
 }
 
-/*
-    \return: air light value 
- */
 int* dehazing::GetAirlight()
 {
     return m_anAirlight;
 }
 
-/*
-    \return: get y image array
- */
 int* dehazing::GetYImg()
 {
     return m_pnYImg;
 }
 
-/*
-    \return: get refined transmission array
- */
 float* dehazing::GetTransmission()
 {
     return m_pfTransmissionR;
 }
 
-/*
-    \brief: chnage labmda values
-    \param:
-        fLambdaLoss - new weight coefficient for loss cost
-        fLambdaTemp - new weight coefficient for temporal cost
- */
 void dehazing::LambdaSetting(float fLambdaLoss, float fLambdaTemp)
 {
     m_fLambda1 = fLambdaLoss;
@@ -698,11 +602,6 @@ void dehazing::LambdaSetting(float fLambdaLoss, float fLambdaTemp)
         m_bPreviousFlag = false;
 }
 
-/*
-    \brief: change boolean value
-    \param
-        bPrevFlag - flag
- */
 void dehazing::PreviousFlag(bool bPrevFlag)
 {
     m_bPreviousFlag = bPrevFlag;
@@ -713,38 +612,16 @@ void dehazing::TransBlockSize(int nBlockSize)
     m_nTBlockSize = nBlockSize;
 }
 
-/*
-    \brief: change the block size of guided filter
-    \param: 
-        nBlockSize - new block size
- */
 void dehazing::FilterBlockSize(int nBlockSize)
 {
     m_nGBlockSize = nBlockSize;
 }
 
-/*
-    \brief: change the step size of guided filter
-    \param:
-        nStepSize - new step size
- */
 void dehazing::SetFilterStepSize(int nStepSize)
 {
     m_nStepSize = nStepSize;
 }
 
-/*
-    Function: AirlightSearchRange
-    \brief: Specify searching range (block shape) by user
-    \param:
-        pointTopLeft - the top left point of searching block
-        pointBottomRight - the bottom right point of searching block.
-    \return:
-        m_nTopLeftX - integer x point
-        m_nTopLeftY - integer y point
-        m_nBottomRightX - integer x point
-        m_nBottomRightY - integer y point.
- */
 void dehazing::AirlightSerachRange(Point pointTopLeft, Point pointBottomRight)
 {
     m_nTopLeftX = pointTopLeft.x;
@@ -753,29 +630,11 @@ void dehazing::AirlightSerachRange(Point pointTopLeft, Point pointBottomRight)
     m_nBottomRightY = pointBottomRight.y;
 }
 
-/*
-    Function: FilterSigma
-    \brief: change the gaussian sigma value 
-    \param:
-        nSigma
- */
 void dehazing::FilterSigma(float nSigma)
 {
     m_fGSigma = nSigma;
 }
 
-/*
-    Function: Decision
-    \brief: Decision function for re-estimation of atmospheric light
-        in this file, we just implement the decision function and don't 
-        apply the decision algorithm in the dehazing function.
-    \param:
-        imSrc1 - first frame 
-        imSrc2 - second frame
-        nThreshold - threshold value
-    \return:
-        boolean value 
- */
 bool dehazing::Decision(IplImage* imSrc1, IplImage* imSrc2, int nThreshold)
 {
     int nX, nY;
