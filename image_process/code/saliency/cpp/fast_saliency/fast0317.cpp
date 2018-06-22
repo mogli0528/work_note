@@ -588,7 +588,7 @@ void computeSaliencyMap(Mat shapeProbability,
 //dataPath="C:/Users/Guoge/Desktop/test";
 //fileFormat=".jpg";
 //savePath="C:/Users/Guoge/Desktop/test/resal"; 
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
 	bool isimage;
 	isimage = false;

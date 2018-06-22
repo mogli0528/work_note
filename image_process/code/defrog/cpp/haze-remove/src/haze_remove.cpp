@@ -12,7 +12,7 @@
 cv::Mat& HazeRemove::DarkChannelPrior()
 {
     float *dc_ptr = (float *)(dark_channel_.data);
-    float *src_ptr = (float *)(real_img_.data);
+    float *src_ptr = (float *)(real_img_small_.data);
     int dc_idx = 0, src_idx = 0;
 
     for (int i = 0; i < height_; i++) {
@@ -23,8 +23,8 @@ cv::Mat& HazeRemove::DarkChannelPrior()
 
             // // 求 RGB 最小值
             // dark_channel_.at<float>(i, j) = min(
-            //         min(real_img_.at<cv::Vec3f>(i, j)[0], real_img_.at<cv::Vec3f>(i, j)[1]),
-            //         min(real_img_.at<cv::Vec3f>(i, j)[0], real_img_.at<cv::Vec3f>(i, j)[2])
+            //         min(real_img_small_.at<cv::Vec3f>(i, j)[0], real_img_small_.at<cv::Vec3f>(i, j)[1]),
+            //         min(real_img_small_.at<cv::Vec3f>(i, j)[0], real_img_small_.at<cv::Vec3f>(i, j)[2])
             //     );
 
 
@@ -54,7 +54,7 @@ cv::Mat& HazeRemove::DarkChannelPrior()
 std::vector<float>& HazeRemove::refine_sky_color()
 {
     int n_bright = top_brightness_ * size_;
-    // n_bright = 10;
+    n_bright = 10;
     
     // dark_1 是一个有图片像素的单行矩阵, 方便下面循环计算
     Mat dark_1 = dark_channel_.reshape(1, size_); 
@@ -79,7 +79,7 @@ std::vector<float>& HazeRemove::refine_sky_color()
                 bright_pixels[i] = pos; // 替换为这个较大像素值的位置
 
                 // 在原始图像中找出[暗通道图中亮度最高的像素位置处]的像素, A 就是这些像素的均值.
-                RGBPixcels[i] = ((cv::Vec3f *)real_img_.data)[pos];
+                RGBPixcels[i] = ((cv::Vec3f *)real_img_small_.data)[pos];
             }
         }
 
@@ -111,7 +111,7 @@ cv::Mat& HazeRemove::DarkChannelPrior_A()
     double A_mean = (A_[0] + A_[1] + A_[2]) / 3.0; 
 
     float *dc_ptr = (float *)(dark_channel_out_.data);
-    float *src_ptr = (float *)(real_img_.data);
+    float *src_ptr = (float *)(real_img_small_.data);
     int dc_idx = 0, src_idx = 0;
 
     for (int i = 0; i < height_; i++) {
@@ -122,8 +122,8 @@ cv::Mat& HazeRemove::DarkChannelPrior_A()
             
             // // 求 RGB 最小值
             // dark_channel_out_.at<float>(i, j) = min(
-            //     min(real_img_.at<cv::Vec3f>(i, j)[0]/ A_mean, real_img_.at<cv::Vec3f>(i, j)[1]/ A_mean),
-            //     min(real_img_.at<cv::Vec3f>(i, j)[0]/ A_mean, real_img_.at<cv::Vec3f>(i, j)[2]/ A_mean)
+            //     min(real_img_small_.at<cv::Vec3f>(i, j)[0]/ A_mean, real_img_small_.at<cv::Vec3f>(i, j)[1]/ A_mean),
+            //     min(real_img_small_.at<cv::Vec3f>(i, j)[0]/ A_mean, real_img_small_.at<cv::Vec3f>(i, j)[2]/ A_mean)
             //     );
 
             // 求 RGB 最小值
@@ -193,11 +193,12 @@ cv::Mat& HazeRemove::haze_remove(cv::Mat& t, float exposure)
 {
     // 取 A 中的最大的值
     double AAA = A_[0];
-
     if (A_[1] > AAA)
         AAA = A_[1];
     if (A_[2] > AAA)
         AAA = A_[2];
+
+    cv::pyrUp(t, t, cv::Size(src_img_.cols,src_img_.rows));
 
     // reforce_img_ = Mat::zeros(height_, width_, CV_32FC3);
     real_img_.copyTo(reforce_img_);

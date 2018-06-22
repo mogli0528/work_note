@@ -26,12 +26,15 @@ class HazeRemove{
             real_img_ = src_img_;
         }
 
-        height_ = src_img_.rows;
-        width_ = src_img_.cols;
-        size_ = src_img_.rows*src_img_.cols;
+        cv::pyrDown(src_img_, src_img_small_);
+        height_ = src_img_small_.rows;
+        width_ = src_img_small_.cols;
+        size_ = src_img_small_.rows*src_img_small_.cols;
 
+        src_img_small_.convertTo(real_img_small_, CV_32FC3);
         src_img_.convertTo(real_img_, CV_32FC3);
 
+        real_img_small_ /= 255;   // 归一化到[0-1] 之间.  
         real_img_ /= 255;   // 归一化到[0-1] 之间.  
         dark_channel_ = cv::Mat::zeros(height_, width_, CV_32FC1); 
         dark_channel_out_ = cv::Mat::zeros(height_, width_, CV_32FC1); 
@@ -40,6 +43,11 @@ class HazeRemove{
     }
 
     const cv::Mat& get_image() const{
+
+        return src_img_small_;
+    }
+    
+    const cv::Mat& get_origin_image() const{
 
         return src_img_;
     }
@@ -64,6 +72,8 @@ class HazeRemove{
     float t0_ = 0.1;          // T(x) 的最小值 
     
     cv::Mat src_img_;
+    cv::Mat src_img_small_;
+    cv::Mat real_img_small_;
     cv::Mat real_img_;
     cv::Mat dark_channel_;       // 计算出的暗通道值
     cv::Mat dark_channel_out_;   // 计算出的暗通道值, 考虑到 A 的均值

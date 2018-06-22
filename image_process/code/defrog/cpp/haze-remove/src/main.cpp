@@ -107,7 +107,7 @@ int main(int argc, char * argv[])
     cout << "Total Time Cost: " << total_elapsed << "ms" << endl;
 
     //imwrite("output.jpg", free_img * 255);
-    cv::imshow("原图", hr.get_image());
+    cv::imshow("原图", hr.get_origin_image());
     cv::imshow("Dark Channel Prior", dark_channel);
     cv::imshow("去雾后", free_img);
     //cv::imshow("Refined Transmission Mat",trans_refine);
