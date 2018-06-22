@@ -2,6 +2,10 @@
 
 ## 计算机视觉基础   
 - [计算机视觉基础1 - 视差与深度信息](./doc/computer_vision_basement/disparity_depth.md)  
+- [计算机视觉基础2 - 相机成像的几何描述 ](./doc/computer_vision_basement/camera_geometry.md)  
+- [计算机视觉基础3 - 内部参数描述](./doc/computer_vision_basement/camera_inner_params.md)  
+- [计算机视觉基础4 - 对极几何](./doc/computer_vision_basement/epipolar_geometry.md)  
+- [计算机视觉基础5 - 本质矩阵与基本矩阵](./doc/computer_vision_basement/fundamental_matrix.md)  
 
 ## 图像去噪   
 - [图像去噪算法总结](./doc/denoise/denoise_sum.md)   
