@@ -537,6 +537,59 @@ void dehazing::HazeRemoval(IplImage* imInput, IplImage* imOutput, int nFrame)
     RestoreImage(imInput, imOutput);
 }
 
+void dehazing::ImageHazeRemoval(IplImage* imInput, IplImage* imOutput)
+{
+    IplImage* imAir;
+    IplImage* imSmallInput;
+    // look up table creation
+    MakeExpLUT(); 
+    GuideLUTMaker(); 
+    GammaLUTMaker(0.7f); 
+
+    // specify the ROI region of atmospheric light estimation(optional)
+    cvSetImageROI(imInput, cvRect(m_nTopLeftX, m_nTopLeftY, m_nBottomRightX-m_nTopLeftX, m_nBottomRightY-m_nTopLeftY));
+
+    imAir = cvCreateImage(cvSize(m_nBottomRightX-m_nTopLeftX, m_nBottomRightY-m_nTopLeftY),IPL_DEPTH_8U, 3);
+    imSmallInput = cvCreateImage(cvSize(320, 240), IPL_DEPTH_8U, 3);
+    cvCopyImage(imInput, imAir);
+    
+    AirlightEstimation(imAir);
+    
+    cvReleaseImage(&imAir);
+    cvResetImageROI(imInput);
+    
+    // iplimage to intimage to int
+    IplImageToIntColor(imInput);
+        
+    TransmissionEstimationColor(m_pnRImg, m_pnGImg, m_pnBImg, m_pfTransmission, m_pnRImg, m_pnGImg, m_pnBImg, m_pfTransmission, 0, m_nWid, m_nHei);
+    
+    GuidedFilter(m_nWid, m_nHei, 0.001);
+    //GuidedFilterShiftableWindow(0.001);
+    /*
+    IplImage *test = cvCreateImage(cvSize(m_nWid, m_nHei),IPL_DEPTH_8U, 1);
+    for(int nK = 0; nK < m_nWid*m_nHei; nK++)
+        test->imageData[nK] = (uchar)(m_pfTransmissionR[nK]*255);
+    cvNamedWindow("tests");
+    cvShowImage("tests", test);
+    cvWaitKey(-1);
+    */
+    // Restore image
+    RestoreImage(imInput, imOutput);
+    cvReleaseImage(&imSmallInput);
+}
+
+void dehazing::HazeRemoval(const cv::Mat& src, cv::Mat& dst, int nFrame)
+{
+    if(src.data && dst.data) {
+
+        IplImage imInput = IplImage(src);
+        IplImage imOutput = IplImage(dst);
+
+        HazeRemoval(&imInput, &imOutput, nFrame);
+        
+    }
+}
+
 int* dehazing::GetAirlight()
 {
     return m_anAirlight;
