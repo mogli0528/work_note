@@ -20,14 +20,16 @@
 int main(int argc, char **argv)
 {
     std::string filename;
-    int n_frames = 600;
+    int n_frames = 100;
     int nWid, nHei;
     cv::VideoCapture cap;
 
-    if(argc > 1){
-        filename = std::string(argv[1]);
-        // n_frames = std::stoi(std::string(argv[2]));
+    if(argc ==2 ){
+        n_frames = std::stoi(std::string(argv[1]));
 
+    } if(argc == 3){
+        n_frames = std::stoi(std::string(argv[1]));
+        filename = std::string(argv[2]);
         LOG(INFO) << "video path (or a camera index)" << filename;
     } else {
         LOG(INFO) << "Use Default Test Video...";
@@ -61,6 +63,7 @@ int main(int argc, char **argv)
         cap.read(image);
         nWid = cap.get(CV_CAP_PROP_FRAME_WIDTH);
         nHei = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
+        LOG(INFO) << "Video height: " << nHei << ", width: "  << nWid ;
         td = new coal::TopLineDetector(cap);
     }else if (file_type == ".jpg" || file_type == ".png"){
         // 处理单张图片
@@ -72,6 +75,7 @@ int main(int argc, char **argv)
         }
         td = new coal::TopLineDetector(image);
     }
+    std::cout << "height: " << nHei << " width: "  << nWid << std::endl;
 
     cv::Rect topLineRoi(image.cols/2, 0, image.cols/2, image.rows/2-20);
     cv::Rect ArmLineRoi(image.cols/2 -20, image.rows/2 - 20, image.cols/2, image.rows/2);

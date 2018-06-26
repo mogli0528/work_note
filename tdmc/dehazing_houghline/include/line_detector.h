@@ -62,7 +62,11 @@ public:
                   bFindTopLine_(false), 
                   frames_(0),
                   bTopLineLastDetect_(false),
-                  bArmLineLastDetect_(false)
+                  bArmLineLastDetect_(false),
+                  pt1TopLineDetect_(cv::Point(0, 0)), 
+                  pt2TopLineDetect_(cv::Point(0, 0)),
+                  pt1ArmLineDetect_(cv::Point(0, 0)), 
+                  pt2ArmLineDetect_(cv::Point(0, 0))
     {
         stop_ = boost::posix_time::microsec_clock::local_time();
         start_ = boost::posix_time::microsec_clock::local_time();
@@ -102,7 +106,11 @@ public:
                   bFindTopLine_(false), 
                   frames_(0),
                   bTopLineLastDetect_(false),
-                  bArmLineLastDetect_(false)
+                  bArmLineLastDetect_(false),  
+                  pt1TopLineDetect_(cv::Point(0, 0)), 
+                  pt2TopLineDetect_(cv::Point(0, 0)),
+                  pt1ArmLineDetect_(cv::Point(0, 0)), 
+                  pt2ArmLineDetect_(cv::Point(0, 0))
     {
 
         dFps_ = STASTIC_FRAMES_*3; // 帧率  
@@ -235,6 +243,9 @@ protected:
     unsigned int frames_;
     bool bTopLineLastDetect_;
     bool bArmLineLastDetect_;
+
+    cv::Point pt1TopLineDetect_, pt2TopLineDetect_;   // detection-out line
+    cv::Point pt1ArmLineDetect_, pt2ArmLineDetect_;
 };
 
 class TopLineDetector : public LineDetector {
@@ -250,8 +261,8 @@ public:
                       const cv::Rect &topLineRoi, 
                       const cv::Rect &armLineRoi, 
                       const std::string &videoName = "./output.avi");   
-    int detectTopLine(const cv::Rect &roi, cv::Point &pt1Detect, cv::Point &ptDetect);
-    int detectArmLine(const cv::Rect &roi, cv::Point &pt1Detect, cv::Point &ptDetect);
+    int detectTopLine(const cv::Rect &roi);
+    int detectArmLine(const cv::Rect &roi);
         // 
     void drawInitTopLine(const std::string &win_name, const cv::Rect &topLineRoi, const cv::Rect &armLineRoi);
 
