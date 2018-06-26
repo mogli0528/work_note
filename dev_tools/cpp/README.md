@@ -29,15 +29,14 @@
 
 ## 代码目录   
 ### C++ primer 5th 笔记对应代码 
-[1. map 使用实例](./code/cpp_primer_5nd/map_instance/map_instance.cpp)    
-[2. vector 操作](./code/cpp_primer_5nd/vector_operation/vector_operation.cpp)  
-[3. shared_ptr 使用实例](./code/cpp_primer_5nd/shared_ptr/shared_ptr.cpp)    
-[4. 默认参数使用实例](./code/cpp_primer_5nd/default_paramter/default_paramter.cpp)    
-
-/work/gitwork/work_note/dev_tools/cpp/code/cpp_primer_5nd/shared_ptr
+- [ map 使用实例](./code/cpp_primer_5nd/map_instance/map_instance.cpp)    
+- [ vector 操作](./code/cpp_primer_5nd/vector_operation/vector_operation.cpp)  
+- [ shared_ptr 使用实例](./code/cpp_primer_5nd/shared_ptr/shared_ptr.cpp)    
+- [ 默认参数使用实例](./code/cpp_primer_5nd/default_paramter/default_paramter.cpp)    
 
 ## 工程化 cpp 项目       
 [让自己的 cpp 工程更加"工程化" ](./doc/projective_cpp.md)
+[高质量 C++/C 编程指南 - C++函数的高级特性](./doc/perfect_programing/advance_cpp_features.md)
 
 ## 老杜培训
 [2. short int 使用注意事项](./doc/shortInt.md)   

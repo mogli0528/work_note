@@ -50,6 +50,7 @@
 - [将 pip3 指向 python3.5](./doc/advanced_issues/pip3_5.md)   
 - [Chrome 浏览器无法调用 GPU 进程](./doc/advanced_issues/chrome_launch_gpu.md)   
 - [ubuntu 连接投影仪失败或显示不正常](./doc/advanced_issues/projector.md)   
+- [在 Ubuntu 上安装 ChromeDriver](./doc/advanced_issues/chromedriver.md)   
 
 释放内存空间:   
 ```bash

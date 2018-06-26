@@ -27,6 +27,10 @@
 - [jupyter-notebook 中的神奇功能](./doc/iPython/magic_functions.md)  
 - [jupyter-notebook 中的快捷键](./doc/iPython/key_bindings.md)       
 
+### 6. python 爬虫 
+- [手把手教你写网络爬虫（1）： 网易云音乐歌单 ](./doc/spider/step_by_step/netease_music.md)   
+- [手把手教你写网络爬虫（2）： 迷你爬虫架构 ](./doc/spider/step_by_step/spider_archtechture.md)   
+- [手把手教你写网络爬虫（8）： 彻底解决乱码问题 ](./doc/spider/step_by_step/character_encode.md)   
+
 ## code   
-1. 爬虫   
 - [壁纸爬虫](./code/spider/wall_papers.py)   

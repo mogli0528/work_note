@@ -58,7 +58,7 @@
 #ifndef DIRENT_H
 #define DIRENT_H
 
-#include <windows.h>
+// #include <windows.h>
 #include <string.h>
 #include <assert.h>
 
