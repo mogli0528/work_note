@@ -39,12 +39,13 @@ HOW TO RUN?
 
 After compiling the code, you can run the code with following variables:
 
-FASA —i -p /path/to/input/image/folder/ -f image_format -s /path/to/output/folder/
-FASA —v -p /path/to/input/video/file.avi -s /path/to/output/folder/
+FASA -i -p /path/to/input/image/folder/ -f image_format -s /path/to/output/folder/
+FASA -v -p /path/to/input/video/file.avi -s /path/to/output/folder/
 
 image_format: Format of the images to be processed
 
-Example: jpg
+Example: 
+./FASA -v -p /home/klm/work/td_marco/images/video/big_buck_bunny.mp4 -s ./
 
 WARNING: Please check the path naming conventions (such as using "/" or
 "\"). This code is written on a Mac.

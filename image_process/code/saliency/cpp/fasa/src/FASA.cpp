@@ -30,11 +30,10 @@ int histogramSize3D     = histogramSize2D * histogramSize1D;
 int logSize             = (int)log2(histogramSize1D);
 int logSize2            = 2*logSize;
 
-Mat squares             = Mat::zeros(1, 10000, CV_32FC1);
-
+Mat squares             = Mat::zeros(1, 10000, CV_32FC1);  // 10000 ?
 float* squaresPtr       = squares.ptr<float>(0);
 
-vector<Mat> LAB;
+vector<Mat> LAB;        // split LAB color space to L, A, B channels
 
 vector<float> L, A, B;
 
@@ -77,6 +76,21 @@ void readFiles(vector<string>& imagePaths,
     }
 }
 
+/**
+ * \brief: Calculate the LAB histogram   
+ * 
+ * \param: im, input image in RGB color space
+ * 
+ * \return: histogram, output LAB histogram
+ *          histogramIndex, mark the LAB value in original image
+ *          averageX, 
+ *          averageY,
+ *          averageX2,
+ *          averageY2,
+ *          LL,
+ *          AA,
+ *          BB,
+*/
 void calculateHistogram(Mat im,
                         Mat &averageX,
                         Mat &averageY,
@@ -92,12 +106,13 @@ void calculateHistogram(Mat im,
     
     double minL, maxL, minA, maxA, minB, maxB;
     
-    averageX        = Mat::zeros(1, histogramSize3D, CV_32FC1);
-    averageY        = Mat::zeros(1, histogramSize3D, CV_32FC1);
-    averageX2       = Mat::zeros(1, histogramSize3D, CV_32FC1);
-    averageY2       = Mat::zeros(1, histogramSize3D, CV_32FC1);
+    averageX = Mat::zeros(1, histogramSize3D, CV_32FC1);
+    averageY = Mat::zeros(1, histogramSize3D, CV_32FC1);
+    averageX2 = Mat::zeros(1, histogramSize3D, CV_32FC1);
+    averageY2 = Mat::zeros(1, histogramSize3D, CV_32FC1);
     
-    // Instead scaling LAB channels, we use compute shift values to stretch the LAB histogram
+    // Instead of scaling LAB channels, we use shift values to stretch the 
+    // LAB histogram, shift values is similar to a lookup table(LUT) 
     
     cvtColor(im, lab, CV_BGR2Lab);
     
@@ -111,10 +126,11 @@ void calculateHistogram(Mat im,
     float tempA = (255 - maxA + minA) / (maxA - minA + 1e-3);
     float tempB = (255 - maxB + minB) / (maxB - minB + 1e-3);
     
-    Lshift          = Mat::zeros(1, 256, CV_32SC1);
-    Ashift          = Mat::zeros(1, 256, CV_32SC1);
-    Bshift          = Mat::zeros(1, 256, CV_32SC1);
+    Lshift = Mat::zeros(1, 256, CV_32SC1);
+    Ashift = Mat::zeros(1, 256, CV_32SC1);
+    Bshift = Mat::zeros(1, 256, CV_32SC1);
     
+    // Construct the LUT that used to stretch the  LAB histogram
     for (int i = 0; i < 256; i++) {
         
         Lshift.at<int>(0,i) = tempL * (i - minL) - minL;
@@ -134,9 +150,9 @@ void calculateHistogram(Mat im,
     minB = minB - 128;
     maxB = maxB - 128;
     
-    tempL   = float(maxL - minL)/histogramSize1D;
-    tempA   = float(maxA - minA)/histogramSize1D;
-    tempB   = float(maxB - minB)/histogramSize1D;
+    tempL = float(maxL - minL)/histogramSize1D;
+    tempA = float(maxA - minA)/histogramSize1D;
+    tempB = float(maxB - minB)/histogramSize1D;
     
     float sL = float(maxL - minL)/histogramSize1D/2 + minL;
     float sA = float(maxA - minA)/histogramSize1D/2 + minA;
@@ -156,57 +172,70 @@ void calculateHistogram(Mat im,
     
     // Calculate LAB histogram
     
-    histogramIndex          = Mat::zeros(im.rows, im.cols, CV_32SC1);
-    histogram               = Mat::zeros(1, histogramSize3D, CV_32SC1);
+    histogramIndex = Mat::zeros(im.rows, im.cols, CV_32SC1);
+    histogram = Mat::zeros(1, histogramSize3D, CV_32SC1);
     
     int*    histogramPtr    = histogram.ptr<int>(0);
     
-    float* averageXPtr      = averageX.ptr<float>(0);
-    float* averageYPtr      = averageY.ptr<float>(0);
-    float* averageX2Ptr     = averageX2.ptr<float>(0);
-    float* averageY2Ptr     = averageY2.ptr<float>(0);
+    float* averageXPtr = averageX.ptr<float>(0);
+    float* averageYPtr = averageY.ptr<float>(0);
+    float* averageX2Ptr = averageX2.ptr<float>(0);
+    float* averageY2Ptr = averageY2.ptr<float>(0);
     
-    int*    LshiftPtr       = Lshift.ptr<int>(0);
-    int*    AshiftPtr       = Ashift.ptr<int>(0);
-    int*    BshiftPtr       = Bshift.ptr<int>(0);
+    int* LshiftPtr = Lshift.ptr<int>(0);
+    int* AshiftPtr = Ashift.ptr<int>(0);
+    int* BshiftPtr = Bshift.ptr<int>(0);
     
     int histShift = 8 - logSize;
     
     for (int y = 0; y < im.rows; y++) {
         
-        int*    histogramIndexPtr   = histogramIndex.ptr<int>(y);
+        int* histogramIndexPtr = histogramIndex.ptr<int>(y);
         
-        uchar*    LPtr   = LAB[0].ptr<uchar>(y);
-        uchar*    APtr   = LAB[1].ptr<uchar>(y);
-        uchar*    BPtr   = LAB[2].ptr<uchar>(y);
+        uchar* LPtr = LAB[0].ptr<uchar>(y);
+        uchar* APtr = LAB[1].ptr<uchar>(y);
+        uchar* BPtr = LAB[2].ptr<uchar>(y);
         
         for (int x = 0; x < im.cols; x++) {
             
-            // Instead of division, we use bit-shift operations for efficieny. This is valid if number of bins is a power of two (4, 8, 16 ...)
+            // Instead of division, we use bit-shift operations for efficieny. 
+            // This is valid if number of bins is a power of two (4, 8, 16 ...)
+            // val >> histShift ==> val / (2^histShift)
             
-            int lpos                = (LPtr[x] + LshiftPtr[LPtr[x]]) >> histShift;
-            int apos                = (APtr[x] + AshiftPtr[APtr[x]]) >> histShift;
-            int bpos                = (BPtr[x] + BshiftPtr[BPtr[x]]) >> histShift;
+            int lpos = (LPtr[x] + LshiftPtr[LPtr[x]]) >> histShift;
+            int apos = (APtr[x] + AshiftPtr[APtr[x]]) >> histShift;
+            int bpos = (BPtr[x] + BshiftPtr[BPtr[x]]) >> histShift;
+            int index = lpos + (apos << logSize) + (bpos << logSize2);
             
-            int index               = lpos + (apos << logSize) + (bpos << logSize2);
-            
-            histogramIndexPtr[x]    = index;
-            
+            histogramIndexPtr[x] = index;
             histogramPtr[index]++;
             
-            // These values are collected here for efficiency. They will later be used in computing the spatial center and variances of the colors
+            // These values are collected here for efficiency. They will be 
+            // used later in computing spatial center and variances of the colors
             
-            averageXPtr[index]      += x;
-            averageYPtr[index]      += y;
-            averageX2Ptr[index]     += squaresPtr[x];
-            averageY2Ptr[index]     += squaresPtr[y];
+            averageXPtr[index] += x;
+            averageYPtr[index] += y;
+            averageX2Ptr[index] += squaresPtr[x];
+            averageY2Ptr[index] += squaresPtr[y];
             
         }
     }
     
 }
 
-int precomputeParameters(Mat histogram,
+/**
+ * \brief: Reduce the colors continue and calculate the weights coefficient   
+ * 
+ * \param: histogram, LAB histogram (calculated before)
+ *         LL, AA, BB, L-A-B values (calculated before)
+ * 
+ * \return: numberOfColors, number of colors until finally reduced
+ *          reverseMap, 
+ *          map,
+ *          colorDistance, color distance measured by ||Q_i, Q_j||  
+ *          exponentialColorDistance, the weights coefficient
+*/
+int preComputeParameters( Mat &histogram,
                           vector<float> LL,
                           vector<float> AA,
                           vector<float> BB,
@@ -216,15 +245,14 @@ int precomputeParameters(Mat histogram,
                           Mat &colorDistance,
                           Mat &exponentialColorDistance){
     
-    int*    histogramPtr    = histogram.ptr<int>(0);
+    int* histogramPtr = histogram.ptr<int>(0);
 
-    Mat problematic         = Mat::zeros(histogram.cols, 1, CV_32SC1);
-    
-    Mat closestElement      = Mat::zeros(histogram.cols, 1, CV_32SC1);
-    
+    Mat problematic  = Mat::zeros(histogram.cols, 1, CV_32SC1);
+    Mat closestElement = Mat::zeros(histogram.cols, 1, CV_32SC1);
     Mat sortedHistogramIdx;
     
-    // The number of colors are further reduced here. A threshold is calculated so that we take the colors that can represent 95% of the image.
+    // The number of colors are further reduced here. A threshold is 
+    // calculated so that we take the colors that can represent 95% of the image.  
     
     sortIdx(histogram, sortedHistogramIdx, CV_SORT_EVERY_ROW + CV_SORT_DESCENDING);
     
@@ -242,14 +270,15 @@ int precomputeParameters(Mat histogram,
         
         if (energy > energyThreshold){
             
-            binCountThreshold = histogramPtr[sortedHistogramIdx.at<int>(0,i)];
+            binCountThreshold = histogramPtr[sortedHistogramIdxPtr[i]];
             
             break;
             
         }
     }
     
-    // Calculate problematic histogram bins (i.e. bins that have very few or no pixels)
+    // Calculate problematic histogram bins. i.e. bins that have few
+    // pixels(or maybe no pixel)
     
     for (int i = 0; i < histogram.cols; i++)
         if (histogramPtr[i] < binCountThreshold)
@@ -311,104 +340,113 @@ int precomputeParameters(Mat histogram,
         if(problematic.at<int>(i,0))
             mapPtr[i] = mapPtr[closestElement.at<int>(i,0)];
     
-    int numberOfColors = (int)L.size();
+    int numberOfColors = (int)L.size();  // acutally: numberOfColors == count
     
-    // Precompute the color weights here
+    // PreCompute the color weights here
     
-    exponentialColorDistance    = Mat::zeros(numberOfColors, numberOfColors, CV_32FC1);
+    exponentialColorDistance = Mat::zeros(numberOfColors, numberOfColors, CV_32FC1);
     
-    colorDistance               = Mat::zeros(numberOfColors, numberOfColors, CV_32FC1);
+    colorDistance = Mat::zeros(numberOfColors, numberOfColors, CV_32FC1);
     
     for (int i = 0; i < numberOfColors; i++) {
         
-        colorDistance.at<float>(i,i)            = 0;
+        colorDistance.at<float>(i,i) = 0;
         
         exponentialColorDistance.at<float>(i,i) = 1.0;
         
         for (int k = i + 1; k < numberOfColors; k++) {
             
-            float colorDifference                   = pow(L[i] - L[k],2) + pow(A[i] - A[k],2) + pow(B[i] - B[k],2);
+            float colorDifference = pow(L[i] - L[k],2) + pow(A[i] - A[k],2) + pow(B[i] - B[k],2);
+            float distance = sqrt(colorDifference);
+            float expDistance = exp(- colorDifference / (2 * sigmac * sigmac));
             
-            colorDistance.at<float>(i,k)            = sqrt(colorDifference);
+            colorDistance.at<float>(i,k) = distance;
+            colorDistance.at<float>(k,i) = distance;
             
-            colorDistance.at<float>(k,i)            = sqrt(colorDifference);
-            
-            exponentialColorDistance.at<float>(i,k) = exp(- colorDifference / (2 * sigmac * sigmac));
-            
-            exponentialColorDistance.at<float>(k,i) = exponentialColorDistance.at<float>(i,k);
-            
+            exponentialColorDistance.at<float>(i,k) = expDistance;
+            exponentialColorDistance.at<float>(k,i) = expDistance;
         }
     }
     
     return numberOfColors;
-    
 }
 
-void bilateralFiltering(Mat colorDistance,
-                        Mat exponentialColorDistance,
-                        vector<int> reverseMap,
+/**
+ * \brief: bilateral Filter, used for calculate (mx, my), (Vx, Vy)
+ *         can be accelerated by `integral image`  
+ * 
+ * \param: colorDistance, color distance measured by ||Q_i, Q_j||  
+ *         exponentialColorDistance, the weights coefficient
+ *         reverseMap, 
+ *         histogramPtr,
+ *         reverseMap, 
+ *         averageXPtr, averageYPtr, averageX2Ptr, averageY2Ptr, 
+ * 
+ * \return: numberOfColors, number of colors until finally reduced
+ *          (mx, my), (Vx, Vy), spatial center and variances of the colors.
+ *          contrast, global contrast, mixed with probability to get the salient map
+*/
+void bilateralFiltering(Mat &colorDistance,
+                        Mat &exponentialColorDistance,
+                        vector<int> &reverseMap,
                         int* histogramPtr,
-                        float* averageXPtr,
-                        float* averageYPtr,
-                        float* averageX2Ptr,
-                        float* averageY2Ptr,
-                        Mat &mx,
-                        Mat &my,
-                        Mat &Vx,
-                        Mat &Vy,
+                        float* averageXPtr, float* averageYPtr,
+                        float* averageX2Ptr, float* averageY2Ptr,
+                        Mat &mx, Mat &my, Mat &Vx, Mat &Vy,
                         Mat &contrast){
     
     int numberOfColors = colorDistance.cols;
     
-    Mat X       = Mat::zeros(1, numberOfColors, CV_32FC1);
-    Mat Y       = Mat::zeros(1, numberOfColors, CV_32FC1);
-    Mat X2      = Mat::zeros(1, numberOfColors, CV_32FC1);
-    Mat Y2      = Mat::zeros(1, numberOfColors, CV_32FC1);
-    Mat NF      = Mat::zeros(1, numberOfColors, CV_32FC1);
+    Mat X = Mat::zeros(1, numberOfColors, CV_32FC1);
+    Mat Y = Mat::zeros(1, numberOfColors, CV_32FC1);
+    Mat X2 = Mat::zeros(1, numberOfColors, CV_32FC1);
+    Mat Y2 = Mat::zeros(1, numberOfColors, CV_32FC1);
+    Mat NF = Mat::zeros(1, numberOfColors, CV_32FC1);
     
     float* XPtr     = X.ptr<float>(0);
     float* YPtr     = Y.ptr<float>(0);
     float* X2Ptr    = X2.ptr<float>(0);
     float* Y2Ptr    = Y2.ptr<float>(0);
-    float* NFPtr    = NF.ptr<float>(0);
+    float* NFPtr    = NF.ptr<float>(0);   // denominator
     
     // Here, we calculate the color contrast and the necessary parameters to compute the spatial center and variances
 
-    contrast    = Mat::zeros(1, numberOfColors, CV_32FC1);
+    contrast = Mat::zeros(1, numberOfColors, CV_32FC1);
     
     float* contrastPtr  = contrast.ptr<float>(0);
     
     for (int i = 0; i < numberOfColors; i++) {
         
-        float* colorDistancePtr             = colorDistance.ptr<float>(i);
+        float* colorDistancePtr = colorDistance.ptr<float>(i);
         float* exponentialColorDistancePtr  = exponentialColorDistance.ptr<float>(i);
         
         for (int k = 0; k < numberOfColors; k++) {
 
             contrastPtr[i]  += colorDistancePtr[k] * histogramPtr[reverseMap[k]];
             
-            XPtr[i]         += exponentialColorDistancePtr[k] * averageXPtr[reverseMap[k]];
-            YPtr[i]         += exponentialColorDistancePtr[k] * averageYPtr[reverseMap[k]];
-            X2Ptr[i]        += exponentialColorDistancePtr[k] * averageX2Ptr[reverseMap[k]];
-            Y2Ptr[i]        += exponentialColorDistancePtr[k] * averageY2Ptr[reverseMap[k]];
-            NFPtr[i]        += exponentialColorDistancePtr[k] * histogramPtr[reverseMap[k]];
-
+            XPtr[i] += exponentialColorDistancePtr[k] * averageXPtr[reverseMap[k]];
+            YPtr[i] += exponentialColorDistancePtr[k] * averageYPtr[reverseMap[k]];
+            X2Ptr[i] += exponentialColorDistancePtr[k] * averageX2Ptr[reverseMap[k]];
+            Y2Ptr[i] += exponentialColorDistancePtr[k] * averageY2Ptr[reverseMap[k]];
+            NFPtr[i] += exponentialColorDistancePtr[k] * histogramPtr[reverseMap[k]];
         }
     }
     
-    divide(X,   NF, X);
-    divide(Y,   NF, Y);
-    divide(X2,  NF, X2);
-    divide(Y2,  NF, Y2);
+    divide(X, NF, X);
+    divide(Y, NF, Y);
+    divide(X2, NF, X2);
+    divide(Y2, NF, Y2);
     
-    // The mx, my, Vx, and Vy represent the same symbols in the paper. They are the spatial center and variances of the colors, respectively.
+    // The (mx, my), (Vx, Vy) represent the same symbols in the paper. 
+    // They are the spatial center and variances of the colors, respectively.
 
     X.assignTo(mx);
     Y.assignTo(my);
     
+    // Here is the INTEGRAL IMAGE 
+
     Vx = X2 - mx.mul(mx);
     Vy = Y2 - my.mul(my);
-
 }
 
 void calculateProbability(Mat mx,
@@ -542,8 +580,8 @@ void outputHowToUse(){
     
 }
 
-int main(int argc, const char * argv[]){
-    
+int main(int argc, const char * argv[])
+{
     bool isimage;
     
     if(argc < 2){
@@ -641,7 +679,7 @@ int main(int argc, const char * argv[]){
     else
         cout << imageNames.size() << " video frame(s) were found." << endl;
 
-    cout << "Processing..." << endl;
+    cout << "Processing..." << endl;cout << "Processing..." << endl;
 
     system(("mkdir -p " + savePath).c_str());
     system(("mkdir -p " + savePath + "globalContrast/").c_str());
@@ -652,16 +690,14 @@ int main(int argc, const char * argv[]){
     system(("mkdir -p " + savePath + "rectangleBoundingBoxes/").c_str());
     
     int totalImages     = 0;
-    
     float totalColor    = 0;
-    
-    float totalPixels   = 0;
-    
+    float totalPixels   = 0;   // pixels number of the image
     float totalTime     = 0;
     
     for (int i = 0; i < squares.cols; i++)
         squaresPtr[i] = pow(i,2);
 
+    // Main Loop
     while(1) {
         
         Mat im;
@@ -692,71 +728,47 @@ int main(int argc, const char * argv[]){
             vector<float> LL, AA, BB;
             
             calculateHistogram(im,
-                               averageX,
-                               averageY,
-                               averageX2,
-                               averageY2,
-                               LL,
-                               AA,
-                               BB,
+                               averageX, averageY,
+                               averageX2, averageY2,
+                               LL, AA, BB,
                                histogram,
                                histogramIndex);
             
-            float* averageXPtr      = averageX.ptr<float>(0);
-            float* averageYPtr      = averageY.ptr<float>(0);
-            float* averageX2Ptr     = averageX2.ptr<float>(0);
-            float* averageY2Ptr     = averageY2.ptr<float>(0);
-            
-            int*    histogramPtr    = histogram.ptr<int>(0);
             
             Mat map, colorDistance, exponentialColorDistance;
-            
             vector<int> reverseMap;
-            
-            int numberOfColors = precomputeParameters(histogram,
-                                                      LL,
-                                                      AA,
-                                                      BB,
+            int numberOfColors = preComputeParameters(histogram,
+                                                      LL,  AA, BB,
                                                       im.cols * im.rows,
                                                       reverseMap,
                                                       map,
                                                       colorDistance,
                                                       exponentialColorDistance);
-            
             totalColor += numberOfColors;
             
-            int* mapPtr = map.ptr<int>(0);
-            
+            float* averageXPtr = averageX.ptr<float>(0);
+            float* averageYPtr = averageY.ptr<float>(0);
+            float* averageX2Ptr = averageX2.ptr<float>(0);
+            float* averageY2Ptr = averageY2.ptr<float>(0);
+            int* histogramPtr = histogram.ptr<int>(0);
             Mat mx, my, Vx, Vy, contrast;
-            
             bilateralFiltering(colorDistance,
                                exponentialColorDistance,
                                reverseMap,
                                histogramPtr,
-                               averageXPtr,
-                               averageYPtr,
-                               averageX2Ptr,
-                               averageY2Ptr,
-                               mx,
-                               my,
-                               Vx,
-                               Vy,
+                               averageXPtr, averageYPtr,
+                               averageX2Ptr, averageY2Ptr,
+                               mx, my, Vx, Vy,
                                contrast);
             
             Mat Xsize, Ysize, Xcenter, Ycenter, shapeProbability;
-            
-            calculateProbability(mx,
-                                 my,
-                                 Vx,
-                                 Vy,
+            int* mapPtr = map.ptr<int>(0);
+            calculateProbability(mx, my, Vx, Vy,
                                  modelMean,
                                  modelInverseCovariance,
-                                 im.cols,
-                                 im.rows,
-                                 Xsize,
-                                 Ysize,
-                                 Xcenter,
-                                 Ycenter,
+                                 im.cols, im.rows,
+                                 Xsize, Ysize,
+                                 Xcenter, Ycenter,
                                  shapeProbability);
             
             
@@ -776,6 +788,7 @@ int main(int argc, const char * argv[]){
             
 //////////////////////// SALIENCY COMPUTATION ENDS HERE ////////////////////////
             
+            // save results to disk
             totalTime += double(et-st)/CLOCKS_PER_SEC;
             
             float* saliencyPtr  = saliency.ptr<float>(0);
@@ -787,7 +800,7 @@ int main(int argc, const char * argv[]){
             
             ofstream objectRectangles;
 
-            objectRectangles.open(savePath + "rectangleBoundingBoxes/" + imageNames[totalImages].substr(0,imageNames[totalImages].length()-4) + "txt");
+            objectRectangles.open(savePath + "rectangleBoundingBoxes/" + imageNames[totalImages].substr(0, imageNames[totalImages].length()-4) + ".txt");
             
             for (int i = 0; i < numberOfColors; i++) {
                 
@@ -803,7 +816,7 @@ int main(int argc, const char * argv[]){
                 
                 objectRectangles << xx << "," << yy << "," << ww << "," << hh << "," << saliencyPtr[i] << "\n";
                 
-                if (saliencyPtr[i] > 254){
+                if (saliencyPtr[i] > 254) { 
                     ellipse(ellipseDetection, Point(mx.at<float>(0,i),my.at<float>(0,i)), Size(rx/2,ry/2),0, 0, 360, Scalar(0,0,saliencyPtr[i]), 3, CV_AA);
                     rectangle(rectangleDetection, Point(xx,yy), Point(xx+ww,yy+hh), Scalar(0,0,255), 3, CV_AA);
                 }
@@ -868,8 +881,7 @@ int main(int argc, const char * argv[]){
         }
         else
             break;
-        
-    }
+    }  // end of while(1): the main loop
     
     cout << "Number of images: " << totalImages << endl;
     cout << "Average processing time: " << totalTime / totalImages * 1e3 << " ms" << endl;
@@ -878,5 +890,3 @@ int main(int argc, const char * argv[]){
     
     return 0;
 }
-
-

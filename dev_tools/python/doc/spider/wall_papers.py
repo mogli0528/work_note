@@ -34,7 +34,7 @@ class Spider(object):
         selector = etree.HTML(html.text)
         pageInfo = selector.xpath('//header[@class="listing-header"]/h1[1]/text()')
         string = str(pageInfo[0])
-        numList = list(filter(str.isdigit, string))
+        numList = list(filter(str.isdigit, string)) 
         for item in numList:
             total += item
         totalPageNum = int(total)
