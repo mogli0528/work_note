@@ -27,7 +27,8 @@
                 "/usr/include/gflags",
                 "/usr/include/glog",
                 "/usr/include/x86_64-linux-gnu/c++/4.8",
-                "${workspaceFolder}/tdmc/enhance_houghline_refactor/include"
+                "${workspaceFolder}/tdmc/enhance_houghline_refactor/include",
+                "/usr/include/python3.4m"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

@@ -2,7 +2,6 @@
 几个原则:  
 - 从源头到结束, 按照流程来熟悉各个组件;   
 - 抽离其中用到的数学库和其他开源库, 以便将来用到自己的项目中;  
-- 熟悉 cpp-python 的接口调用方式;  
 
 搞清楚流程之后再深入细节.   
 ## caffe 组件 
@@ -25,3 +24,6 @@
 ## caffe 对于泛化工程的作用   
 - [ 算法运行时间统计](./doc/caffe_for_other_projects/time_consume.md)   
 - [ C++ 禁用拷贝构造函数和赋值运算符](./doc/caffe_for_other_projects/disable_copy-assignment_operator.md)   
+
+## caffe 中 cpp 接口到 python 接口的封装   
+- [caffe cpp to python 的接口封装](./doc/caffe/klm_read_caffe_src/doc/caffe_for_other_projects/caffe.cpp2pycaffe.md)  

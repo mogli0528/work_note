@@ -28,3 +28,20 @@ The path to the source directory currently being processed.
 
 This the full path to the source directory that is currently being processed by cmake.
 
+## 指定编译结果的输出路径  
+
+```cmake
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ./exercise/)
+add_executable( hello_ext ${DIRSRCS})
+
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ../src/python)
+add_library(hello_ext SHARED ${DIRSRCS})
+```
+
+## 编译动态库  
+
+```cmake
+add_library(hello_ext SHARED ${DIRSRCS})
+```
+
+使用 `set_target_properties(hello_ext PROPERTIES PREFIX "" OUTPUT_NAME "hello_ext")` 可以使编译出的动态库没有 `lib` 前缀 - `libhello_ext.so`;  
