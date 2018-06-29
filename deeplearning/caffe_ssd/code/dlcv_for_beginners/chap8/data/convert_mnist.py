@@ -1,3 +1,4 @@
+#coding=utf-8
 import os
 import pickle, gzip
 from matplotlib import pyplot
@@ -5,7 +6,9 @@ from matplotlib import pyplot
 # Load the dataset
 print('Loading data from mnist.pkl.gz ...')
 with gzip.open('mnist.pkl.gz', 'rb') as f:
-    train_set, valid_set, test_set = pickle.load(f)
+    # UnicodeDecodeError: 'ascii' codec can't decode byte 0x90 in position 614: 
+    # ordinal not in range(128): 加上 encoding='bytes' 参数即可
+    train_set, valid_set, test_set = pickle.load(f, encoding='bytes')
 
 imgs_dir = 'mnist'
 os.system('mkdir -p {}'.format(imgs_dir))

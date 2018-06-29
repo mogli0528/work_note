@@ -1,5 +1,12 @@
 # 深度学习系列
 
+ssd 使用 python3 而不是 Python2.7:   
+```makefile
+PYTHON_LIBRARIES := boost_python python3.4m
+PYTHON_INCLUDE := /usr/include/python3.4m \
+                /usr/lib/python3.4/dist-packages/numpy/core/include
+```
+
 `-------------------------------我是分割线------------------------------------`
 ## 1. 环境搭建   
 [1. caffe/ssd/tensorflow 环境搭建](./dev_enviroment/)    

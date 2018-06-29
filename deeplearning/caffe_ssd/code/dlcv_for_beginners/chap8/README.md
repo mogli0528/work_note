@@ -1,46 +1,54 @@
-## Prepare Data
+## Prepare Data For Caffe
+
 ### step 1
 > ./download_mnist.sh
 
-下载mnist.pkl.gz，然后运行 *convert_mnist.py* 将pickle格式的数据转换为图片
+下载 mnist.pkl.gz， 然后运行 *convert_mnist.py* 将 pickle 格式的数据转换为图片.  
 
-如果原链接无法下载可以到下面云盘地址下载：
-http://pan.baidu.com/s/1bHmm7s
+如果原链接无法下载可以到下面云盘地址下载：http://pan.baidu.com/s/1bHmm7s
 
-### step 2
-> python gen_caffe_imglist.py mnist/train train.txt
+### step 2 生成图片-label 信息
 
-> python gen_caffe_imglist.py mnist/val val.txt
+```bash
+python3 gen_caffe_imglist.py mnist/train train.txt
+python3 gen_caffe_imglist.py mnist/val val.txt
+python3 gen_caffe_imglist.py mnist/test test.txt
+```
 
-> python gen_caffe_imglist.py mnist/test test.txt
+### step 3 产生 lmdb 
 
-得到图片的列表，然后运行： 
-> /path/to/caffe/built/tools/convert_imageset ./ train.txt train_lmdb --gray --shuffle
+得到图片的列表，然后运行：  
 
-> /path/to/caffe/built/tools/convert_imageset ./ val.txt val_lmdb --gray --shuffle
+```bash
+/path/to/caffe/build/tools/convert_imageset ./ train.txt train_lmdb --gray --shuffle
+/path/to/caffe/build/tools/convert_imageset ./ val.txt val_lmdb --gray --shuffle
+/path/to/caffe/build/tools/convert_imageset ./ test.txt test_lmdb --gray --shuffle
+```
 
-> /path/to/caffe/built/tools/convert_imageset ./ test.txt test_lmdb --gray --shuffle
+## Prepare Data For MXNet 
 
+### step 1 
 
-产生lmdb
+同上;   
 
-### step 3
-> python gen_mxnet_imglist.py mnist/train train.lst
+### step 2 生成
 
-> python gen_mxnet_imglist.py mnist/val val.lst
+```bash
+python3 gen_mxnet_imglist.py mnist/train train.lst
+python3 gen_mxnet_imglist.py mnist/val val.lst
+python3 gen_mxnet_imglist.py mnist/test test.lst
+```
+### step 3 产生 ImageRecordio 
 
-> python gen_mxnet_imglist.py mnist/test test.lst
+用于产生图片的列表，然后运行:  
 
-用于产生图片的列表，然后运行
+```bash
+/path/to/mxnet/bin/im2rec train.lst ./ train.rec color=0
+/path/to/mxnet/bin/im2rec val.lst ./ val.rec color=0
+/path/to/mxnet/bin/im2rec test.lst ./ test.rec color=0
+```
 
-> /path/to/mxnet/bin/im2rec train.lst ./ train.rec color=0
-
-> /path/to/mxnet/bin/im2rec val.lst ./ val.rec color=0
-
-> /path/to/mxnet/bin/im2rec test.lst ./ test.rec color=0
-
-产生ImageRecordio文件
-
+产生 ImageRecordio 文件.  
 
 ## MXNet
 
@@ -62,3 +70,9 @@ http://pan.baidu.com/s/1bHmm7s
 *lenet.prototxt* 是用于部署的网络结构定义文件
 
 运行 *recognize_digit.py* 接测试文件的列表用来演示手写数字图片识别
+
+## Train Caffe Model  
+
+```bash
+/path/to/caffe/build/tools/caffe train -solver lenet_solver.prototxt -gpu 0 -log_dir log_dir
+```

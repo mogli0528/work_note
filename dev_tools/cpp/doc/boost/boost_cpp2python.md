@@ -191,22 +191,22 @@ import hello_var
 
 var = hello_var.Var("hello_var")
 var.value = 3.14
-# var.name = 'hello' # error
+# var.name = 'hello' # error, variable name is readonly
+
 print var.name
 ```
 
-C++类对象导出为Python的类对象，注意var.name不能赋值。
+C++ 类对象导出为 Python 的类对象，注意 var.name 不能赋值。
 
-类的属性
+## 类的属性
 
+```cpp
 // 类的属性
-
 #include<string>
 #include<boost/python.hpp>
 
 using namespace std;
 using namespace boost::python;
-
 
 struct Num
 {
@@ -222,47 +222,22 @@ BOOST_PYTHON_MODULE(hello_num)
     class_<Num>("Num")
         .add_property("rovalue", &Num::get) // 对外：只读
         .add_property("value", &Num::get, &Num::set);// 对外读写 .value值会改变.rovalue值，存储着同样的数据。
-
 }
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-python:
+```
 
+python 调用:  
+
+```python
 import hello_num
 num = hello_num.Num()
 num.value = 10
-print num.rovalue #  result: 10
-1
-2
-3
-4
-继承
+print (num.rovalue) #  result: 10
+```
 
+## 继承
+
+```cpp
 // 类的继承
-
 #include<string>
 #include<iostream>
 #include<boost/python.hpp>
@@ -324,83 +299,22 @@ BOOST_PYTHON_MODULE(hello_derived)
         return_value_policy<manage_new_object>());//
 
 }
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-python:
+```
 
+python 调用:   
+
+```python
 import hello_derived
+
 derive = hello_derived.factory()
 hello_derived.d(derive)
-1
-2
-3
-类的虚函数：
+```
 
+## 导出类的虚函数   
 
-
-/*
- 类的虚函数，实现的功能是：可以编写Python类，来继承C++类
+```cpp
+/**
+ * 类的虚函数，实现的功能是：可以编写 Python 类，来继承 C++类   
 */
 #include<boost/python.hpp>
 
@@ -423,8 +337,8 @@ struct BaseWrap : Base, wrapper<Base>
     int f()
     {
         if (override f = this->get_override("f"))
-            return f(); //如果函数进行重载了，则返回重载的
-        return Base::f(); //否则返回基类
+            return f(); // 如果函数进行重载了，则返回重载的
+        return Base::f(); // 否则返回基类
     }
     int default_f() { return this->Base::f(); }
 };
@@ -433,52 +347,12 @@ BOOST_PYTHON_MODULE(hello_virtual)
 {
     class_<BaseWrap, boost::noncopyable>("Base")
         .def("f", &Base::f, &BaseWrap::default_f);
-
-
 }
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-python：
+```
 
+python 调用：  
+```python
 import hello_virtual 
-
 
 base = hello_virtual.Base()
 # 定义派生类，继承C++类
@@ -488,32 +362,17 @@ class Derived(hello_virtual.Base):
 
 derived = Derived()
 
+print (base.f())
+print (derived.f())
+```
 
-print base.f()
+## 导出类的运算符 / 特殊函数  
 
-print derived.f()
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-类的运算符/特殊函数
+```cpp
 
-// 类的运算符/特殊函数
-
+// 类的运算符 / 特殊函数
 #include<string>
 #include<iostream>
-
 
 // #include<boost/python.hpp> 如果仅包含该头文件，会出错
 
@@ -586,7 +445,7 @@ bool operator<(FilePos  pos1, FilePos pos2)
 }
 
 
-//特殊的方法
+// 特殊的方法
 
 FilePos pow(FilePos pos1, FilePos pos2)
 {
@@ -627,128 +486,13 @@ BOOST_PYTHON_MODULE(hello_operator)
 
 
 }
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85
-86
-87
-88
-89
-90
-91
-92
-93
-94
-95
-96
-97
-98
-99
-100
-101
-102
-103
-104
-105
-106
-107
-108
-109
-110
-111
-112
-113
-114
-115
-116
-117
-118
-注意上面的：.def(pow(self, other<FilePos>()))模板后面要加上括号。也要注意头文件的包含，否则会引发错误。
+```
 
-python:
+注意上面的：`.def(pow(self, other<FilePos>()))` 模板后面要加上括号。也要注意头文件的包含，否则会引发错误。   
 
+python 调用:  
+
+```python
 import hello_operator
 
 filepos1 = hello_operator.FilePos()
@@ -758,20 +502,11 @@ filepos2 = hello_operator.FilePos()
 filepos2.len = 20;
 
 print filepos1 - filepos2
-1
-2
-3
-4
-5
-6
-7
-8
-9
-函数
+```
 
-函数的调用策略。
+## 函数的调用策略  
 
-
+```cpp
 // 函数的调用策略 
 
 #include<string>
@@ -801,7 +536,7 @@ struct Y
 X & f(Y &y, Z*z)
 {
     y.z = z;
-    return y.x;  //因为x是y的数据成员，x的声明周期与y进行了绑定。因为我们的目的是：Python接口应尽可能的反映C++接口
+    return y.x;  // 因为x是y的数据成员，x的声明周期与y进行了绑定。
 }
 
 
@@ -816,61 +551,17 @@ BOOST_PYTHON_MODULE(hello_call_policy)
         .def_readwrite("str", &X::str);
     class_<Z>("Z")
         .def_readwrite("value", &Z::value);
+
     // return_internal_reference<1 表示返回的值与第一个参数有关系：即第一个参数是返回对象的拥有者（y和x都是引用的形式)。
     // with_custodian_and_ward<1, 2> 表示第二个参数的生命周期依赖于第一个参数的生命周期。
+    // 因为我们的目的是：Python接口应尽可能的反映C++接口
     def("f", f, return_internal_reference<1, with_custodian_and_ward<1, 2> >());
 }
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-函数重载
+```
 
+## 导出重载的成员函数  
+
+```cpp
 // overloading
 
 #include<string>
@@ -888,23 +579,27 @@ struct X
     {
         return true;
     }
+
     bool f(int a, double b)
     {
         return true;
     }
+
     bool f(int a, double b, char c)
     {
         return true;
     }
+        
     int f(int a, int b, int c)
     {
         return a + b + c;
     }
 };
+
 bool (X::*fx1)(int) = &X::f;
 bool(X::*fx2)(int, double) = &X::f;
-bool(X::*fx3)(int, double,char) = &X::f;
-int(X::*fx4)(int, int,int) = &X::f;
+bool(X::*fx3)(int, double, char) = &X::f;
+int(X::*fx4)(int, int, int) = &X::f;
 
 BOOST_PYTHON_MODULE(hello_overloaded)
 {
@@ -915,97 +610,40 @@ BOOST_PYTHON_MODULE(hello_overloaded)
         .def("f", fx4);
 
 }
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-python:
+```
 
+python 调用:   
+
+```python
 import hello_overloaded
 
 x = hello_overloaded.X() # create a new object
 
+print (x.f(1))  # default int type
+print (x.f(2,double(3)))
+print (x.f(4,double(5),chr(6)))  # chr(6) convert * to char 
+print (x.f(7,8,9))
+```
 
-print x.f(1)  # default int type
-print x.f(2,double(3))
-print x.f(4,double(5),chr(6))  # chr(6) convert * to char 
-print x.f(7,8,9)
-1
-2
-3
-4
-5
-6
-7
-8
-9
-默认参数
+## 导出普通函数的默认参数  
 
-普通函数的默认参数：
+然而通过上面的方式对重载函数进行封装时，就丢失了默认参数的信息。因此我们可以通过一般形式的封装，如下：     
 
-然而通过上面的方式对重载函数进行封装时，就丢失了默认参数的信息。当然我们可以通过一般形式的封装，如下：
+```cpp
+int f(int,double = 3.14, char const * = "hello");
+int f1(int x){ return f(x); }
+int f2(int x,double y){ return f(x,y); }
 
-int f(int,double = 3.14,char const * = "hello");
-int f1(int x){ return f(x);}
-int f2(int x,double y){return f(x,y)}
-
-//int module init
-def("f",f); // 所有参数
-def("f",f2); //两个参数
-def("f",f1); //一个参数
-1
-2
-3
-4
-5
-6
-7
-8
-但是通过上面的形式封装很麻烦。我们可以通过宏的形式，为我们批量完成上面的功能。
+// int module init
+def("f",f);  // 所有参数
+def("f",f2); // 两个参数
+def("f",f1); // 一个参数
+```
+但是通过上面的形式封装很麻烦。我们可以通过 `宏` 的形式，为我们批量完成上面的功能。   
 
 C++:
 
-
+```cpp
 // BOOST_PYTHON_FUNCTION_OVERLOADS
 
 #include<string>
@@ -1023,72 +661,34 @@ void foo(int a, char b = 1, unsigned c = 2, double d = 3)
     return;
 }
 
-BOOST_PYTHON_FUNCTION_OVERLOADS(foo_overloads, foo, 1, 4); // 参数个数的最小为1，最大为4
+BOOST_PYTHON_FUNCTION_OVERLOADS(foo_overloads, foo, 1, 4); // 参数个数的最小为 1，最大为 4
 
 BOOST_PYTHON_MODULE(hello_overloaded)
 {
-
-    def("foo", foo, foo_overloads()); //实现导出带有默认参数的函数
-
+    def("foo", foo, foo_overloads()); // 实现导出带有默认参数的函数
 }
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-python:
+```
 
+python 调用:
+
+```python
 import hello_overloaded
 
-
 hello_overloaded.foo(1)
-
 hello_overloaded.foo(1,chr(2))
-
 hello_overloaded.foo(1,chr(2),3)  # 3对应的C++为unsigned int
-
 hello_overloaded.foo(1,chr(2),3,double(4))
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-成员函数的默认参数：
+```
 
+## 导出带默认参数的普通成员函数
 
-//使用BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS 宏，完成成员函数默认参数的接口
+```cpp
+// 使用 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS 宏，完成成员函数默认参数的接口   
 
 #include<string>
 #include<iostream>
 
 #include<boost/python.hpp>
-
 
 using namespace std;
 using namespace boost::python;
@@ -1102,7 +702,6 @@ struct george
 
 };
 
-
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(george_overloads, wack_em, 1, 3); // 参数个数的最小为1，最大为3
 
 BOOST_PYTHON_MODULE(hello_member_overloaded)
@@ -1112,39 +711,11 @@ BOOST_PYTHON_MODULE(hello_member_overloaded)
         .def("wack_em", &george::wack_em, george_overloads());
 
 }
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-python:
+```
 
+python 调用:   
+
+```python
 import hello_member_overloaded
 
 c = hello_member_overloaded.george()
@@ -1152,17 +723,13 @@ c = hello_member_overloaded.george()
 c.wack_em(1)
 c.wack_em(1,2)
 c.wack_em(1,2,chr(3))
-1
-2
-3
-4
-5
-6
-7
-利用init和optional实现构造函数的重载。 
-使用方法如下：
+```
 
+## 导出带默认参数的构造函数  
 
+利用 init 和 optional 实现构造函数的重载。 使用方法如下：  
+
+```cpp
 // init  optional
 
 #include<string>
@@ -1181,38 +748,17 @@ BOOST_PYTHON_MODULE(hello_construct_overloaded)
 {
     class_<X>("X")
         .def(init<int, optional<char, string, double> >()); // init 和 optional
-
 }
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-对象接口
+```
 
-Python 是动态类型的语言，C++是静态类型的。Python变量可能是：integer,float ,list ,dict,tuple,str,long,等等，还有其他类型。从Boost.Python和C++的观点来看，Python中的变量是类object的实例，在本节，我们看一下如何处理Python对象。
+## 对象接口
 
-基本接口
+Python 是动态类型的语言，C++ 是静态类型的。Python 变量可能是：integer, float, list, dict, tuple, str, long, 等等，还有其他类型。从 Boost.Python 和 C++ 的观点来看，Python 中的变量是类 object 的实例， 在本节，我们看一下如何处理 Python 对象。  
 
+### 1. 基本接口  
 
+```cpp
 // init  optional
-
 #include<string>
 #include<iostream>
 #include<boost/python.hpp>
@@ -1258,11 +804,12 @@ public:
     void listOperation(list &lst) {};
 };
 
-// 传入np.array数组对象，让C++进行处理
+// 传入 np.array 数组对象，让 C++ 进行处理
 int add_arr_1(object & data_obj, object rows_obj, object cols_obj)
 {
     PyArrayObject* data_arr = reinterpret_cast<PyArrayObject*>(data_obj.ptr());
     float * data = static_cast<float *>(PyArray_DATA(data_arr));
+    
     // using data
     int rows = extract<int>(rows_obj);
     int cols = extract<int>(cols_obj);
@@ -1279,77 +826,11 @@ BOOST_PYTHON_MODULE(hello_object)
     def("test2", test2);
     def("add_arr_1", add_arr_1);
 }
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-python 调用：
+```
 
+python 调用：   
+
+```python
 import hello_object
 
 dic1 = {"whatever":1}
@@ -1358,13 +839,12 @@ hello_object.test2(dic1)
 
 arr = np.array([1,2,3],dtype = float32)
 
-print arr.dtype
-
-print arr
+print (arr.dtype)
+print (arr)
 
 hello_object.add_arr_1(arr,1,3)
-
-print arr
+print (arr)
+```
 
 ## 参考
 
