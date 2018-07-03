@@ -1,36 +1,38 @@
 # python 笔记  
 
 ## Note
+> [ 愉快地迁移到 Python 3 ](./doc/python_virtualenv.md)  
+ 
 ### 1. 基本使用   
-[1. virtualenv 功能](./doc/python_virtualenv.md)  
-[2. dict 字典操作](./doc/dict.md)  
-[3. 文件操作(复制/删除/移动)](./doc/dirs_files_operations.md)  
-[4. matplot 图像绘制库的使用](./doc/matplotlib.md)  
-[5. matplot 随机漫步示例](./doc/random_walk.md)  
-[6. matplot 骰子示例](./doc/random_walk.md) 
-[7. ssd 训练脚本中使用到的 skills ](./doc/skills_in_ssd_training_script.md) 
-[8. decorator 装饰器 ](./doc/decorator.md) 
+- [ virtualenv 功能](./doc/python_virtualenv.md)  
+- [ dict 字典操作](./doc/dict.md)  
+- [ 文件操作(复制/删除/移动)](./doc/dirs_files_operations.md)  
+- [ matplot 图像绘制库的使用](./doc/matplotlib.md)  
+- [ matplot 随机漫步示例](./doc/random_walk.md)  
+- [ matplot 骰子示例](./doc/random_walk.md) 
+- [ ssd 训练脚本中使用到的 skills ](./doc/skills_in_ssd_training_script.md) 
+- [ decorator 装饰器 ](./doc/decorator.md) 
 
 ### 2. python 源码剖析   
-[xx. `python`源码剖析`--1`](./doc/python_src_analysis.md)  
-[xx. `python`源码剖析一书中的错误](./doc/python_src_mistake.md)  
+- [ python 源码剖析 - 1](./doc/python_src_analysis.md)  
+- [ python 源码剖析一书中的错误](./doc/python_src_mistake.md)  
 
 ### 3. python / c
-[1. `python` 调用 c 库函数](./doc/call_libc_func.md)  
-[2. `python` 和 C/C++ 相互调用](./doc/call_c_func.md)  
+- [ python 调用 c 库函数](./doc/call_libc_func.md)  
+- [ python 和 C/C++ 相互调用](./doc/call_c_func.md)  
 
 ### 4. << Python 科学计算 >>     
-- [ndarray 对象](./doc/science_compute/chapter2.md)  
-[numpy 的使用](./doc/numpy.md)  
+- [ ndarray 对象](./doc/science_compute/chapter2.md)  
+- [ numpy 的使用](./doc/numpy.md)  
 
 ### 5. jupyter-notebook 用法    
-- [jupyter-notebook 中的神奇功能](./doc/iPython/magic_functions.md)  
-- [jupyter-notebook 中的快捷键](./doc/iPython/key_bindings.md)       
+- [ jupyter-notebook 中的神奇功能](./doc/iPython/magic_functions.md)  
+- [ jupyter-notebook 中的快捷键](./doc/iPython/key_bindings.md)       
 
 ### 6. python 爬虫 
-- [手把手教你写网络爬虫（1）： 网易云音乐歌单 ](./doc/spider/step_by_step/netease_music.md)   
-- [手把手教你写网络爬虫（2）： 迷你爬虫架构 ](./doc/spider/step_by_step/spider_archtechture.md)   
-- [手把手教你写网络爬虫（8）： 彻底解决乱码问题 ](./doc/spider/step_by_step/character_encode.md)   
+- [ 手把手教你写网络爬虫（1）： 网易云音乐歌单 ](./doc/spider/step_by_step/netease_music.md)   
+- [ 手把手教你写网络爬虫（2）： 迷你爬虫架构 ](./doc/spider/step_by_step/spider_archtechture.md)   
+- [ 手把手教你写网络爬虫（8）： 彻底解决乱码问题 ](./doc/spider/step_by_step/character_encode.md)   
 
 ## code   
-- [壁纸爬虫](./code/spider/wall_papers.py)   
+- [ 壁纸爬虫 ](./code/spider/wall_papers.py)   

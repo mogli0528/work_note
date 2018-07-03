@@ -1,4 +1,8 @@
 # `Ubuntu14.04`安装`TensorFlow1.0.1`
+
+> tensorflow 镜像地址: https://github.com/tensorflow/tensorflow   
+> https://pypi.org/project/tensorflow/1.4.0/
+
 系统环境：Ｕbuntu14.04 64bit
 Python版本：Python 2.7.8
 TensorFlow版：TensorFlow 1.0.1
@@ -44,6 +48,10 @@ $ source ~/tf101py27/bin/activate
 ```
 这个过程要持续一段时间，系统会下载相关的依赖包，比如`numpy`等。        
 安装成功后输出：`Successfully installed numpy-1.12.1 pbr-3.0.0 protobuf-3.2.0 tensorflow-1.0.1`     
+
+pip install tf-nightly
+
+
 ６. 验证`TensorFlow`是否安装成功         
 ```
 (tf101py27)  ~/tf101py27$ python

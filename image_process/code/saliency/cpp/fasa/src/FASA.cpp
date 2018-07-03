@@ -372,7 +372,7 @@ int preComputeParameters( Mat &histogram,
 }
 
 /**
- * \brief: bilateral Filter, used for calculate (mx, my), (Vx, Vy)
+ * \brief: Bilateral Filter, used for calculate (mx, my), (Vx, Vy)
  *         can be accelerated by `integral image`  
  * 
  * \param: colorDistance, color distance measured by ||Q_i, Q_j||  
@@ -403,13 +403,14 @@ void bilateralFiltering(Mat &colorDistance,
     Mat Y2 = Mat::zeros(1, numberOfColors, CV_32FC1);
     Mat NF = Mat::zeros(1, numberOfColors, CV_32FC1);
     
-    float* XPtr     = X.ptr<float>(0);
-    float* YPtr     = Y.ptr<float>(0);
-    float* X2Ptr    = X2.ptr<float>(0);
-    float* Y2Ptr    = Y2.ptr<float>(0);
-    float* NFPtr    = NF.ptr<float>(0);   // denominator
+    float* XPtr = X.ptr<float>(0);
+    float* YPtr = Y.ptr<float>(0);
+    float* X2Ptr = X2.ptr<float>(0);
+    float* Y2Ptr = Y2.ptr<float>(0);
+    float* NFPtr = NF.ptr<float>(0);   // denominator
     
-    // Here, we calculate the color contrast and the necessary parameters to compute the spatial center and variances
+    // Here, we calculate the color contrast and the necessary parameters to 
+    // compute the spatial center and variances
 
     contrast = Mat::zeros(1, numberOfColors, CV_32FC1);
     
@@ -449,32 +450,33 @@ void bilateralFiltering(Mat &colorDistance,
     Vy = Y2 - my.mul(my);
 }
 
-void calculateProbability(Mat mx,
-                          Mat my,
-                          Mat Vx,
-                          Mat Vy,
-                          Mat modelMean,
-                          Mat modelInverseCovariance,
+/**
+ * \brief: Modeling Salient Probability, computations are same as that paper writes.
+ * 
+ * \param: (mx, my), (Vx, Vy), spatial center and variances of the colors.
+ *         modelMean, the mean value of the model
+ *         modelInverseCovariance, the inverse of the covatiance Matrix.
+ * 
+ * \return: shapeProbability, Salient Probability
+*/
+void calculateProbability(Mat &mx, Mat &my, Mat &Vx, Mat &Vy, 
+                          Mat &modelMean, Mat &modelInverseCovariance,
                           int width,
                           int height,
-                          Mat &Xsize,
-                          Mat &Ysize,
-                          Mat &Xcenter,
-                          Mat &Ycenter,
+                          Mat &Xsize, Mat &Ysize,
+                          Mat &Xcenter, Mat &Ycenter,
                           Mat &shapeProbability){
     
-    // Convert the spatial center and variances to vector "g" in the paper, so we can compute the probability of saliency.
-    
+    // Convert the spatial center and variances to vector "g_i" in the paper, 
+    // so we can compute the probability of saliency.
     sqrt(12 * Vx, Xsize);
-    Xsize       = Xsize/(float)width;
-    
+    Xsize = Xsize/(float)width;
     sqrt(12 * Vy, Ysize);
-    Ysize       = Ysize/(float)height;
-    
+    Ysize = Ysize/(float)height;
     Xcenter = (mx - width /2)/(float)width;
     Ycenter = (my - height/2)/(float)height;
     
-    Mat     g;
+    Mat g;  // g's shape = (4, numberOfColors)
     
     vconcat(Xsize, Ysize, g);
     vconcat(g, Xcenter, g);
@@ -482,7 +484,7 @@ void calculateProbability(Mat mx,
     
     Mat repeatedMeanVector;
     
-    repeat(modelMean, 1, Xcenter.cols, repeatedMeanVector);
+    repeat(modelMean, 1, Xcenter.cols, repeatedMeanVector);  // broadcast vector
     
     g = g - repeatedMeanVector;
     
@@ -492,7 +494,9 @@ void calculateProbability(Mat mx,
     
     float* shapeProbabilityPtr = shapeProbability.ptr<float>(0);
     
-    // Comptuing the probability of saliency. As we will perform a normalization later, there is no need to multiply it with a constant term of the Gaussian function.
+    // Comptuing the probability of saliency. As we will perform a 
+    // normalization later, there is no need to multiply it with a constant 
+    // term of the Gaussian function(ie. 1/(2*PI^2)).  
     
     for (int i = 0; i < Xcenter.cols; i++) {
         
@@ -505,9 +509,7 @@ void calculateProbability(Mat mx,
         gemm(result, g.col(i), 1.0, 0.0, 0.0, result);
         
         shapeProbabilityPtr[i] = exp(- result.at<float>(0,0) / 2);
-        
     }
-    
 }
 
 void computeSaliencyMap(Mat shapeProbability,
@@ -522,7 +524,7 @@ void computeSaliencyMap(Mat shapeProbability,
     
     int numberOfColors  = shapeProbability.cols;
     
-    saliency            = shapeProbability.mul(contrast);
+    saliency = shapeProbability.mul(contrast);
     
     float* saliencyPtr  = saliency.ptr<float>(0);
     
@@ -537,13 +539,13 @@ void computeSaliencyMap(Mat shapeProbability,
                 
                 a1 += saliencyPtr[k] * exponentialColorDistance.at<float>(i,k);
                 a2 += exponentialColorDistance.at<float>(i,k);
-                
             }
-            
         }
         
         saliencyPtr[i] = a1/a2;
     }
+
+    // Histogram Stretch ?? TODO ??
 
     minMaxLoc(saliency, &minVal, &maxVal);
     
@@ -563,11 +565,8 @@ void computeSaliencyMap(Mat shapeProbability,
             float sal = saliencyPtr[mapPtr[histogramIndexPtr[x]]];
 
             SMPtr[x] = (uchar)(sal);
-            
         }
     }
-
-    
 }
 
 void outputHowToUse(){

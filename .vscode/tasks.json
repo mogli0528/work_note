@@ -6,7 +6,7 @@
         {
             "label": "python3",
             "type": "shell",
-            "command": "/usr/bin/python3",
+            "command": "/home/klm/work/python-venv/py34TF/bin/python3",
             "args": [
                 "${file}"
             ],
