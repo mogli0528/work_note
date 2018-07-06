@@ -73,9 +73,8 @@ for i in range(1000):
 
 # Visualize Results
 # Pull out slope/intercept
-[[slope]] = sess.run(A)
-[[intercept]] = sess.run(b)
-
+[[slope], [intercept]] = sess.run([A, b])
+print(slope, intercept)
 # Create fitted line
 x = np.linspace(0, 3, num=50)
 ablineValues = []

@@ -22,7 +22,7 @@ sess = tf.Session()
 
 # Create data
 x_vals = np.random.normal(1, 0.1, 100)
-y_vals = np.repeat(10., 100)
+y_vals = np.repeat(5., 100)
 x_data = tf.placeholder(shape=[1], dtype=tf.float32)
 y_target = tf.placeholder(shape=[1], dtype=tf.float32)
 
@@ -36,7 +36,7 @@ my_output = tf.multiply(x_data, A)
 loss = tf.square(my_output - y_target)
 
 # Create Optimizer
-my_opt = tf.train.GradientDescentOptimizer(0.02)
+my_opt = tf.train.GradientDescentOptimizer(learning_rate=0.02)
 train_step = my_opt.minimize(loss)
 
 # Initialize variables
@@ -44,15 +44,15 @@ init = tf.global_variables_initializer()
 sess.run(init)
 
 # Run Loop
-for i in range(100):
+for i in range(1000):
     rand_index = np.random.choice(100)
     rand_x = [x_vals[rand_index]]
     rand_y = [y_vals[rand_index]]
     sess.run(train_step, feed_dict={x_data: rand_x, y_target: rand_y})
-    if (i+1)%25==0:
+    if (i+1) % 25==0:
         print('Step #' + str(i+1) + ' A = ' + str(sess.run(A)))
         print('Loss = ' + str(sess.run(loss, feed_dict={x_data: rand_x, y_target: rand_y})))
-
+print("\n\n")
 # Classification Example
 # We will create sample data as follows:
 # x-data: sample 50 random values from a normal = N(-1, 1)
@@ -82,7 +82,7 @@ A = tf.Variable(tf.random_normal(mean=10, shape=[1]))
 # Note, the sigmoid() part is in the loss function
 my_output = tf.add(x_data, A)
 
-# Now we have to add another dimension to each (batch size of 1)
+# Now we have to add another dimension to each (batch size of 1). on axis 0
 my_output_expanded = tf.expand_dims(my_output, 0)
 y_target_expanded = tf.expand_dims(y_target, 0)
 
@@ -94,11 +94,11 @@ sess.run(init)
 xentropy = tf.nn.sigmoid_cross_entropy_with_logits(logits=my_output_expanded, labels=y_target_expanded)
 
 # Create Optimizer
-my_opt = tf.train.GradientDescentOptimizer(0.05)
+my_opt = tf.train.GradientDescentOptimizer(learning_rate=0.05)
 train_step = my_opt.minimize(xentropy)
 
 # Run loop
-for i in range(1400):
+for i in range(2000):
     rand_index = np.random.choice(100)
     rand_x = [x_vals[rand_index]]
     rand_y = [y_vals[rand_index]]

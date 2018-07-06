@@ -110,4 +110,4 @@ unscaled_logits = tf.constant([[1., -3., 10.]])
 sparse_target_dist = tf.constant([2])
 sparse_xentropy =  tf.nn.sparse_softmax_cross_entropy_with_logits(logits=unscaled_logits,
                                                                   labels=sparse_target_dist)
-print(sess.run(sparse_xentropy))
+print(sess.run(sparse_xentropy)) 

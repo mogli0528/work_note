@@ -19,7 +19,7 @@
 #include "dehazing.h"
 
 /**
- *   \brief: calculate the coefficent "a" of guided filter 
+ *   \brief: calculate the coefficent "a_k" of guided filter 
  *           (intrinsic function for guide filtering)
  * 
  *   \param: 
@@ -78,25 +78,25 @@ void dehazing::BoxFilter(float* pfInArray, int nR, int nWid, int nHei, float*& f
 {
     float* pfArrayCum = new float[nWid*nHei];
 
-    //cumulative sum over Y axis
+    // cumulative sum over Y axis
     for ( int nX = 0; nX < nWid; nX++ )
         pfArrayCum[nX] = pfInArray[nX];
 
     for ( int nIdx = nWid; nIdx <nWid*nHei; nIdx++ )
         pfArrayCum[nIdx] = pfArrayCum[nIdx-nWid] + pfInArray[nIdx];
 
-    //difference over Y axis
-    for ( int nIdx = 0; nIdx < nWid*(nR+1); nIdx++)
-        fOutArray[nIdx] = pfArrayCum[nIdx+nR*nWid];
+    // difference over Y axis
+    for ( int nIdx = 0; nIdx < nWid*(nR+1); nIdx++)   // (nR+1) rows at head, borderMethod 
+        fOutArray[nIdx] = pfArrayCum[nIdx+nR*nWid];   // copy straight-forward
 
-    for ( int nIdx = (nR+1)*nWid; nIdx < (nHei-nR)*nWid; nIdx++ )
-        fOutArray[nIdx] = pfArrayCum[nIdx+nR*nWid] - pfArrayCum[nIdx-nR*nWid-nWid];
+    for ( int nIdx = (nR+1)*nWid; nIdx < (nHei-nR)*nWid; nIdx++ ) // nHei-(2nR+1) rows middle 
+        fOutArray[nIdx] = pfArrayCum[nIdx+nR*nWid] - pfArrayCum[nIdx-(nR+1)*nWid];
 
-    for ( int nY = nHei-nR; nY < nHei; nY++ )
+    for ( int nY = nHei-nR; nY < nHei; nY++ )     // nR rows at end, borderMethod
         for ( int nX = 0; nX < nWid; nX++ )
             fOutArray[nY*nWid+nX] = pfArrayCum[(nHei-1)*nWid+nX] - pfArrayCum[(nY-nR-1)*nWid+nX];
     
-    //cumulative sum over X axis
+    // cumulative sum over X axis, Similar to Y axis
     for ( int nIdx = 0; nIdx < nHei*nWid; nIdx += nWid )
         pfArrayCum[nIdx] = fOutArray[nIdx];
 
@@ -104,9 +104,9 @@ void dehazing::BoxFilter(float* pfInArray, int nR, int nWid, int nHei, float*& f
         for ( int nX = 1; nX < nWid; nX++ )
             pfArrayCum[nY+nX] = pfArrayCum[nY+nX-1]+fOutArray[nY+nX];
 
-    //difference over Y axis
+    // difference over X axis
     for ( int nY = 0; nY < nHei*nWid; nY+=nWid )
-        for ( int nX = 0; nX < nR+1; nX++ )
+        for ( int nX = 0; nX < nR+1; nX++ )          // (nR+1) cols at head, borderMethod
             fOutArray[nY+nX] = pfArrayCum[nY+nX+nR];
 
     for ( int nY = 0; nY < nHei*nWid; nY+=nWid )
@@ -120,20 +120,22 @@ void dehazing::BoxFilter(float* pfInArray, int nR, int nWid, int nHei, float*& f
     delete []pfArrayCum;
 }
 
-/*
-    Function: BoxFilter (for 3D array)
-    \brief: cummulative function for calculating the integral image (It may apply other arraies.)
-    \param:
-        pfInArray1 - input array D1
-        pfInArray2 - input array D2
-        pfInArray3 - input array D3
-        nR - radius of filter window
-        nWid - width of array
-        nHei - height of array
-    \return:
-        fOutArray1 - output array D1(integrated array)
-        fOutArray1 - output array D2(integrated array)
-        fOutArray1 - output array D3(integrated array)
+/**
+ *   \brief: calculating the integral image for 3 channels color image
+ *           (It may apply other arraies.)
+ * 
+ *   \param:
+ *       pfInArray1 - input array D1
+ *       pfInArray2 - input array D2
+ *       pfInArray3 - input array D3
+ *       nR - radius of filter window
+ *       nWid - width of array
+ *       nHei - height of array
+ *
+ *    \return:
+ *       fOutArray1 - output array D1(integrated array)
+ *       fOutArray1 - output array D2(integrated array)
+ *       fOutArray1 - output array D3(integrated array)
  */
 void dehazing::BoxFilter(float* pfInArray1, float* pfInArray2, float* pfInArray3, int nR, int nWid, int nHei, float*& pfOutArray1, float*& pfOutArray2, float*& pfOutArray3)
 {
@@ -141,7 +143,7 @@ void dehazing::BoxFilter(float* pfInArray1, float* pfInArray2, float* pfInArray3
     float* pfArrayCum2 = new float[nWid*nHei];
     float* pfArrayCum3 = new float[nWid*nHei];
 
-    //cumulative sum over Y axis
+    // cumulative sum over Y axis
     for ( int nX = 0; nX < nWid; nX++ )
     {
         pfArrayCum1[nX] = pfInArray1[nX];
