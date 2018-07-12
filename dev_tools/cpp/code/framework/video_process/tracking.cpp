@@ -42,7 +42,7 @@ int main()
 	processor.displayOutput("Tracked Features");
 
 	// Play the video at the original frame rate
-	processor.setDelay(1500./processor.getFrameRate());
+	processor.setDelay(1000./processor.getFrameRate());
 
 	// Start the process
 	processor.run();

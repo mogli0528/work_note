@@ -13,6 +13,8 @@
 
 #include "box_filtering.h"
 #include <ctime>
+#include <sstream>
+#include <iomanip>      // std::setfill, std::setw
 
 using namespace tdmc;
 
@@ -47,17 +49,6 @@ int main()
     uchar * image_ptr = image.data;
 
     double duration = static_cast<double>(cv::getTickCount());
-
-    // // 30 rows at beginning
-    // for ( int i = 0; i < (image.rows-30) * image.cols; i++)
-    //     image_ptr[i] = cv::saturate_cast<uchar>(image_ptr[i]<<5);
-    // duration = static_cast<double>(cv::getTickCount()) - duration;
-    // duration /= cv::getTickFrequency();
-    // std::cout << "Time elaspe: " << duration << " ms" << std::endl;
-    // // 30 cols at left
-    // for (int j = 0; j < image.rows; j++ )
-    //     for ( int i = 0; i < (image.cols-30); i++ )
-    //         image_ptr[j*image.cols + i] = cv::saturate_cast<uchar>(image_ptr[j*image.cols + i] + 300); 
     
     for(int k = 0; k < 2000; k++ ) {
     
@@ -70,5 +61,14 @@ int main()
 
     cv::imshow("dst", image);
 
+    for (int i = 0; i < 10; i++) {
+
+        std::stringstream ss;
+        ss << "bikeOut" << std::setfill('0') << std::setw(3) << i << ".jpg"; 
+        std::cout << ss.str() << std::endl;
+    }
+
+
     cv::waitKey(0);
 }
+

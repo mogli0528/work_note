@@ -38,7 +38,7 @@ void canny(cv::Mat& img, cv::Mat& out) {
 	cv::threshold(out,out,128,255,cv::THRESH_BINARY_INV);
 }
 
-int main_()
+int main()
 {
 	// Open the video file
     cv::VideoCapture capture("../bike.avi");

@@ -27,8 +27,7 @@
 int main()
 {
 	// Open the video file
-    // cv::VideoCapture capture("../bike.avi");
-    cv::VideoCapture capture("/home/klm/work/td_marco/images/video/coal_machine.avi");
+    cv::VideoCapture capture("../bike.avi");
 	// check if video successfully opened
 	if (!capture.isOpened())
 		return 0;
@@ -64,7 +63,7 @@ int main()
 
 		// introduce a delay
 		// or press key to stop
-		if (cv::waitKey(30)>=0)
+		if (cv::waitKey(10)>=0)
 				stop= true;
 	}
 

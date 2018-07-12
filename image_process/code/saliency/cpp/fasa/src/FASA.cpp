@@ -461,8 +461,7 @@ void bilateralFiltering(Mat &colorDistance,
 */
 void calculateProbability(Mat &mx, Mat &my, Mat &Vx, Mat &Vy, 
                           Mat &modelMean, Mat &modelInverseCovariance,
-                          int width,
-                          int height,
+                          int width, int height,
                           Mat &Xsize, Mat &Ysize,
                           Mat &Xcenter, Mat &Ycenter,
                           Mat &shapeProbability){
