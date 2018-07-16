@@ -356,3 +356,169 @@ $$
 $$
 \xleftarrow{x+y+z} \quad \xrightarrow[x<y]{x+y+z} 
 $$
+
+
+
+MathJax是一个用来在网页上显示复杂的数学符合和公式的js库。本文总结部分MathJax符号，本页作为一个参考页面，用到的时候随时查询，采用的是LaTex语法（MathJax的LaTex语法，实际上是TeX-AMS，即美国数学学会统一使用的LaTex标准）。
+
+ 
+
+希腊字母和希伯来字母
+
+latex	显示效果	latex	显示效果	latex	显示效果
+\alpha	α				
+\beta	β				
+\gamma	γ	\Gamma	Γ	\digamma	ϝ
+\delta	δ	\Delta	Δ		
+\epsilon	ϵ	\varepsilon	ε		
+\zeta	ζ				
+\eta	η				
+\theta	θ	\Theta	Θ	\vartheta	ϑ
+\iota	ι				
+\kappa	κ	\varkappa	ϰ		
+\lambda	λ	\Lambda	Λ		
+\mu	μ	\nu	ν		
+\xi	ξ	\Xi	Ξ		
+\pi	π	\Pi	Π	\varpi	ϖ
+\rho	ρ	\varrho	ϱ		
+\sigma	σ	\Sigma	Σ	\varsigma	ς
+\varsigma	ς	\tau	τ		
+\upsilon	υ	\Upsilon	Υ		
+\phi	ϕ	\Phi	Φ	\varphi	φ
+\chi	χ				
+\psi	ψ	\Psi	Ψ		
+\omega	ω	\Omega	Ω		
+latex	显示效果
+\aleph	ℵ
+\beth	ℶ
+\daleth	ℸ
+\gimel	ℷ
+ 
+
+逻辑运算符
+
+latex	显示效果
+\because	∵
+\therefore	∴
+\forall	∀
+\exists	∃
+\not=	≠
+\not>	≯
+\not\subset	⊄
+集合运算符
+
+latex	显示效果
+\emptyset	∅
+\in	∈
+\notin	∉
+\subset	⊂
+\supset	⊃
+\subseteq	⊆
+\supseteq	⊇
+\bigcap	⋂
+\bigcup	⋃
+\bigvee	⋁
+\bigwedge	⋀
+\biguplus	⨄
+\bigsqcup	⨆
+箭头符号
+
+latex	显示效果
+\uparrow	↑
+\downarrow	↓
+\Uparrow	⇑
+\Downarrow	⇓
+\updownarrow	↕
+\Updownarrow	⇕
+\rightarrow	→
+\leftarrow	←
+\Rightarrow	⇒
+\Leftarrow	⇐
+\leftrightarrow	↔
+\Leftrightarrow	⇔
+\longrightarrow	⟶
+\longleftarrow	⟵
+\Longrightarrow	⟹
+\Longleftarrow	⟸
+\longleftrightarrow	⟷
+\Longleftrightarrow	⟺
+更多的箭头符号
+
+latex	显示效果
+\mapsto	↦
+\longmapsto	⟼
+\hookleftarrow	↩
+\hookrightarrow	↪
+\leftharpoonup	↼
+\rightharpoonup	⇀
+\leftharpoondown	↽
+\rightharpoondown	⇁
+\rightleftharpoons	⇌
+\leadsto	⇝
+\nearrow	↗
+\searrow	↘
+\swarrow	↙
+\nwarrow	↖
+\nleftarrow	↚
+\nrightarrow	↛
+\nLeftarrow	⇍
+\nRightarrow	⇏
+\nleftrightarrow	↮
+\nLeftrightarrow	⇎
+\dashrightarrow	⇢
+\dashleftarrow	⇠
+\leftleftarrows	⇇
+\leftrightarrows	⇆
+\Lleftarrow	⇚
+\twoheadleftarrow	↞
+\leftarrowtail	↢
+\looparrowleft	↫
+\leftrightharpoons	⇋
+\curvearrowleft	↶
+\circlearrowleft	↺
+\Lsh	↰
+\upuparrows	⇈
+\upharpoonleft	↿
+\downharpoonleft	⇃
+\multimap	⊸
+\leftrightsquigarrow	↭
+\rightrightarrows	⇉
+\rightleftarrows	⇄
+\rightrightarrows	⇉
+\rightleftarrows	⇄
+\twoheadrightarrow	↠
+\rightarrowtail	↣
+\looparrowright	↬
+\rightleftharpoons	⇌
+\curvearrowright	↷
+\circlearrowright	↻
+\Rsh	↱
+\downdownarrows	⇊
+\upharpoonright	↾
+\downharpoonright	⇂
+\rightsquigarrow	⇝
+关系运算符
+
+latex	显示效果
+\mid	∣
+\nmid	∤
+\cdot	⋅
+\leq	≤
+\geq	≥
+\neq	≠
+\approx	≈
+\equiv	≡
+\circ	∘
+\ast	∗
+\bigodot	⨀
+\bigotimes	⨂
+\bigoplus	⨁
+其他运算符
+
+latex	显示效果
+\pm	±
+\times	×
+\div	÷
+\sum	∑
+\prod	∏
+\coprod	∐

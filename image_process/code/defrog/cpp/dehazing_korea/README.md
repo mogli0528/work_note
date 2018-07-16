@@ -25,6 +25,8 @@ you may modify the some parameters in dehazing constructor or modify the code to
 
 ```bash
 dehazing "sample/cross.avi" "outputs/cross_out.avi" 100    
+
+dehazing /home/klm/work/td_marco/images/video/DSC_0056.MOV "out.avi" 100 
 ```
 
 ## License:
