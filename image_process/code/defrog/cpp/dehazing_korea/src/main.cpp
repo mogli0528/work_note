@@ -31,7 +31,7 @@ int main(int argc, char** argv)
     int nFrame;
 
     // \lambda_L = 5, \lambda_T = 1
-    dehazing dehazingImg(nWid, nHei, 30, false, false, 5.0f, 1.0f, 40);
+    dehazing dehazingImg(nWid, nHei, 30, false, false, 5.0f, 1.0f, 60);
 
     time_t start_t = clock();
 

@@ -1,14 +1,14 @@
 # ubuntu 系统遇到的问题及解决方法   
 
 ## 开发工具   
-- [1. sublime-text 环境配置相关](./doc/sublime-text3)   
-- [2. git 使用 skills ](./doc/git_usage/)  
+- [ sublime-text 环境配置相关](./doc/sublime-text3)   
+- [ git 使用 skills ](./doc/git_usage/)  
+- [ vi 使用教程](./doc/vi_usage/)  
  
 ## 常用命令   
-- [ubuntu 常用命令 cheatsheet](./doc/quick_cmd.md)  
-- [vi 使用教程](./doc/vi_usage.md)  
-- [grep 用法](./doc/grep_usage.md)   
-- [nohup 的使用](./doc/nohup.md)   
+- [ubuntu 常用命令 cheatsheet](./doc/advanced_issues/quick_cmd.md)  
+- [grep 用法](./doc/advanced_issues/grep_usage.md)   
+- [nohup 的使用](./doc/advanced_issues/nohup.md)   
  
 ## 安装系统必备    
 - [Ubuntu 1404 更换软件下载源](./doc/system_install/sourceslist.md)  
@@ -51,6 +51,7 @@
 - [Chrome 浏览器无法调用 GPU 进程](./doc/advanced_issues/chrome_launch_gpu.md)   
 - [ubuntu 连接投影仪失败或显示不正常](./doc/advanced_issues/projector.md)   
 - [在 Ubuntu 上安装 ChromeDriver](./doc/advanced_issues/chromedriver.md)   
+- [配置 Fiddler 抓包工具](./doc/advanced_issues/mono_fiddler.md)   
 
 释放内存空间:   
 ```bash

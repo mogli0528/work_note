@@ -1,102 +1,6 @@
+#include "lee_filter.hpp"
 
-
-#include "integer_image.hpp"
-#include "int_integral_image.hpp"
-#include <boost/date_time/posix_time/posix_time.hpp>
-
-/**
- * Usage Example:
- * 
- *      ./integer_image /home/klm/Desktop/a_sa.jpg 2 9 
-*/
-
-using namespace std;
-
-
-int main__(int argc, char* argv[])
-{
-    Mat src = imread(argv[1]);
-    // cv::cvtColor(src, src, cv::COLOR_BGR2GRAY);
-    Mat dst = src.clone();
-
-    IntegerImage ii;
-    int radius = 1;
-    ii.init(src.cols, src.rows, radius, radius);
-    ii.integerImage((uchar*)src.data);
-
-    int x = 20, y = 50;
-    float a = ii.getMean(x, y);    // 求出以(x,y)为中心的矩形的均值
-    float b = ii.getVar(x, y);
-
-    cout << "mean:       "        << a << endl;
-    cout << "var:        "        << b << endl;
-
-    cv::imshow("src", src);
-    cv::imshow("output", dst);
-
-    if(27 == cv::waitKey(0))
-        cv::destroyAllWindows();
-
-    return 0;
-}
-
-int SIZE = 9; 
 uchar CLIP255(int x)  {if(x < 0) return 0; else if(x > 255) return 255;}    
-
-void lee_filter_1_chs(const cv::Mat &src, cv::Mat &dst, int sigmma);
-void lee_filter_3_chs(const cv::Mat &src, cv::Mat &dst, int sigmma);
-void lee_filter_1_chs_ii(const cv::Mat &src, cv::Mat &dst, int sigmma, IntIntegralImage &ii);
-void lee_filter_3_chs_ii(const cv::Mat &src, cv::Mat &dst, int sigmma, IntIntegralImage &ii);
-
-int main(int argc, char* argv[])
-{
-    boost::posix_time::ptime start_cpu;
-    boost::posix_time::ptime stop_cpu;
-
-    if (argc < 4){
-        std::cout << "Usage: integra_image input.png patch_size DenoiseLevel "<< std::endl;
-        return -1;
-    }
-
-    Mat src = imread(argv[1]);
-    cv::resize(src, src, cv::Size(600, 480));
-    // cv::cvtColor(src, src, COLOR_BGR2GRAY);
-    Mat dst = src.clone();
-    uchar* src_data = src.data;
-    uchar* dst_data = dst.data;
-    
-    int DenoiseLevel = atoi(argv[2]);
-    int sigmma = 100 + DenoiseLevel * DenoiseLevel * 5;
-    SIZE = atoi(argv[3]);
-
-    // 获取当前时间
-    IntIntegralImage ii(src);
-
-    start_cpu = boost::posix_time::microsec_clock::local_time();
-    ii.calculate_sum_and_squaresum();
-    float elapsed = (boost::posix_time::microsec_clock::local_time() - 
-                        start_cpu).total_milliseconds();
-    // cout << "takes " << elapsed << "ms"<< endl;
-
-    // start_cpu = boost::posix_time::microsec_clock::local_time();
-    if ( 1 == src.channels() )
-        lee_filter_1_chs_ii(src, dst, sigmma, ii);
-    else if( 3 == src.channels() )
-        lee_filter_3_chs_ii(src, dst, sigmma, ii);
-
-    elapsed = (boost::posix_time::microsec_clock::local_time() - 
-                        start_cpu).total_milliseconds();
-    cout << "takes " << elapsed << "ms"<< endl;
-
-    cv::imshow("src", src);
-    cv::imshow("output", dst);
-
-    if(27 == cv::waitKey(0))
-        cv::destroyAllWindows();
-
-    return 0;
-}
-
 
 void lee_filter_1_chs_ii(const cv::Mat &src, cv::Mat &dst, int sigmma, IntIntegralImage &ii)
 {
@@ -109,7 +13,6 @@ void lee_filter_1_chs_ii(const cv::Mat &src, cv::Mat &dst, int sigmma, IntIntegr
     int index;
     double Mean, Var, k;
     int size = SIZE*SIZE;
-    cout << "II,  Size = " << SIZE << ", sigmma = " << sigmma << endl;
 
     for ( int y = SIZE/2;y < height-SIZE/2; y++ ) {  
         for ( int x = SIZE/2;x < width-SIZE/2; x++ ) {  
@@ -140,7 +43,6 @@ void lee_filter_1_chs(const cv::Mat &src, cv::Mat &dst, int sigmma)
     int index;
     double Mean, Var, k;
     int size = SIZE*SIZE;
-    cout << "Size = " << SIZE << ", sigmma = " << sigmma << endl;
 
     for ( int x = SIZE/2;x < height-SIZE/2; x++ ) {  
         for ( int y = SIZE/2;y < width-SIZE/2; y++ ) {  
@@ -184,10 +86,16 @@ void lee_filter_3_chs_ii(const cv::Mat &src, cv::Mat &dst, int sigmma, IntIntegr
     int index;
     int size = SIZE * SIZE;
     int* sum;
-    float* ssum;
+    int* ssum;
+    int radius = SIZE/2;
 
-    for( int y = SIZE/2; y < height-SIZE/2; y++ ) {
-        for( int x = SIZE/2; x < width-SIZE/2; x++ ) {
+    // int i = 0;
+    // for( int y = radius; y < (height-radius); y++ ) {
+    //     for( int x = radius; x < (width-radius); x++ ) {
+    for( int y = SIZE; y < (height-SIZE); y++ ) {
+        for( int x = SIZE; x < (width-SIZE); x++ ) {
+            // std::cout << "y = " << y << ", height= "<< height-radius << std::endl;
+            // std::cout << "x = " << x << ", width= "<< width-radius << std::endl;
 
             index = y * lineByte + 3 * x;   // 3 channels
 
@@ -289,5 +197,51 @@ void lee_filter_3_chs(const cv::Mat &src, cv::Mat &dst, int sigmma)
     }
 }
 
+// example call
+int main_example(int argc, char* argv[])
+{
+    boost::posix_time::ptime start_cpu;
+    boost::posix_time::ptime stop_cpu;
 
+    if (argc < 4){
+        std::cout << "Usage: integra_image input.png DenoiseLevel "<< std::endl;
+        return -1;
+    }
 
+    cv::Mat src = cv::imread(argv[1]);
+    cv::resize(src, src, cv::Size(600, 480));
+    cv::cvtColor(src, src, cv::COLOR_BGR2GRAY);
+    cv::Mat dst = src.clone();
+    uchar* src_data = src.data;
+    uchar* dst_data = dst.data;
+    
+    int DenoiseLevel = atoi(argv[2]);
+    int sigmma = 100 + DenoiseLevel * DenoiseLevel * 5;
+
+    // 获取当前时间
+    IntIntegralImage ii(src);
+
+    start_cpu = boost::posix_time::microsec_clock::local_time();
+    ii.calculate_sum_and_squaresum();
+    float elapsed = (boost::posix_time::microsec_clock::local_time() - 
+                        start_cpu).total_milliseconds();
+    // cout << "takes " << elapsed << "ms"<< endl;
+
+    // start_cpu = boost::posix_time::microsec_clock::local_time();
+    if ( 1 == src.channels() )
+        lee_filter_1_chs_ii(src, dst, sigmma, ii);
+    else if( 3 == src.channels() )
+        lee_filter_3_chs_ii(src, dst, sigmma, ii);
+
+    elapsed = (boost::posix_time::microsec_clock::local_time() - 
+                        start_cpu).total_milliseconds();
+    cout << "takes " << elapsed << "ms"<< endl;
+
+    cv::imshow("src", src);
+    cv::imshow("output", dst);
+
+    if(27 == cv::waitKey(0))
+        cv::destroyAllWindows();
+
+    return 0;
+}

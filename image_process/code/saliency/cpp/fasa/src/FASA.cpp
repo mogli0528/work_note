@@ -861,18 +861,26 @@ int main(int argc, const char * argv[])
             
             globalContrastImage = 255 * globalContrastImage;
             globalContrastImage.convertTo(globalContrastImage, CV_8UC1);
-            
-            imwrite(savePath + "globalContrast/"        + imageNames[totalImages].substr(0,imageNames[totalImages].size()-3) + "png", globalContrastImage);
-            imwrite(savePath + "saliencyProbability/"   + imageNames[totalImages].substr(0,imageNames[totalImages].size()-3) + "png", saliencyProbabilityImage);
-            imwrite(savePath + "saliencyMaps/"          + imageNames[totalImages].substr(0,imageNames[totalImages].size()-3) + "png", SM);
-            
-            imwrite(savePath + "ellipseDetection/"      + imageNames[totalImages].substr(0,imageNames[totalImages].size()-3) + "png", ellipseDetection);
-            imwrite(savePath + "rectangleDetection/"    + imageNames[totalImages].substr(0,imageNames[totalImages].size()-3) + "png", rectangleDetection);
-            
-            if(totalImages % (imageNames.size()/10) == 0){
-                float percentage = ((float) 100 * totalImages) / imageNames.size();
-                cout << percentage << "%" << endl;
+
+            cv::imshow("detection", rectangleDetection);
+            int key = cv::waitKey(10);
+            if (key == 27){
+
+                cv::destroyAllWindows();
+                break;
             }
+            
+            // imwrite(savePath + "globalContrast/"        + imageNames[totalImages].substr(0,imageNames[totalImages].size()-3) + "png", globalContrastImage);
+            // imwrite(savePath + "saliencyProbability/"   + imageNames[totalImages].substr(0,imageNames[totalImages].size()-3) + "png", saliencyProbabilityImage);
+            // imwrite(savePath + "saliencyMaps/"          + imageNames[totalImages].substr(0,imageNames[totalImages].size()-3) + "png", SM);
+            
+            // imwrite(savePath + "ellipseDetection/"      + imageNames[totalImages].substr(0,imageNames[totalImages].size()-3) + "png", ellipseDetection);
+            // imwrite(savePath + "rectangleDetection/"    + imageNames[totalImages].substr(0,imageNames[totalImages].size()-3) + "png", rectangleDetection);
+            
+            // if(totalImages % (imageNames.size()/10) == 0){
+            //     float percentage = ((float) 100 * totalImages) / imageNames.size();
+            //     cout << percentage << "%" << endl;
+            // }
             
             totalImages++;
             

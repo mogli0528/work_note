@@ -1,4 +1,5 @@
 {
     "C_Cpp.intelliSenseEngineFallback": "Enabled",
-    "C_Cpp.dimInactiveRegions": false
+    "C_Cpp.dimInactiveRegions": false,
+    "python.pythonPath": "/usr/bin/python3.4"
 }

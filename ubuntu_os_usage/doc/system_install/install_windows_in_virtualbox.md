@@ -25,16 +25,16 @@ $ sudo apt-get install virtualbox
 4.3 安装完成后，重启自己的windows10就好用多了，桌面可以自适应了。    
 5. windows 和 Ubuntu文件共享     
 5.1 设置virtualbox中主机的共享文件夹   
-![](../../pictures/share_folder.png)    
+![](../../snapshots/share_folder.png)    
 5.2 设置share文件夹的属性    
-![](../../pictures/share_props.png)   
+![](../../snapshots/share_props.png)   
 5.3 在windows中映射网络驱动器。      
 此电脑 | 映射网络驱动器, 输入下面的路径.    
 ```
 \\vboxsvr\share 
 ```  
-![](../../pictures/server.png)   
+![](../../snapshots/server.png)   
 到此，共享文件夹就设置好了。    
-![](../../pictures/net_use.png)
+![](../../snapshots/net_use.png)
 
 
