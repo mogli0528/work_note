@@ -1,9 +1,10 @@
-# 
+# 正则表达式   
 
 `+` 贪婪模式, 至少匹配一个
 `?` 表示匹配 0 个或多个
 `*` 
 
+## 概览   
 
 import re
 
@@ -166,3 +167,20 @@ This module also defines an exception 'error'.
 
 """
 ~~~
+
+
+## 使用正则的内涵段子爬虫案例  
+
+.*? 匹配零个或一个字符集合, 非贪婪模式      
+\s 空格   
+
+re.S  表示全文匹配   
+
+url = https://tieba.baidu.com/f?kw=%E6%B5%B7%E8%B4%BC%E7%8E%8B
+
+
+
+
+//div[@class="threadlist_lz clearfix"]//a[@class="j_th_tit"]/@href
+
+

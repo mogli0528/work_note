@@ -45,13 +45,16 @@ $ tar vjcpf /media/klm/work/ubuntu_`date +%Y%m%d_%H`.tar.bz2
 
 ## 4. 备份两个重要的文件    
  备份`/boot`和`/etc/fstab`.        
+
 ```
 sudo cp -R /boot /home/klm/boot
 sudo cp /etc/fstab /home/klm/fstab
 ```
 
 ## 5. 恢复系统    
+
 将备份文件拷贝到/目录，执行恢复命令：   
+
 5.1 使用`gzip`格式   
 ```bash
 $ su - root
@@ -62,35 +65,3 @@ $ tar vxzpf ubuntu*.tar.gz -C /
 $ tar vxjpf ubuntu*.tar.bz2 -C /
 ```
 
-## 6. 系统层面的后遗症    
-6.1 grub rescue (即找不到系统引导).   
-```
-错误提示，error: file '/grub/i386-pc/normal.mod' not found   
-grub rescue>
-```
-1) 找到包含 ${}/boot/grub 的分区.   
-```bash
-ls  # 查看当前目录下的所有文件  
-(hd0) (hd0,msdos8) (hd0,msdos7) (hd0,msdos6) (hd0,msdos5) (hd0,msdos3) (hd0,msdos2) (hd0,msdos1)
-# 依次使用tab 补全的方式查看哪个分区包含有 ${}/boot/grub 目录.   
-```
-经试验，发现我的引导 grub 在(hd0,msdos6)/boot/grub 下, 所以，只要将 grub 指向这个位置就 ok 了.   
-当然，其他人的 grub 位置可能会不同，需要自己用 ls 命令耐心查找。一般人的在 (hd0,msdos5)/grub.   
-2) 解决方法.   
-```bash
-grub rescue> ls  # 查看当前目录下的所有文件  
-(hd0) (hd0,msdos8) (hd0,msdos7) (hd0,msdos6) (hd0,msdos5) (hd0,msdos3) (hd0,msdos2) (hd0,msdos1)  
-grub rescue> set root=(hd0,msdos6)/boot   # 设置grub的启动分区  
-grub rescue> set prefix=(hd0,msdos6)/boot/grub # 设置grub的启动路径  
-grub rescue> insmod normal # 加载正常模式  
-grub rescue> normal  
-```
-3) 启动后进入 ubuntu 系统   
-现在只是进入了系统，引导还是坏的，所以下一步是在修复 ubuntu 引导 win10.   
-进入 terminal 终端输入以下命令:   
-```bash
-# sudo能使用 某些只有管理员或者管理员授权才能使用的命令  
-sudo update-grub  
-# grub安装到指定位置  
-sudo grub-install /dev/sda 
-``` 

@@ -12,6 +12,7 @@
  
 ## 安装系统必备    
 - [Ubuntu 1404 更换软件下载源](./doc/system_install/sourceslist.md)  
+- [安装双系统中出现的问题](./doc/system_install/os_install.md)  
 - [修改系统默认启动 ubuntu 或 windows](./doc/system_install/default_grub.md)  
 - [pip install 更换源](./doc/system_install/pip_install_source.md)  
 - [搜狗输入法的安装和卸载](./doc/system_install/sogou_install.md)  
