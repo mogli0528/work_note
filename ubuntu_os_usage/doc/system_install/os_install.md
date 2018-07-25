@@ -9,6 +9,24 @@
 - 最后输入exit回车退出命令提示符，返回安装界面继续安装系统。
 
 
+## 亲测可用   
+
+> ubuntu 所在为固态硬盘, uefi 模式; windows 为机械硬盘, mbr 模式; 
+
+~~~bash
+sudo vi /etc/grub.d/40_custom
+
+# 在文件末尾添加以下内容  
+
+menuentry "Windows 10" {
+    insmod part_msdos
+    insmod ntfs
+    set root=(hd1,msdos1)
+    search --no-floppy --fs-uuid --set=root 9A087D21087CFE17
+    chainloader ($root)/Windows/Boot/EFI/bootmgfw.efi
+}
+~~~
+
 ## 让 ubuntu 搜索到 windows 
 
 1. 确定 uefi 所在的磁盘分区.  

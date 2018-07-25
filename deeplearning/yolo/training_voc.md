@@ -87,6 +87,7 @@ Now we can train! Run the command:
 
 ~~~bash
 ./darknet detector train cfg/voc-klm.data cfg/yolov3-voc-klm.cfg /home/klm/data_training/darknet/voc/darknet53.conv.74
+./darknet detector train cfg/voc-klm.data cfg/yolov3-voc-klm.cfg /home/klm/data/darknet/voc/darknet53.conv.74
 ~~~
 
 ## 6. Training YOLO on COCO  

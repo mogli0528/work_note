@@ -25,6 +25,10 @@ python3 gen_caffe_imglist.py mnist/test test.txt
 /path/to/caffe/build/tools/convert_imageset ./ test.txt test_lmdb --gray --shuffle
 ```
 
+/home/klm/work/gitwork/ssd/build/tools/convert_imageset ./ train.txt train_lmdb --gray --shuffle
+/home/klm/work/gitwork/ssd/build/tools/convert_imageset ./ val.txt val_lmdb --gray --shuffle
+/home/klm/work/gitwork/ssd/build/tools/convert_imageset ./ test.txt test_lmdb --gray --shuffle
+
 ## Prepare Data For MXNet 
 
 ### step 1 
@@ -76,3 +80,6 @@ python3 gen_mxnet_imglist.py mnist/test test.lst
 ```bash
 /path/to/caffe/build/tools/caffe train -solver lenet_solver.prototxt -gpu 0 -log_dir log_dir
 ```
+/home/klm/work/gitwork/ssd/build/tools/caffe train -solver lenet_solver.prototxt -gpu 0 -log_dir log_dir
+/home/klm/work/gitwork/ssd/build/tools/convert_imageset ./ val.txt val_lmdb --gray --shuffle
+/home/klm/work/gitwork/ssd/build/tools/convert_imageset ./ test.txt test_lmdb --gray --shuffle
