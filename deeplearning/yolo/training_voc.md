@@ -160,7 +160,7 @@ If you want to stop and restart training from a checkpoint:
 ./darknet detector test cfg/voc.data cfg/yolov3-voc.cfg backup/yolov3-voc_1000.weights /data/horse.jpg   
 
 sudo ./darknet detector test cfg/voc.data cfg/yolov3-voc.cfg backup/yolov3-voc_800.weights /home/tdmc/data/darknet/voc/VOCdevkit/VOC2007/JPEGImages/009951.jpg
-```
+~~~
 
 ## cmd
 
@@ -170,4 +170,7 @@ sudo nohup ./darknet detector train cfg/voc.data cfg/yolov3-voc.cfg /home/tdmc/d
 # 查看日志
 tail -f log_dir/voc_train.log   
 ~~~  
+
+## 如何根据打印信息判断一个训练是否可以结束
+
 
