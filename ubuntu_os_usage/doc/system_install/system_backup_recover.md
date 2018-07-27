@@ -1,4 +1,5 @@
-# Ubuntu 16.04备份和恢复
+# Ubuntu 16.04 备份和恢复   
+
 一开始想借助于第三方的备份恢复工具来完成当前的`Ubuntu 16.04`系统的备份以及后面的还原工作，不过考虑到那样做比较麻烦，索性就使用tar工具直接备份得了。这篇文章给大家详细介绍了`Ubuntu 16.04`备份和恢复的方法，有需要的朋友们可以参考借鉴，下面来一起看看吧。    
 
 > 注意：
@@ -33,18 +34,19 @@ $ su - root
 ```
 - (3) 使用`gzip`压缩格式（压缩略低，但是速度快）    
 ```bash
-$ tar vzcpf /media/klm/work/ubuntu_`date +%Y%m%d_%H`.tar.gz --exclude=/proc --exclude=/dev --exclude=/mnt --exclude=/media --exclude=/lost+found --exclude=/cdrom --exclude=/tmp --exclude=/sys --exclude=/home/klm/.cache --exclude=/home/klm/pkgs --exclude=/home/klm/work --exclude=/run  / > /media/klm/work/ubuntu_`date +%Y%m%d_%H`.log 2> /media/klm/work/ubuntu_`date +%Y%m%d_%H`.error
+$ tar vzcpf /media/klm/work/ubuntu_`date +%Y%m%d_%H`.tar.gz --exclude=/proc --exclude=/dev --exclude=/mnt --exclude=/media --exclude=/boot --exclude=/lost+found --exclude=/cdrom --exclude=/tmp --exclude=/sys --exclude=/home/klm/.cache --exclude=/etc/fstab --exclude=/home/klm/work --exclude=/run  / > /media/klm/work/ubuntu_`date +%Y%m%d_%H`.log 2> /media/klm/work/ubuntu_`date +%Y%m%d_%H`.error
 ```
 其中，`-exclude=`表示这些目录并不会被打包。这里有：`/proc，/dev，/mnt，/media，/lost+found，/cdrom，/tmp，/sys，/home/klm/.cache，/run`。    
 如果你的硬盘已经分区了`/home`，则应该对`/home`目录单独备份，或者不要备份。    
 - (4) 使用`bzip2`压缩格式（压缩略高，但是速度慢）   
 ```bash
 $ tar vjcpf /media/klm/work/ubuntu_`date +%Y%m%d_%H`.tar.bz2
---exclude=/proc --exclude=/dev --exclude=/mnt --exclude=/media --exclude=/lost+found --exclude=/cdrom --exclude=/tmp --exclude=/sys --exclude=/home/klm/.cache --exclude=/home/klm/pkgs --exclude=/home/klm/Downloads --exclude=/run  / > /media/klm/work/ubuntu_`date +%Y%m%d_%H`.log 2> /media/klm/work/ubuntu_`date +%Y%m%d_%H`.error
+--exclude=/proc --exclude=/dev --exclude=/mnt --exclude=/media --exclude=/boot --exclude=/lost+found --exclude=/cdrom --exclude=/tmp --exclude=/sys --exclude=/home/klm/.cache --exclude=/etc/fstab --exclude=/home/klm/Downloads --exclude=/run  / > /media/klm/work/ubuntu_`date +%Y%m%d_%H`.log 2> /media/klm/work/ubuntu_`date +%Y%m%d_%H`.error
 ```
 
 ## 4. 备份两个重要的文件    
- 备份`/boot`和`/etc/fstab`.        
+
+备份 `/boot` 和 `/etc/fstab`.        
 
 ```
 sudo cp -R /boot /home/klm/boot
