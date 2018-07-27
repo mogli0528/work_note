@@ -10,16 +10,16 @@
  在备份时主要需要确认有哪些目录不需要备份，网上虽然有很多备份的教程，不过还是要根据自己的情况来调整参数。   
 
 ## 1. 清理缓存、回收站等   
-```bash  
+~~~bash  
 # 将已经删除了的软件包的.deb安装文件从硬盘中删除掉
 $ sudo apt-get autoclean   
 # 类似上面的命令，但它删除包缓存中的所有包。   
 $ sudo apt-get clean
-```
+~~~
 ## 2. 删除系统不再使用的孤立软件     
-```bash
+~~~bash
 $ sudo apt-get autoremove
-```
+~~~
 ## 3. 使用`tar`备份
 - (1) 命令及参数解释    
  v: 显示详细的压缩信息   
@@ -29,41 +29,48 @@ $ sudo apt-get autoremove
  p：使用绝对路径    
  f：生成的压缩文件的路径    
 - (2) 终端操作    
-```bash
+~~~bash
 $ su - root
-```
+~~~
 - (3) 使用`gzip`压缩格式（压缩略低，但是速度快）    
-```bash
+~~~bash
 $ tar vzcpf /media/klm/work/ubuntu_`date +%Y%m%d_%H`.tar.gz --exclude=/proc --exclude=/dev --exclude=/mnt --exclude=/media --exclude=/boot --exclude=/lost+found --exclude=/cdrom --exclude=/tmp --exclude=/sys --exclude=/home/klm/.cache --exclude=/etc/fstab --exclude=/home/klm/work --exclude=/run  / > /media/klm/work/ubuntu_`date +%Y%m%d_%H`.log 2> /media/klm/work/ubuntu_`date +%Y%m%d_%H`.error
-```
+~~~
 其中，`-exclude=`表示这些目录并不会被打包。这里有：`/proc，/dev，/mnt，/media，/lost+found，/cdrom，/tmp，/sys，/home/klm/.cache，/run`。    
 如果你的硬盘已经分区了`/home`，则应该对`/home`目录单独备份，或者不要备份。    
 - (4) 使用`bzip2`压缩格式（压缩略高，但是速度慢）   
-```bash
-$ tar vjcpf /media/klm/work/ubuntu_`date +%Y%m%d_%H`.tar.bz2
---exclude=/proc --exclude=/dev --exclude=/mnt --exclude=/media --exclude=/boot --exclude=/lost+found --exclude=/cdrom --exclude=/tmp --exclude=/sys --exclude=/home/klm/.cache --exclude=/etc/fstab --exclude=/home/klm/Downloads --exclude=/run  / > /media/klm/work/ubuntu_`date +%Y%m%d_%H`.log 2> /media/klm/work/ubuntu_`date +%Y%m%d_%H`.error
-```
+~~~bash
+$ tar vjcpf /home/tdmc/data/ubuntu_`date +%Y%m%d`.tar.bz2 --exclude=/proc --exclude=/dev --exclude=/mnt --exclude=/media --exclude=/lost+found --exclude=/cdrom --exclude=/tmp --exclude=/sys --exclude=/home/tdmc/.cache --exclude=/home/tdmc/data --exclude=/home/tdmc/work --exclude=/etc/fstab --exclude=/boot --exclude=/run  / > /home/tdmc/data/ubuntu_`date +%Y%m%d`.log 2> /home/tdmc/data/ubuntu_`date +%Y%m%d`.error
+
+~~~
 
 ## 4. 备份两个重要的文件    
 
-备份 `/boot` 和 `/etc/fstab`.        
+备份 `/boot` 和 `/etc/fstab`.  其实上边的命令后来修改之后就不再备份这两个文件了.   
 
-```
+~~~bash
 sudo cp -R /boot /home/klm/boot
 sudo cp /etc/fstab /home/klm/fstab
-```
+~~~
+
+同时更新系统的启动项.   
+
+~~~bash
+sudo update-grub
+~~~
+
 
 ## 5. 恢复系统    
 
 将备份文件拷贝到/目录，执行恢复命令：   
 
 5.1 使用`gzip`格式   
-```bash
+~~~bash
 $ su - root
 $ tar vxzpf ubuntu*.tar.gz -C /
-```
+~~~
 5.2 使用`bzip2`格式   
-```bash
+~~~bash
 $ tar vxjpf ubuntu*.tar.bz2 -C /
-```
+~~~
 

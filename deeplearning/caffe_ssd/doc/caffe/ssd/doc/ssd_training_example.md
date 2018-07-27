@@ -171,9 +171,11 @@ $ find xml/ -name "*.xml" -exec cp {} Annotations/ \;
 $ find jpg/ -name "*.jpg" -exec cp {} JPEGImages/ \;
 ```
 4. log    
+
 ```bash
 nohup python examples/ssd/ssd_xwk.py > xwk.log 2>&1 &
 ```
+
 5. 关闭test    
 ```
 #'test_iter': [test_iter],

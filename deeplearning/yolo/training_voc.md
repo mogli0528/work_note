@@ -90,8 +90,8 @@ wget https://pjreddie.com/media/files/darknet53.conv.74
 Now we can train! Run the command:   
 
 ~~~bash
-./darknet detector train cfg/voc-klm.data cfg/yolov3-voc-klm.cfg /home/klm/data_training/darknet/voc/darknet53.conv.74
-./darknet detector train cfg/voc-klm.data cfg/yolov3-voc-klm.cfg /home/klm/data/darknet/voc/darknet53.conv.74
+sudo ./darknet detector train cfg/voc-klm.data cfg/yolov3-voc-klm.cfg /home/klm/data_training/darknet/voc/darknet53.conv.74
+sudo ./darknet detector train cfg/voc.data cfg/yolov3-voc.cfg /home/tdmc/data/darknet/voc/darknet53.conv.74
 ~~~
 
 ## 6. Training YOLO on COCO  
@@ -132,6 +132,8 @@ subdivisions=8
 ....
 ~~~
 
+在 YOLOv3 中，我们的 anchor 由 5 个变为 9 个，当然，也是由K均值产生的。每个尺度分配 3 个 anchor。其中每个尺度下每个位置预测 3 个 bbox(4 个位置输出 + 1 个 objectness + C 个类别的分数)。所以每个位置输出 (1+4+C) * 3 个值，这也就是训练时 yolov3.cfg 里最后一层的 filters 的数量。   
+
 6.3 Train The Model   
 
 Now we can train! Run the command:   
@@ -151,3 +153,21 @@ If you want to stop and restart training from a checkpoint:
 ~~~bash
 ./darknet detector train cfg/coco.data cfg/yolo.cfg backup/yolo.backup -gpus 0,1,2,3
 ~~~
+
+## test 训练结果   
+
+~~~bash
+./darknet detector test cfg/voc.data cfg/yolov3-voc.cfg backup/yolov3-voc_1000.weights /data/horse.jpg   
+
+sudo ./darknet detector test cfg/voc.data cfg/yolov3-voc.cfg backup/yolov3-voc_800.weights /home/tdmc/data/darknet/voc/VOCdevkit/VOC2007/JPEGImages/009951.jpg
+```
+
+## cmd
+
+~~~bash
+sudo nohup ./darknet detector train cfg/voc.data cfg/yolov3-voc.cfg /home/tdmc/data/darknet/voc/darknet53.conv.74 -gpus 0,1 > log_dir/voc_train.log 2>&1&
+
+# 查看日志
+tail -f log_dir/voc_train.log   
+~~~  
+

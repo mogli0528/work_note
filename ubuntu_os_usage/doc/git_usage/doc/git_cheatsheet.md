@@ -118,6 +118,7 @@ B的修改
 >>>>>>>
 ```
 删除的需要统一，要么所有的地方要么都保留 A 的修改，要么都保留 B 的修改。          
+
 7. 配置`git`使用`ss5`代理                 
 ```bash
 $ git config --global http.proxy 'socks5://127.0.0.1:1080' 
@@ -127,15 +128,28 @@ $ git config --global https.proxy 'socks5://127.0.0.1:1080'
 $ git config --global --unset http.proxy
 $ git config --global --unset https.proxy
 ```
-8. git撤销上一次还未`push`的`commit `             
+
+8. 撤销  
+
+(1). git 撤销上一次还未`push`的`commit `             
+
 ```bash
 $ git commit --amend
 ```
+
+(2) 撤销本地误删的文件
+
+~~~bash
+git checkout xxx_file
+~~~
+
 9. `git rm`               
+
 `git rm`有两种选择.            
 一种是 `git rm --cached "路径/文件"`，不删除物理文件，仅将该文件从`git`远程仓库中删除；   
 一种是 `git rm --f "路径/文件"`，不仅将该文件从 `git` 远程仓库中删除，还会将物理文件删除（不会回收到垃圾桶）                       
 10. git 添加多个远程仓库            
+
  比如你有`oschina`和`github`           
 ```
 git remote add origin https://github.com/xxx(仓库地址)  #添加github
