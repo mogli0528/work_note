@@ -156,6 +156,12 @@ If you want to stop and restart training from a checkpoint:
 
 ## test 训练结果   
 
+test 阶段需要作的几件事情:    
+
+- 对 cfg/yolov3-voc.cfg 中的训练阶段参数关闭, 改为新的测试阶段参数.    
+- 对 cfg/yolov3-voc.cfg 中 ignore_thresh = .7.    
+- 设置检测的阈值, 不然可能会检测出很少的目标;  
+
 ~~~bash
 ./darknet detector test cfg/voc.data cfg/yolov3-voc.cfg backup/yolov3-voc_1000.weights /data/horse.jpg   
 
@@ -165,7 +171,7 @@ sudo ./darknet detector test cfg/voc.data cfg/yolov3-voc.cfg backup/yolov3-voc_8
 ## cmd
 
 ~~~bash
-sudo nohup ./darknet detector train cfg/voc.data cfg/yolov3-voc.cfg /home/tdmc/data/darknet/voc/darknet53.conv.74 -gpus 0,1 > log_dir/voc_train.log 2>&1&
+sudo nohup ./darknet detector train cfg/voc.data cfg/yolov3-voc.cfg weights/ -gpus 0,1 > log_dir/voc_train.log 2>&1&
 
 # 查看日志
 tail -f log_dir/voc_train.log   
