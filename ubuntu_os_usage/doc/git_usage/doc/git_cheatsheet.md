@@ -215,3 +215,5 @@ git config credential.helper 'cache --timeout=3600'
 ```
 git config --global credential.helper store
 ```
+
+13. 已经提交了一个新版本, 但是发现之前仓库有更新过, 但是在提交之前并没有拉下来.   
