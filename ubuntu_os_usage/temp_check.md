@@ -27,8 +27,7 @@ github.com
 sudo gedit /etc/hosts
 # 写入下面两行
 192.30.253.112 github.com
-151.101.113.194 github.global.ssl.fastly.Net
-151.101.185.194
+151.101.185.194 github.global.ssl.fastly.Net
 ~~~
 
 保存退出
