@@ -1,4 +1,4 @@
-# caffe源码阅读——基本概念
+# caffe 源码阅读 —— 基本概念
 
 
 1. Blobs, Layers, and Nets：Caffe模型解析

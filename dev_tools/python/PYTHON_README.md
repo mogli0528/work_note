@@ -10,7 +10,6 @@
 - [ matplot 图像绘制库的使用](./doc/matplotlib.md)  
 - [ matplot 随机漫步示例](./doc/random_walk.md)  
 - [ matplot 骰子示例](./doc/random_walk.md) 
-- [ ssd 训练脚本中使用到的 skills ](./doc/skills_in_ssd_training_script.md) 
 - [ decorator 装饰器 ](./doc/decorator.md) 
 
 ### 2. python 源码剖析   

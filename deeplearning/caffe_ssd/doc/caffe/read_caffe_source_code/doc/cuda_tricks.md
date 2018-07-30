@@ -1,4 +1,5 @@
-# cuda的设计技巧：
+# Caffe 中 Cuda 的设计技巧 
+
 在common.hpp中用到一个宏定义CUDA_KERNEL_LOOP
 
 ```

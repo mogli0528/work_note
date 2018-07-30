@@ -19,22 +19,30 @@
         "back-to-top-button",
         "yahei",
         "katex",
-        "theme-api",
+        "-theme-api",
         "theme-comscore"
     ],
     "pluginsConfig": {
         "expandable-chapters": {},
-        "theme-api": { "theme": "light" },
+        "theme-default": {
+            "showLevel": true
+        },
+        "prism": {
+            "css": [
+            "prismjs/themes/prism-tomorrow.css"
+            ]
+        },
         "tbfed-pagefooter": {
             "copyright": "&copy; magic428",
             "modify_label": "文件修订时间：",
             "modify_format": "YYYY-MM-DD HH:mm:ss"
         },
         "fontSettings": {
-            "theme": "white",
+            "theme": "night",
             "family": "msyh",
             "size": 2
-          }
+        },
+        "theme-api": { "theme": "dark" }
     },
     "pdf": {
         "toc": true,
