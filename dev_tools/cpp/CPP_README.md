@@ -2,7 +2,10 @@
 
 ## 笔记目录  
 ### VS 使用教程   
+
 [1. vs2013 使用教程](./doc/vs2013_usage.md)   
+[1. vs2013 使用教程](/dev_tools/cpp/doc/vs2013_usage.md)   
+
 ### C++ primer 5th 笔记 
 - [ map 使用实例](./doc/cpp_primer_5nd/map_instance.md)    
 - [ vector 操作](./doc/cpp_primer_5nd/vector_operation.md)      
@@ -27,12 +30,6 @@
 - [x] convert_annoset.cpp 中的 gflag/glog 语法模仿;   
 - [ ] caffe 增广方式的改变;   
 
-## 代码目录   
-### C++ primer 5th 笔记对应代码 
-- [ map 使用实例](./code/cpp_primer_5nd/map_instance/map_instance.cpp)    
-- [ vector 操作](./code/cpp_primer_5nd/vector_operation/vector_operation.cpp)  
-- [ shared_ptr 使用实例](./code/cpp_primer_5nd/shared_ptr/shared_ptr.cpp)    
-- [ 默认参数使用实例](./code/cpp_primer_5nd/default_paramter/default_paramter.cpp)    
 
 ## 工程化 cpp 项目       
 [让自己的 cpp 工程更加"工程化" ](./doc/projective_cpp.md)

@@ -13,9 +13,10 @@ PYTHON_INCLUDE := /usr/include/python3.4m \
 
 `-------------------------------我是分割线------------------------------------`
 ## 2. 深度学习框架
-[1. caffe/ssd 笔记](./caffe_ssd/)    
-[2. tensorflow ](./tensorflow/)   
-[3. 吴恩达系列课程学习笔记](./common/doc/Andrew_Ng)   
+[ 吴恩达系列课程学习笔记](./common/doc/Andrew_Ng)   
+[ caffe/ssd 笔记](./caffe_ssd/)    
+[ tensorflow ](./tensorflow/)   
+[ Yolo ](./yolo/YOLO_README.md)   
 
 `-------------------------------我是分割线------------------------------------`
 ## 3. 深度学习实践--`training skills`   

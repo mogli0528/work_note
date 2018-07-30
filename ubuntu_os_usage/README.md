@@ -27,6 +27,7 @@
 - [在 ubuntu 中安装 meshLab](./doc/system_install/meshlab.md)  
 - [ubuntu 清理内存](./doc/system_install/ubuntu_memory_cleanup.md)  
 - [vs code 用户配置](./doc/system_install/vs_code_user_settings.md)  
+- [安装最新版本的 Nodejs ](./doc/system_install/nodejs_install.md)  
  
 ## 系统使用中的坑   
 - [chrome 提示无法正确打开您的个人资料](./doc/advanced_issues/chrome.md)  
@@ -53,11 +54,9 @@
 - [ubuntu 连接投影仪失败或显示不正常](./doc/advanced_issues/projector.md)   
 - [在 Ubuntu 上安装 ChromeDriver](./doc/advanced_issues/chromedriver.md)   
 - [配置 Fiddler 抓包工具](./doc/advanced_issues/mono_fiddler.md)   
+- [gitbook 安装](./doc/advanced_issues/gitbook_install.md)   
+- [清理 ubuntu 系统](./doc/advanced_issues/clean_ubuntu_system.md)   
 
-释放内存空间:   
-```bash
-sudo sysctl -w vm.drop_caches=3
-```
 
 ```shadowsocks5
 {

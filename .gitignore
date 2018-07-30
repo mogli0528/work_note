@@ -71,3 +71,7 @@ out.jpg
 de*.jpg
 de*.png
 de*.avi
+
+# gitbook
+_book/
+node_modules/

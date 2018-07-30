@@ -2,11 +2,11 @@
  编程语言也是开发工具，因此放在这个目录。   
 
 ## 编程语言
-- [ 有用的示例程序](./useful_examples/)   
-- [ C++ 笔记](./cpp/)      
-- [ python 笔记](./python/)      
+- [ C++ 笔记](./cpp/README.md)      
+- [ python 笔记](./python/PYTHON_README.md)      
 - [ matlab 笔记](./matlab/)      
 - [ opencv 笔记](./opencv/)       
+- [ 有用的示例程序](./useful_examples/)   
 - [ C 语言盲点扫除笔记](./c_blind_clear/)       
 - [ 算法笔记](./algorithm/)  
 - [ Makefile 语法](./makefile/)     
