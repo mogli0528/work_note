@@ -193,23 +193,28 @@ JsonPath 对于 JSON 来说，相当于 XPATH 对于 XML。
 官方文档：http://goessner.net/articles/JsonPath
 
 JsonPath与XPath语法对比：
-Json结构清晰，可读性高，复杂度低，非常容易匹配，下表中对应了XPath的用法。
+Json结构清晰，可读性高，复杂度低，非常容易匹配，下表中对应了XPath的用法。   
 
-XPath	JSONPath	描述
-/	$	根节点
-.	@	现行节点
-/	.or[]	取子节点
-..	n/a	取父节点，Jsonpath未支持
-//	..	就是不管位置，选择所有符合条件的条件
-*	*	匹配所有元素节点
-@	n/a	根据属性访问，Json不支持，因为Json是个Key-value递归结构，不需要。
-[]	[]	迭代器标示（可以在里边做简单的迭代操作，如数组下标，根据内容选值等）
-|	[,]	支持迭代器中做多选。
-[]	?()	支持过滤操作.
-n/a	()	支持表达式计算
-()	n/a	分组，JsonPath不支持
-示例：
-我们以拉勾网城市JSON文件 http://www.lagou.com/lbs/getAllCitySearchLabels.json 为例，获取所有城市。
+
+| XPath | JSONPath	| 描述 |
+|:-------:|:-------:|:------|
+| /	    | $  	    | 根节点 |
+| .	    | @  	    | 现行节点 |
+| /	    | .or  []	| 取子节点 |
+| ..  	| null	    | 取父节点，Jsonpath 未支持 |
+| //  	| ..	    | 就是不管位置，选择所有符合条件的条件 |
+| *	    | *  	    | 匹配所有元素节点 |
+| @	    | null	    | 根据属性访问，Json 不支持，因为 Json 是个 Key-value 递归结构，不需要 |
+| []  	| []	    | 迭代器标示（可以在里边做简单的迭代操作，如数组下标，根据内容选值等） |
+| `|`	| [,]  	    | 支持迭代器中做多选 |
+| []  	| ?()	    | 支持过滤操作 |
+| n/a  	| ()	    | 支持表达式计算 |
+| ()  	| null	    | 分组，JsonPath 不支持 |
+
+
+示例：   
+
+我们以拉勾网城市 JSON 文件 http://www.lagou.com/lbs/getAllCitySearchLabels.json 为例，获取所有城市。
 
 # jsonpath_lagou.py
 
@@ -223,10 +228,12 @@ request =urllib2.Request(url)
 response = urllib2.urlopen(request)
 html = response.read()
 
-# 把json格式字符串转换成python对象
+# 把 json 格式字符串转换成 python 对象  
+
 jsonobj = json.loads(html)
 
-# 从根节点开始，匹配name节点
+# 从根节点开始，匹配 name 节点
+
 citylist = jsonpath.jsonpath(jsonobj,'$..name')
 
 print citylist
@@ -264,7 +271,7 @@ UTF-8 与 GBK 互相转换，那就先把UTF-8转换成Unicode，再从Unicode�
 
 
 
-``` python 
+~~~python 
 # 这是一个 UTF-8 编码的字符串
 utf8Str = "你好地球"
 
@@ -279,9 +286,191 @@ unicodeStr = gbkData.decode("gbk")
 
 # 2. 再将 Unicode 编码格式字符串转换成 UTF-8
 utf8Str = unicodeStr.encode("UTF-8")
+~~~
+
 decode的作用是将其他编码的字符串转换成 Unicode 编码
 
 encode的作用是将 Unicode 编码转换成其他编码的字符串
 
-一句话：UTF-8是对Unicode字符集进行编码的一种编码方式
+一句话：UTF-8 是对Unicode字符集进行编码的一种编码方式
+
+~~~python
+
+# Note
+
+import json
+import jsonpath
+
+url = ""
+headers = {}
+
+req = request.Request(url, headers=headers) 
+response = urllib.urlopen(req)
+
+html = response.read()
+
+text = json.loads(html)  # 把 json 格式的字符串转换为 Python 格式(Unicode).
+
+# Python 形式的列表文件  
+city_list = jsonpath.jsonpath(text, "$..name")
+
+for item in city_list:
+    print (item)
+
+# Python 的 list 会转换为 json 的 array
+# 默认会转换中文为 ascii 码格式, 因此加上 ensure_ascii=False 会保证返回的是Unicode字符串
+array = json.dumps(city_list, ensure_ascii=False)
+
+with open("file.json", "w"):
+    f.write(array.encode("utf-8"))   # encode("utf-8") 也是必须的  
+
+~~~
+
+## Xpath  
+
+**Note**: 使用 Xpath 进行解析的时候, 不同的网站服务器会根据不同的浏览器发送不同的请求结果, 因此最好使用 IE 浏览器的 User-Agent.   
+
+Xpath 返回的结果是一个 list.  
+
+模糊查询:   
+
+> 以糗事百科为例.   
+
+~~~xpath
+//div[contains(@id,"qiushi_tag_")]
+~~~
+
+这样就可以作为根节点来获取其他的标签字段.   
+
+~~~xpath
+./div/a/@title)[0]                # 获取帖子发表的用户
+.//div[@class="content"]/span     # 获取内容
+.//span[@class="stats-vote"]/i    # 获取点赞数, 等价于.//i [0]
+.//a[@class="qiushi-comments"]/i  # 获取评论数, 等价于.//i [1]
+.//div[@class="thumb"]//@src      # 获取图片链接
+ 
+~~~
+
+## 糗事百科爬虫示例   
+
+
+~~~python
+import urllib
+from lxml import etree
+import json
+
+url = ""
+headers = {}
+
+req = urllib.request.Request(url, headers=headers)
+html = urllib.parse.urlopen(req).read()
+
+text = etree.HTML(html)
+node_list = text.xpath('//div[contains(@id, "qiushi_tag")]')
+
+items = {}
+for node in node_list:
+    username = node.xpath('./div/a/@title')[0]
+    # 不一定有图片, 因此不能直接使用索引
+    image_url = node.xpath('.//div[@class="thumb"]//@src')
+    thumb_up = node.xpath('.//i')[0].text() # text 用来取出标签里包含的内容
+    content = node.xpath('.//div[@class="content"]/span')[0].text()
+    comment = node.xpath('.//i')[1].text()
+    items = {
+        "username" : username,
+        "image" : image_url,
+        "thumb_up" : thumb_up,
+        "content" : content,
+        "comment" : comment
+    }
+
+    with open("qiushi.json", "w") as f:
+        f.write(json.dumps(items, ensure_ascii=False).encode("utf-8")+"\n")
+~~~
+
+善用 xpath 的模糊查找.    
+
+
+## 多线程爬虫   
+
+
+GIL, 全局解释器锁, 相当于 Python 中的执行通行证, 控制的是 CPU 单元.   
+
+Python 的多线程其实很弱, 但对于爬虫这种 IO(网络 IO 和磁盘 IO) 密集型操作还是很有用的.  
+
+Python 的多进程适用于密集计算.   
+
+队列 : put(), get(), empty(), full(), qsize().   
+
+
+
+~~~python
+import threading
+import json
+from lxml import etree
+from Queue import Queue
+
+class ThreadCrawl(threading.Thread):
+    def __init__(self, threadName, pageQueue, dataQueue):
+        # 调用父类初始化方法
+        #threading.Thread.__init(self)
+        super(ThreadCrawl, sels).__init__()  # 好处是: 多继承, 代码重构
+        self.threadName = threadName
+        self.pageQueue = pageQueue
+        self.dataQueue = dataQueue
+        self.headers = {}
+
+    def run(self):
+        while not CRAW_EXIT:
+            # get() 方法有一个可选参数是 block   
+            # 如果 block=True, 当队列为空时, 函数进入阻塞状态.
+            # 如果 block=False, 当队列为空时, 函数会弹出一个队列为空的异常.
+            try:     
+                page = self.pageQueue.get(False)
+                url = "http://www.qiushibaike.com/8hr/page/" + str(page) + "/"
+                content = requests.get(url, headers=headers)
+                self.dataQueue.put(content)
+
+            except: 
+                CRAW_EXIT = True
+                print("pageQueue empty")
+                pass
+
+
+global CRAW_EXIT
+CRAW_EXIT = False
+global PARSE_EXIT
+PARSE_EXIT = False
+
+
+def main():
+
+    pageQueue = Queue(10) # 队列的大小  
+    for i in range(1, 11):
+        pageQueue.put(i)
+
+    dataQueue = Queue()  # 队列大小为无限大, 存放爬取到的页面数据
+
+    crawlList = ["getPage1", "getPage2", "getPage3"]  
+
+    threadCrawl = []
+    for threadName in crawlList:
+        thread = ThreadCrawl(threadName, PageQueue, dataQueue)
+        thread.start()
+        threadCrawl.append(thread)
+
+    for thread in threadCrawl:
+        thread.join()
+        print(thread.name+"joining...")
+
+    
+
+if __name__ == "__main__":
+    
+    main()
+
+
+
+~~~
+
 

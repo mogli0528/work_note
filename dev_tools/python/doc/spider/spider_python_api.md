@@ -9,13 +9,19 @@
 
 ## lxml
 
+~~~python
+from lxml import etree
+~~~
+
 
 ## BeautifulSoup  
 
 
 ## json   
 
-> import json
+~~~python
+import json
+~~~
 
 1) json.loads()   
 
@@ -27,3 +33,19 @@
 
 
 
+## 队列 
+
+~~~bash
+from Queue import Queue
+
+put(), get(), empty(), full(), qsize().   
+~~~
+
+
+## thread
+
+~~~python
+import threading
+
+threading.Thread
+~~~
