@@ -41,10 +41,16 @@
         * [ numpy 的使用](./dev_tools/python/doc/numpy.md)
         * [ jupyter-notebook 中的神奇功能](./dev_tools/python/doc/iPython/magic_functions.md)
         * [ jupyter-notebook 中的快捷键](./dev_tools/python/doc/iPython/key_bindings.md)
+        `------------------------------------- Python Spider -------------------------------------`
+        * [ 爬虫相关的　Python API 整理 ](./dev_tools/python/doc/spider/spider_python_api.md)
         * [ 手把手教你写网络爬虫（1）： 网易云音乐歌单 ](./dev_tools/python/doc/spider/step_by_step/netease_music.md)
         * [ 手把手教你写网络爬虫（2）： 迷你爬虫架构 ](./dev_tools/python/doc/spider/step_by_step/spider_archtechture.md)
         * [ 手把手教你写网络爬虫（8）： 彻底解决乱码问题 ](./dev_tools/python/doc/spider/step_by_step/character_encode.md)
+        * [ 传智播客 day1 - 爬虫知识体系和 urllib2 库基本使用 ](./dev_tools/python/doc/spider/c_z_b_k/day1.md)
+        * [ 传智播客 day2 - urllib2 高级用法以及正则与 lxml 解析库 ](./dev_tools/python/doc/spider/c_z_b_k/day2.md)
+        * [ 传智播客 day3 - 多线程爬虫和 Selenium + PhantomJS ](./dev_tools/python/doc/spider/c_z_b_k/day3.md)
         * [ python 正则表达式 ](./dev_tools/python/doc/spider/regular.md)
+        `---------------------------------- Python Source Code ----------------------------------`
         * [ python 源码剖析 - 1](./dev_tools/python/doc/python_src_analysis.md)
         * [ python 源码剖析一书中的错误](./dev_tools/python/doc/python_src_mistake.md)
     * [ OpenCV 笔记](./dev_tools/opencv/OPENCV_README.md)
@@ -87,8 +93,8 @@
         * [TODO]()  
       `-------------------------------SSD 笔记------------------------------------`
       * [ SSD 笔记 ](./deeplearning/caffe_ssd/doc/ssd/README.md)  
-        * [ 完整的 SSD 训练教程 ](./deeplearning/caffe_ssd/doc/ssd/doc/ssd_training_example.md)   
-        * [ 更为安全/不间断的训练 sSSDsd 模型 ](./deeplearning/caffe_ssd/doc/ssd/doc/train_ssd_models_safely.md)  
+        * [ 使用 SSD 训练自己的数据 ](./deeplearning/caffe_ssd/doc/ssd/doc/ssd_training_example.md)   
+        * [ 如何更好的训练 SSD 模型 ](./deeplearning/caffe_ssd/doc/ssd/doc/train_ssd_models_safely.md)  
         * [ SSD 训练 python 脚本源码分析 ](./deeplearning/caffe_ssd/doc/ssd/doc/read_ssd_training_script.md)   
         * [ SSD 论文阅读 ](./deeplearning/caffe_ssd/doc/ssd/doc/ssd_paper_read.md)   
       `---------------------------- 从 Caffe 到 SSD 的进化 ---------------------------`
@@ -112,6 +118,7 @@
 
 
 * [ 工作计划 ](./work_plan/README.md)  
+  * [ yolo 训练和行人数据](./work_plan/doc/2018-07-30.md)　　
 
 
 * [ 图像处理 ](./image_process/README.md)  

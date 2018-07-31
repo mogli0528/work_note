@@ -1,8 +1,11 @@
-# 如何更好的训练 ssd 模型   
+# 如何更好的训练 SSD 模型   
+ 
+## 1. 如何在训练中禁用 `Test`    
 
-1. 如何在训练中禁用`Test`    
-在`examples/ssd/ssd_xxx.py`文件中作如下修改：   
-1.1 注释掉`test_`开头的变量；     
+在 `examples/ssd/ssd_xxx.py` 文件中作如下修改：   
+
+1) 注释掉`test_`开头的变量；     
+
 ```python
 solver_param = {
     # Train parameters
@@ -31,9 +34,13 @@ solver_param = {
     #'test_initialization': False,
 }
 ```
- 其中，`test_initialization`表示是否可以用上次保存的`snapshot`来继续训练，如果为`True`,则下次开始训练的时候，`caffe`会自动从这个目录下加载最近一次迭代的模型，继续训练，以节省时间。如果是`False`，则会从`0`开始重新迭代。所以这个参数的默认值是`False`。     
-因此在第一次训练的时候，不能将这个参数改为了`True`。     
-1.2 注释掉`test_net`；      
+
+其中，test_initialization 表示是否可以用上次保存的 snapshot 来继续训练，如果为 True, 则下次开始训练的时候， caffe 会自动从这个目录下加载最近一次迭代的模型，继续训练以节省时间。如果是 False ，则会从 0 开始重新迭代。 所以这个参数的默认值是 False。     
+
+因此在第一次训练的时候，不能将这个参数改为了 True。  
+
+2) 注释掉`test_net`；    
+
 ```python
 solver = caffe_pb2.SolverParameter(
             train_net=train_net_file,
@@ -42,15 +49,22 @@ solver = caffe_pb2.SolverParameter(
             **solver_param
         )
 ```
-1.3 重新运行`python examples/ssd/ssd_xxx.py`即可。      
-2. 如何保持训练的`log`输出不中断?   
+
+3) 重新运行`python examples/ssd/ssd_xxx.py`即可。      
+
+## 2. 如何保持训练的`log`输出不中断?   
+
 ```
 nohup python examples/ssd/ssd_weimeng.py >weimeng.log 2>&1 &
 ```
+
 要想动态观测log的内容，使用下面的命令：   
+
 ```
 tail -f weimeng.log
 ```
 其中 `-f` 的作用是显示追加到文件中的内容。  
-3. 什么时候需要降低学习率?   
+
+## 3. 什么时候需要降低学习率?   
+
 当样本训练的 loss 总是处于波动状态时, 需要将学习率降低(1/10), 然后继续观察训练过程.   
