@@ -43,12 +43,14 @@
         * [ jupyter-notebook 中的快捷键](./dev_tools/python/doc/iPython/key_bindings.md)
         `------------------------------------- Python Spider -------------------------------------`
         * [ 爬虫相关的　Python API 整理 ](./dev_tools/python/doc/spider/spider_python_api.md)
+        * [ 关于反爬虫，看这一篇就够了 ](./dev_tools/python/doc/spider/anti-spider.md)
         * [ 手把手教你写网络爬虫（1）： 网易云音乐歌单 ](./dev_tools/python/doc/spider/step_by_step/netease_music.md)
         * [ 手把手教你写网络爬虫（2）： 迷你爬虫架构 ](./dev_tools/python/doc/spider/step_by_step/spider_archtechture.md)
         * [ 手把手教你写网络爬虫（8）： 彻底解决乱码问题 ](./dev_tools/python/doc/spider/step_by_step/character_encode.md)
         * [ 传智播客 day1 - 爬虫知识体系和 urllib2 库基本使用 ](./dev_tools/python/doc/spider/c_z_b_k/day1.md)
         * [ 传智播客 day2 - urllib2 高级用法以及正则与 lxml 解析库 ](./dev_tools/python/doc/spider/c_z_b_k/day2.md)
-        * [ 传智播客 day3 - 多线程爬虫和 Selenium + PhantomJS ](./dev_tools/python/doc/spider/c_z_b_k/day3.md)
+        * [ 传智播客 day3 - 多线程爬虫 ](./dev_tools/python/doc/spider/c_z_b_k/day3.md)
+        * [ 传智播客 day4 - 使用 Selenium + PhantomJS 获取动态网页 ](./dev_tools/python/doc/spider/c_z_b_k/day4.md)
         * [ python 正则表达式 ](./dev_tools/python/doc/spider/regular.md)
         `---------------------------------- Python Source Code ----------------------------------`
         * [ python 源码剖析 - 1](./dev_tools/python/doc/python_src_analysis.md)
@@ -125,6 +127,7 @@
   * [ vi 使用教程](./ubuntu_os_usage/doc/vi_usage/README.md)  
   * [安装系统必备]()      
     * [ Ubuntu 1404 更换软件下载源](./ubuntu_os_usage/doc/system_install/sourceslist.md)  
+    * [ Ubuntu 16.04 系统备份和恢复](./ubuntu_os_usage/doc/system_install/system_backup_recover.md)  
     * [ 安装双系统中出现的问题](./ubuntu_os_usage/doc/system_install/os_install.md)  
     * [ 修改系统默认启动 ubuntu 或 windows](./ubuntu_os_usage/doc/system_install/default_grub.md)  
     * [ pip install 更换源](./ubuntu_os_usage/doc/system_install/pip_install_source.md)  
@@ -134,13 +137,13 @@
     * [ 配置 shadowsocks](./ubuntu_os_usage/doc/system_install/shadowsocks_install.md)  
     * [ ssh-keygen 生成步骤](./ubuntu_os_usage/doc/system_install/ssh_keygen.md)  
     * [ jupyter-python2.7 安装问题](./ubuntu_os_usage/doc/system_install/jupyter_python2.7_install.md) 
-    * [ Ubuntu 16.04 系统备份和恢复](./ubuntu_os_usage/doc/system_install/system_backup_recover.md)  
     * [ 在 virtual box 中安装 windows10](./ubuntu_os_usage/doc/system_install/install_windows_in_virtualbox.md)  
     * [ 在 ubuntu 中同时安装 opencv 3 和 opencv 2](./ubuntu_os_usage/doc/system_install/install_opencv2_and_opencv3.md)  
     * [ 在 ubuntu 中安装 meshLab](./ubuntu_os_usage/doc/system_install/meshlab.md)  
     * [ ubuntu 清理内存](./ubuntu_os_usage/doc/system_install/ubuntu_memory_cleanup.md)  
     * [ vs code 用户配置](./ubuntu_os_usage/doc/system_install/vs_code_user_settings.md)  
     * [ 安装最新版本的 Nodejs ](./ubuntu_os_usage/doc/system_install/nodejs_install.md)  
+    * [ 安装 Headless Chrome ](./ubuntu_os_usage/doc/system_install/chromedriver_install.md)  
   * [系统使用中的坑]()     
     * [ 清理 ubuntu 系统](./ubuntu_os_usage/doc/advanced_issues/clean_ubuntu_system.md)   
     * [ 更改 ubuntu 启动等待时间](./ubuntu_os_usage/doc/advanced_issues/grub_timeout.md)  
@@ -196,6 +199,11 @@
 
 
 * [ 面试 ](./interview/README.md)  
+
+* [ 政治 / 历史](./plocy_history/README.md)  
+    * [解放军极简史 ](./plocy_history/doc/8-1.md)
+    * [更好的生活 ](./plocy_history/doc/live_better.md)
+    * [政府工作报告 —— 2018年3月5日在第十三届全国人民代表大会第一次会议上 ](./plocy_history/doc/gover_report.md)
 
 
 

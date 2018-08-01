@@ -1,4 +1,4 @@
-# 传智播客 day3 - 多线程爬虫和 Selenium + PhantomJS  
+# 传智播客 day3 - 多线程爬虫  
 
 
 ## 模拟登录知乎网   
@@ -402,8 +402,6 @@ Python 的多进程适用于密集计算.
 
 队列 : put(), get(), empty(), full(), qsize().   
 
-
-
 ~~~python
 import threading
 import json
@@ -436,6 +434,45 @@ class ThreadCrawl(threading.Thread):
                 print("pageQueue empty")
                 pass
 
+class ThreadParse(threading.Thread):
+    def __init__(self, threadName, dataQueue, outputFile):
+        super(ThreadParse, self).__init__()
+        self.threadName = threadName
+        self.dataQueue = dataQueue
+        self.outputFile = outputFile 
+
+    def run(self):
+        while not PARSE_EXIT:
+            try:
+                html = self.dataQueue.get(Fales)
+
+            except:
+                pass
+
+    def parse(self):
+        etree.HTML(html)
+        node_list = text.xpath('//div[contains(@id, "qiushi_tag")]')
+
+        items = {}
+        for node in node_list:
+            username = node.xpath('./div/a/@title')[0]
+            # 不一定有图片, 因此不能直接使用索引
+            image_url = node.xpath('.//div[@class="thumb"]//@src')
+            thumb_up = node.xpath('.//i')[0].text() # text 用来取出标签里包含的内容
+            content = node.xpath('.//div[@class="content"]/span')[0].text()
+            comment = node.xpath('.//i')[1].text()
+            items = {
+                "username" : username,
+                "image" : image_url,
+                "thumb_up" : thumb_up,
+                "content" : content,
+                "comment" : comment
+            }
+
+            with open("qiushi.json", "w") as f:
+                f.write(json.dumps(items, ensure_ascii=False).encode("utf-8")+"\n")
+
+
 
 global CRAW_EXIT
 CRAW_EXIT = False
@@ -444,6 +481,8 @@ PARSE_EXIT = False
 
 
 def main():
+
+    outputFile = "output.json"
 
     pageQueue = Queue(10) # 队列的大小  
     for i in range(1, 11):
@@ -456,21 +495,29 @@ def main():
     threadCrawl = []
     for threadName in crawlList:
         thread = ThreadCrawl(threadName, PageQueue, dataQueue)
-        thread.start()
+        thread.start()  # 调用线程的 run 方法
         threadCrawl.append(thread)
 
+    parseList = ["parseThread1", "parseThread2", "parseThread3"]
+
+    threadParse = []
+    for threadName in parseList:
+        thread = ThreadParse(threadName, dataQueue, outputFile)
+        thread.start()
+        threadParse.append(thread)
+
+    # 保证线程安全退出  
     for thread in threadCrawl:
         thread.join()
-        print(thread.name+"joining...")
-
+        print(thread.name+"joining...")   
+    for thread in threadParse:
+        thread.join()
+        print(thread.name+"joining...")   
     
 
 if __name__ == "__main__":
     
     main()
-
-
-
 ~~~
 
 
