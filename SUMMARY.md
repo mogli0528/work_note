@@ -72,6 +72,7 @@
 * [ 深度学习 ](./deeplearning/README.md)
     * [ YOLO](./deeplearning/yolo/YOLO_README.md)
         * [ 使用 VOC 数据集训练 YOLOv3](./deeplearning/yolo/training_yolo_on_voc.md)
+        * [ 理解 YOLOv3 的训练输出日志信息](./deeplearning/yolo/understanding_training_output.md)
         * [ YOLO 实践篇（darknet） ](./deeplearning/yolo/yolo_config.md)
         * [ 使用自己的数据集训练 YOLOv3 ](./deeplearning/yolo/traing_yolo_on_custom_data.md)
         * [ 提高 YOLOv3 的检测性能](./deeplearning/yolo/how_to_improve_yolo_object_detection.md)

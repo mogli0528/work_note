@@ -153,6 +153,12 @@ subdivisions=1
 sudo ./darknet detector test cfg/voc.data cfg/yolov3-voc.cfg backup/yolov3-voc_final.weights /data/dog.jpg -thresh 0.25
 ~~~
 
+测试一段视频（CUDA、OpenCV、Video）.  
+
+~~~bash
+sudo ./darknet detector demo cfg/voc.data cfg/yolov3-voc.cfg backup/yolov3-voc_final.weights <video file>
+~~~
+
 ## 7. darknet 训练过程中的打印信息  
 
 **Note**: If during training you see nan values for avg (loss) field - then training goes wrong, but if nan is in some other lines - then training goes well.  
