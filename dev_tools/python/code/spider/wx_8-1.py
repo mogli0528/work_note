@@ -38,7 +38,7 @@ class Spider():
         # url = ("https://alpha.wallhaven.cc/search?q={}&categories=111&purity=100&sorting=relevance&order=desc").format(keyWord)
         url = ("https://mp.weixin.qq.com/s?__biz=MjM5OTYyNzAyMA==&mid=2649895342&idx=1&sn=495b4d9be84080ae29322b0859de5d1d&chksm=bf3e01cd884988db72750d6ef8280d44b7eea57f4f5ee18d6be1df13c2089ec0aa404198160b&mpshare=1&scene=1&srcid=0801QfpZ1nwyp2nXbNW9Ee9w&pass_ticket=Z7wLpqzbbmBdQ6VcmAorAEI6wvVmxI%2Fi1k5XATgGEBXu31%2FI054dUVvjEmg3ybNH#rd")
         
-        html = requests.get(url)
+        html = requests.get(url, headers=self.headers)
         selector = etree.HTML(html.text)
         # pageInfo = selector.xpath('//header[@class="listing-header"]/h1[1]/text()')
         # image_url_list = selector.xpath('//img[@data-src]')

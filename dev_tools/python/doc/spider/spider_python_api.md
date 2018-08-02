@@ -115,7 +115,44 @@ js = "document.body.scrollTop=10000"
 driver.execute_script(js)
 ~~~
 
+## selenium + chrome
 
+~~~python
+
+import os
+import urllib
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.keys import Keys
+from lxml import etree
+import requests
+
+headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.104 Safari/537.36",
+        }
+
+# headers = {'User-Agent': "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36"}
+
+home_dir = os.getenv("HOME")
+save_dir = "{}/work/spider/miners/".format(home_dir) 
+print(save_dir)
+
+if not os.path.exists(save_dir):
+    os.makedirs(save_dir)
+
+chrome_options = Options()
+chrome_options.add_argument('--headless')
+chrome_options.add_argument('--disable-gpu')
+driver = webdriver.Chrome(chrome_options=chrome_options)
+
+url = "https://image.baidu.com/search/index?tn=baiduimage&word="
+
+kw = "矿工"
+kw = urllib.parse.quote(kw)
+
+driver.get(url + kw)
+selector = etree.HTML(driver.page_source)
+~~~
 
 ## 保存到本地的文件命名   
 
@@ -168,3 +205,11 @@ if __name__ == "__main__":
     # 启动测试模块  
     unittest.main()
 ~~~
+
+
+## 参考资料   
+
+[1. Requests: 让 HTTP 服务人类]: http://docs.python-requests.org/zh_CN/latest/   
+[2. Beautiful Soup 4.2.0 文档]: https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.zh.html   
+[3. Beautiful Soup 4.2.0 文档]: http://deerchao.net/tutorials/regex/regex.htm   
+[4. 在线正则表达式测试]: http://tool.oschina.net/regex/   
