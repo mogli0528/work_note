@@ -25,7 +25,6 @@ log
 
 # git
 !.gitignore
-!.vscode
 
 # make file
 *~
@@ -75,3 +74,9 @@ de*.avi
 # gitbook
 _book/
 node_modules/
+
+# VS Code Config
+.vscode/
+settings.json
+tasks.json
+c_cpp_properties.json
