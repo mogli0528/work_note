@@ -141,7 +141,7 @@
     * [ 在 ubuntu 中同时安装 opencv 3 和 opencv 2](./ubuntu_os_usage/doc/system_install/install_opencv2_and_opencv3.md)  
     * [ 在 ubuntu 中安装 meshLab](./ubuntu_os_usage/doc/system_install/meshlab.md)  
     * [ ubuntu 清理内存](./ubuntu_os_usage/doc/system_install/ubuntu_memory_cleanup.md)  
-    * [ vs code 用户配置](./ubuntu_os_usage/doc/system_install/vs_code_user_settings.md)  
+    * [ VS Code 用户配置](./ubuntu_os_usage/doc/system_install/vs_code_user_settings.md)  
     * [ 安装最新版本的 Nodejs ](./ubuntu_os_usage/doc/system_install/nodejs_install.md)  
     * [ 安装 Headless Chrome ](./ubuntu_os_usage/doc/system_install/chromedriver_install.md)  
   * [系统使用中的坑]()     

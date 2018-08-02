@@ -1,6 +1,6 @@
 {
     "C_Cpp.intelliSenseEngineFallback": "Enabled",
     "C_Cpp.dimInactiveRegions": false,
+    // python
     "python.pythonPath": "/usr/bin/python3.4",
-    "python.linting.enabled": false
 }

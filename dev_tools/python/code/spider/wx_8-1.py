@@ -10,7 +10,10 @@ import random
 from lxml import etree
 
 keyWord = input(r"{'Please input the keywords that you want to download :'}\n")
-savePath = '/home/tdmc/work/spider/wx/'
+
+HOME = os.getenv("HOME")
+
+savePath = HOME + '/work/spider/wx/'
 
 class Spider():
     #初始化参数
@@ -31,7 +34,6 @@ class Spider():
     def get_pageNum(self):
         #用来获取搜索关键词得到的结果总页面数,用totalPagenum记录。由于数字是夹在形如：1,985 Wallpapers found for “dog”的string中，
         #所以需要用个小函数，提取字符串中的数字保存到列表numlist中，再逐个拼接成完整数字。。。
-        total = ""
         totalPagenum = 0
         # url = ("https://alpha.wallhaven.cc/search?q={}&categories=111&purity=100&sorting=relevance&order=desc").format(keyWord)
         url = ("https://mp.weixin.qq.com/s?__biz=MjM5OTYyNzAyMA==&mid=2649895342&idx=1&sn=495b4d9be84080ae29322b0859de5d1d&chksm=bf3e01cd884988db72750d6ef8280d44b7eea57f4f5ee18d6be1df13c2089ec0aa404198160b&mpshare=1&scene=1&srcid=0801QfpZ1nwyp2nXbNW9Ee9w&pass_ticket=Z7wLpqzbbmBdQ6VcmAorAEI6wvVmxI%2Fi1k5XATgGEBXu31%2FI054dUVvjEmg3ybNH#rd")
@@ -46,7 +48,6 @@ class Spider():
             totalPagenum += 1
             image_name = "{:>05}.jpg".format(i)
             # print(help(image_url))
-            image_url = image_url.encode('utf-8')
             print(image_name, image_url)
             image = requests.get(image_url).content
             # print (image)
