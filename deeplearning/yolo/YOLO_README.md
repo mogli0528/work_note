@@ -46,7 +46,6 @@ v2 只有一个 detection, v3 一下变成了 3 个, 分别是一个下采样(fe
 
 在论文中从单层预测五种 boundingbox 变成每层 3 种 boundongbox。  
 
-
 ### 2. loss不同  
 
 作者 v3 替换了 v2 的 softmax loss 变成 logistic loss, 由于每个点所对应的 bounding box 少并且差异大, 每个 bounding 与 ground truth 的 matching 策略变成了 1 对 1。  

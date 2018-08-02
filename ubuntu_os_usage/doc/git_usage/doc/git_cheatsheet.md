@@ -9,48 +9,48 @@ GitHub就是一个免费托管开源代码的远程仓库。但是对于某些�
 假设你已经有sudo权限的用户账号，下面，正式开始安装。    
 
 1. 安装git   
-```
+~~~
 $ sudo apt-get install git
-```
+~~~
 2. 创建一个git用户，用来运行git服务              
-```
+~~~
 $ sudo adduser git
-```
+~~~
 3. 创建证书登录    
 收集所有需要登录的用户的公钥，就是他们自己的`id_rsa.pub`文件，把所有公钥导入到`/home/git/.ssh/authorized_keys`文件里，一行一个。            
-```bash
+~~~bash
 $ scp .ssh/id_rsa.pub git@<ServerIP>:~/ssh/tmp_ids
 $ ssh git@<ServerIP>
 $ cat id_rsa.pub >> authorized_keys
-```
+~~~
 4. 初始化`Git`仓库    
-```bash
+~~~bash
 $ sudo mkdir ~/work
 $ sudo chown git:git ~/work
-```
+~~~
 先选定一个目录作为`Git`仓库，假定是`~/work/sample.git`，在`~/work`目录下输入命令：  
-```bash
+~~~bash
 $ sudo git init --bare sample.git
-```
+~~~
 `Git`就会创建一个裸仓库，裸仓库没有工作区，因为服务器上的`Git`仓库纯粹是为了共享，所以不让用户直接登录到服务器上去改工作区，并且服务器上的`Git`仓库通常都以`.git`结尾。然后，把`owner`改为`git`：   
-```
+~~~
 $ sudo chown -R git:git sample.git
-```
+~~~
 5. 禁用`shell`登录   
 出于安全考虑，第二步创建的git用户不允许登录`shell`，这可以通过编辑`/etc/passwd`文件完成。找到类似下面的一行：    
-```
+~~~
 git:x:1001:1001:,,,:/home/git:/bin/bash
 # 改为：
 git:x:1001:1001:,,,:/home/git:/usr/bin/git-shell
-```
+~~~
 这样，`git`用户可以正常通过`ssh`使用`git`，但无法登录`shell`，因为我们为`git`用户指定的`git-shell`每次一登录就自动退出。  
 6. 克隆远程仓库：   
 现在，可以通过`git clone`命令克隆远程仓库了，在各自的电脑上运行：   
-```bash
+~~~bash
 $ git clone git@server:/srv/sample.git
 Cloning into 'sample'...
 warning: You appear to have cloned an empty repository.
-```
+~~~
 剩下的推送就简单了。   
 7. 管理公钥  
 如果团队很小，把每个人的公钥收集起来放到服务器的`/home/git/.ssh/authorized_keys`文件里就是可行的。如果团队有几百号人，就没法这么玩了，这时，可以用`Gitosis`来管理公钥。   
@@ -65,15 +65,15 @@ warning: You appear to have cloned an empty repository.
 
 ## `git cheatsheet`                  
 1. 添加远程仓库                 
-```bash
+~~~bash
 $ git remote add origin git@github.com:gzj2013/xxx.git
-```
+~~~
 2. 删除远程仓库               
-```bash
+~~~bash
 $ git remote rm origin 
-```
+~~~
 3. 添加.gitignore模板         
-```bashiles
+~~~bashiles
 *~
 
 # log files
@@ -95,7 +95,7 @@ core
 *.mod.c
 Module.symvers
 modules.order
-```
+~~~
 新建`.gitignore`
 4. git add -u           
 只是删除了本地文件，远程仓库的并没有删除，但是此时想要直接删除远程仓库中对应的文件。             
@@ -106,36 +106,36 @@ modules.order
 第一步用命令`git reset HEAD file`就回到了场景1；     
 第二步按场景1操作。     
 **场景3**：已经提交了不合适的修改到版本库时，想要撤销本次提交(撤销提交后本地修改仍然会保留的)。    
-```
+~~~
 git reset HEAD^
-```
+~~~
 6. `git` 冲突合并              
-```
+~~~
 <<<<<<<   
 A的修改 
 =======
 B的修改
 >>>>>>>
-```
+~~~
 删除的需要统一，要么所有的地方要么都保留 A 的修改，要么都保留 B 的修改。          
 
 7. 配置`git`使用`ss5`代理                 
-```bash
+~~~bash
 $ git config --global http.proxy 'socks5://127.0.0.1:1080' 
 $ git config --global https.proxy 'socks5://127.0.0.1:1080'
 
 # 取消代理
 $ git config --global --unset http.proxy
 $ git config --global --unset https.proxy
-```
+~~~
 
 8. 撤销  
 
 (1). git 撤销上一次还未`push`的`commit `             
 
-```bash
+~~~bash
 $ git commit --amend
-```
+~~~
 
 (2) 撤销本地误删的文件
 
@@ -151,7 +151,7 @@ git checkout xxx_file
 10. git 添加多个远程仓库            
 
  比如你有`oschina`和`github`           
-```
+~~~
 git remote add origin https://github.com/xxx(仓库地址)  #添加github
 git remote add oschina https://git.oschina.net/xxxx(仓库地址)  #添加oschina
 
@@ -160,36 +160,36 @@ git push origin master(分支名)   #提交到github
 
 git pull oschina master    #从oschina更新
 git pull origin master     #从github更新
-```
+~~~
  `git remote add <name> <url>`         
  其中，`name`表示你要给这个远程库起的名字, `url`表示这个库的地址提交的时候，先`add`, `commit`。          
  `git push <name> <branch>`      
  其中，`name`表示你在上一步给它起的名字，`branch`表示某一个分支。      
 11. 访问`github.com`超时。    
 connect to host github.com port 22: Connection timed out.   
-```
+~~~
 $ ssh git@github.com 
 ssh: connect to host github.com port 22: Connection timed out
-```
+~~~
 **解决办法(windows/linux 通用)**：
 11.1 修改源地址协议    
-```
+~~~
 git config --local -e
-```
+~~~
 将`url = git@github.com:username/repo.git`改为`url = https://github.com/username/repo.git`，然后保存，再次执行。    
 11.2 添加一个配置文件       
  在`.ssh`目录下创建一个`config`文件，输入如下内容：   
-```
+~~~
 Host github.com 
 User guozhijie_2006@126.com 
 Hostname ssh.github.com 
 PreferredAuthentications publickey 
 IdentityFile C:/Users/Administrator/.ssh/id_rsa 
 Port 443 
-```
+~~~
 注意修改你的邮箱，保存并关闭.      
 进行测试是否连接上`github.com`      
-```
+~~~
 ssh -T git@github.com 
 
 The authenticity of host ‘[ssh.github.com]:443 ([207.97.227.248]:443)’ can’t be established. 
@@ -198,22 +198,28 @@ Are you sure you want to continue connecting (yes/no)? y
 Please type ‘yes’ or ‘no’: yes 
 Warning: Permanently added ‘[ssh.github.com]:443,[207.97.227.248]:443’ (RSA) to the list of known hosts. 
 Hi gzj2013! You've successfully authenticated, but GitHub does not provide shell access. 
-```
+~~~
 出现`Hi xxx!……`表示连接成功。  
 12. `https`方式每次都要输入密码
 按照如下设置即可输入一次就不用再手输入密码的困扰而且又享受https带来的极速。       
 12.1 设置记住密码（默认15分钟）：   
-```
+
+~~~
 git config --global credential.helper cache
-```
-如果想自己设置时间，可以这样做：    
-```
+~~~
+
+如果想自己设置时间，可以这样做：  
+
+~~~
 git config credential.helper 'cache --timeout=3600'
-```
+~~~
+
 这样就设置一个小时之后失效。   
+
 12.2 **长期存储密码 **  
-```
+
+~~~
 git config --global credential.helper store
-```
+~~~
 
 13. 已经提交了一个新版本, 但是发现之前仓库有更新过, 但是在提交之前并没有拉下来.   
