@@ -154,6 +154,26 @@ driver.get(url + kw)
 selector = etree.HTML(driver.page_source)
 ~~~
 
+问题:  
+
+~~~
+Traceback (most recent call last):
+  File "miners.py", line 51, in <module>
+    driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
+  File "/usr/local/lib/python3.4/dist-packages/selenium/webdriver/remote/webdriver.py", line 635, in execute_script
+    'args': converted_args})['value']
+  File "/usr/local/lib/python3.4/dist-packages/selenium/webdriver/remote/webdriver.py", line 320, in execute
+    self.error_handler.check_response(response)
+  File "/usr/local/lib/python3.4/dist-packages/selenium/webdriver/remote/errorhandler.py", line 242, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.WebDriverException: Message: unknown error: call function result missing 'value'
+  (Session info: chrome=68.0.3440.75)
+  (Driver info: chromedriver=2.26.436382 (70eb799287ce4c2208441fc057053a5b07ceabac),platform=Linux 4.4.0-131-generic x86_64)
+~~~
+
+版本问题, 换个新点的版本就可以了, chromedriver=2.36.540471 .  
+
+
 ## 保存到本地的文件命名   
 
 ~~~python
