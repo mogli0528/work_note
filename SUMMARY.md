@@ -70,13 +70,15 @@
     * [ 《编程之法：面试和算法心得》](https://github.com/julycoding/The-Art-Of-Programming-By-July/tree/master/ebook/zh)
 
 
-* [ 深度学习 ](/deeplearning/README.md)
-    * [ YOLO](/deeplearning/yolo/YOLO_README.md)
-        * [ 使用 VOC 数据集训练 YOLOv3](/deeplearning/yolo/training_yolo_on_voc.md)
-        * [ 理解 YOLOv3 的训练输出日志信息](/deeplearning/yolo/understanding_training_output.md)
-        * [ YOLO 实践篇（darknet） ](/deeplearning/yolo/yolo_config.md)
-        * [ 使用自己的数据集训练 YOLOv3 ](/deeplearning/yolo/traing_yolo_on_custom_data.md)
-        * [ 提高 YOLOv3 的检测性能](/deeplearning/yolo/how_to_improve_yolo_object_detection.md)
+* [ 深度学习 ](./deeplearning/README.md)
+    * [ YOLO](./deeplearning/yolo/YOLO_README.md)
+        * [ 使用 VOC 数据集训练 YOLOv3](./deeplearning/yolo/training_yolo_on_voc.md)
+        * [ 使用 COCO 数据集训练 YOLOv3](./deeplearning/yolo/training_yolo_on_coco.md)
+        * [ 理解 YOLOv3 的训练输出日志信息](./deeplearning/yolo/understanding_training_output.md)
+        * [ YOLO 实践篇（darknet） ](./deeplearning/yolo/yolo_config.md)
+        * [ 使用自己的数据集训练 YOLOv3 ](./deeplearning/yolo/traing_yolo_on_custom_data.md)
+        * [ 提高 YOLOv3 的检测性能](./deeplearning/yolo/how_to_improve_yolo_object_detection.md)
+        * [ YOLOv3 的标注数据格式](./deeplearning/yolo/yolo_annotations.md)
     `-------------------------------Caffe 笔记------------------------------------`
     * [ Caffe / SSD](/deeplearning/caffe_ssd/README.md)  
       * [ caffe 源码阅读笔记 - langb ](/deeplearning/caffe_ssd/doc/caffe/read_caffe_source_code/README.md)  
