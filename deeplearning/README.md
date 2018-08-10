@@ -87,4 +87,55 @@ R-CNN 需要非常多的候选区域以提升准确度，但其实有很多区�
 Fast R-CNN 使用特征提取器（CNN）先提取整个图像的特征，而不是从头开始对每个图像块提取多次。然后，我们可以将创建候选区域的方法直接应用到提取到的特征图上。例如，Fast R-CNN 选择了 VGG16 中的卷积层 conv5 来生成 ROI，这些关注区域随后会结合对应的特征图以裁剪为特征图块，并用于目标检测任务中。我们使用 ROI 池化将特征图块转换为固定的大小，并馈送到全连接层进行分类和定位。因为 Fast-RCNN 不会重复提取特征，因此它能显著地减少处理时间。    
 
 
+## data Sets
 
+3D PASCAL VOC: 
+    http://cvgl.stanford.edu/projects/pascal3d.html   
+
+KITTI(A project of Karlsruhe Institute of Technology and Toyota Technological Institute at Chicago):   
+    http://www.cvlibs.net/datasets/kitti/eval_object.php   
+
+NYC3DCars (a database of 3D vehicles in geographic context):  
+http://nyc3d.cs.cornell.edu/
+
+Complex-YOLO: An Euler-Region-Proposal for Real-time 3D Object Detection on Point Clouds:  
+    https://www.arxiv-vanity.com/papers/1803.06199/
+
+## 高效下载 coco 数据集  
+
+这里介绍一种不会中断的下载方法. 使用 aria2 命令行下载。   
+
+需要先安装：
+
+~~~bash
+sudo apt-get install aria2
+~~~
+
+进入存放 COCO 数据集的目录，依次输入下面 3 个命令下载：  
+
+~~~bash
+aria2c -c http://msvocds.blob.core.windows.net/annotations-1-0-3/instances_train-val2014.zip 
+aria2c -c http://msvocds.blob.core.windows.net/coco2014/train2014.zip 
+aria2c -c http://msvocds.blob.core.windows.net/coco2014/val2014.zip 
+~~~
+
+以上 3 个 url 链接分别为 2014 年的 annotations、train data、val data.  
+
+## coco 2017 数据集下载链接
+
+各个链接的意思: 第一组是 train 数据，第二组是 val 验证数据集，第三组是 test 验证数据集。  
+
+数据包括物体检测和 keypoints 身体关键点的检测。  
+
+~~~html
+http://images.cocodataset.org/zips/train2017.zip
+http://images.cocodataset.org/annotations/annotations_trainval2017.zip
+
+http://images.cocodataset.org/zips/val2017.zip
+http://images.cocodataset.org/annotations/stuff_annotations_trainval2017.zip
+
+http://images.cocodataset.org/zips/test2017.zip
+http://images.cocodataset.org/annotations/image_info_test2017.zip
+~~~
+
+这些就是全部的 microsoft coco 数据集 2017 的链接了。  

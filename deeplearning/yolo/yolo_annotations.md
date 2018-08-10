@@ -99,6 +99,8 @@ def convert_annotation(year, image_id):
 
 ## YOLOv3 是如何找到标注数据的?   
 
+主要的逻辑在 fill_truth_detection() 函数中.  
+
 ~~~cpp
 void fill_truth_detection(char *path, int num_boxes, float *truth, int classes, int flip, float dx, float dy, float sx, float sy)
 {
@@ -141,4 +143,14 @@ void fill_truth_detection(char *path, int num_boxes, float *truth, int classes, 
     }
     free(boxes);
 }
+~~~
+
+
+## error: pycocotools/_mask.c: No such file or directory
+
+错误来自编译cocoapi PythonAPI. 解决办法是安装 cython 后再编译.   
+　
+~~~bash
+sudo pip3 install cython
+make -j8
 ~~~

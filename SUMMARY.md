@@ -71,6 +71,9 @@
 
 
 * [ 深度学习 ](./deeplearning/README.md)
+    * [Common]()
+      * [ COCO 数据集 / API 的使用](/deeplearning/common/doc/coco_api.md)  
+
     * [ YOLO](./deeplearning/yolo/YOLO_README.md)
         * [ 使用 VOC 数据集训练 YOLOv3](./deeplearning/yolo/training_yolo_on_voc.md)
         * [ 使用 COCO 数据集训练 YOLOv3](./deeplearning/yolo/training_yolo_on_coco.md)
