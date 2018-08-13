@@ -1,11 +1,30 @@
 # 深度学习系列
 
-ssd 使用 python3 而不是 Python2.7:   
-```makefile
-PYTHON_LIBRARIES := boost_python python3.4m
-PYTHON_INCLUDE := /usr/include/python3.4m \
-                /usr/lib/python3.4/dist-packages/numpy/core/include
-```
+## dataSets
+
+### 1. 3D PASCAL VOC 
+
+http://cvgl.stanford.edu/projects/pascal3d.html   
+
+### 2. KITTI   
+
+A project of Karlsruhe Institute of Technology and Toyota Technological Institute at Chicago.  
+http://www.cvlibs.net/datasets/kitti/eval_object.php   
+
+### 3. NYC3DCars 
+
+a database of 3D vehicles in geographic context.  
+
+http://nyc3d.cs.cornell.edu/
+
+### 4. 视频监控中的目标追踪
+
+Coarse Gaze Estimation in Visual Surveillance.  
+
+http://www.robots.ox.ac.uk/ActiveVision/Research/Projects/2009bbenfold_headpose/project.html  
+
+
+Complex-YOLO: An Euler-Region-Proposal for Real-time 3D Object Detection on Point Clouds: https://www.arxiv-vanity.com/papers/1803.06199/
 
 `-------------------------------我是分割线------------------------------------`
 ## 1. 环境搭建   
@@ -85,21 +104,6 @@ R-CNN 需要非常多的候选区域以提升准确度，但其实有很多区�
 ![直接利用特征图计算 ROI](https://mmbiz.qpic.cn/mmbiz_jpg/KmXPKA19gW8H2Xghj59KZqesWzoictPPAM6S59jKSOvE0pPqooETv5RtQJzsaddyR8oMMxk4KOXYibTyUDgMqMUg/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1)
 
 Fast R-CNN 使用特征提取器（CNN）先提取整个图像的特征，而不是从头开始对每个图像块提取多次。然后，我们可以将创建候选区域的方法直接应用到提取到的特征图上。例如，Fast R-CNN 选择了 VGG16 中的卷积层 conv5 来生成 ROI，这些关注区域随后会结合对应的特征图以裁剪为特征图块，并用于目标检测任务中。我们使用 ROI 池化将特征图块转换为固定的大小，并馈送到全连接层进行分类和定位。因为 Fast-RCNN 不会重复提取特征，因此它能显著地减少处理时间。    
-
-
-## data Sets
-
-3D PASCAL VOC: 
-    http://cvgl.stanford.edu/projects/pascal3d.html   
-
-KITTI(A project of Karlsruhe Institute of Technology and Toyota Technological Institute at Chicago):   
-    http://www.cvlibs.net/datasets/kitti/eval_object.php   
-
-NYC3DCars (a database of 3D vehicles in geographic context):  
-http://nyc3d.cs.cornell.edu/
-
-Complex-YOLO: An Euler-Region-Proposal for Real-time 3D Object Detection on Point Clouds:  
-    https://www.arxiv-vanity.com/papers/1803.06199/
 
 ## 高效下载 coco 数据集  
 

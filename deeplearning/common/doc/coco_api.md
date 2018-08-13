@@ -284,3 +284,14 @@ a couple of people that are surfing in water
 A man and a young child in wet suits surfing in the ocean.
 a man and small child standing on a surf board  and riding some waves
 A young boy on a surfboard being taught to surf.
+
+## 编译 COCO Python API 遇到的问题  
+
+### 1. error: pycocotools/_mask.c: No such file or directory
+
+错误来自编译 cocoapi PythonAPI. 解决办法是安装 cython 后再编译.   
+　
+~~~bash
+sudo pip3 install cython
+make -j8
+~~~

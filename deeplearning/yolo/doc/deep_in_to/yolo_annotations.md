@@ -1,10 +1,12 @@
-# YOLOv3 的标注数据格式   
+# YOLOv3 的标注数据格式转化与使用   
 
 > coco API   
 
 > darknet/scripts/voc_label.py  
 
-## VOC 的标注数据格式
+## YOLOv3 的标注数据格式转化
+
+### 1. VOC 的标注数据格式
 
 我们熟知的像 VOC 的标注格式, 给出标注目标的类别, 标注目标的位置是以矩形的两个角点给出. 数据以 xml 格式存放.   
 
@@ -50,9 +52,9 @@
 
 上面的 xml 文件中, 有两个 object, 说明在标注的图片中存在两个目标. 目标的边界框在 <bndbox> </bndbox> 之间给出.  
 
-## YOLOv3 训练需要的标注数据格式   
+### 2. YOLOv3 训练需要的标注数据格式   
 
-yolov3 的标注格式:
+YOLOv3 的标注格式:
 
 ~~~text
 <object-class> <x> <y> <width> <height>
@@ -64,10 +66,9 @@ yolov3 的标注格式:
 
 如: 1 0.716797 0.395833 0.216406 0.147222   
 
-## 将 VOC 标注数据格式转换为 YOLOv3 格式  
+### 3. 将 VOC 标注数据格式转换为 YOLOv3 格式  
 
-转换的思路其实也很简单, 就是
-通过下面的脚本进行转换.   
+转换的思路其实也很简单, 就是按照 YOLOv3 的格式对标注框参数进行表示转换. VOC 标注数据通过下面的脚本进行转换.   
 
 ~~~python
 
@@ -80,6 +81,9 @@ def convert(size, box):
 
         如: 
             1 0.716797 0.395833 0.216406 0.147222
+        
+        pram@size: 原图的宽和高  
+        pram@box: (xmin,xmax), (ymin,ymax) 表示的边界框  
     '''
     dw = 1./(size[0])
     dh = 1./(size[1])
@@ -95,7 +99,19 @@ def convert(size, box):
     h = h*dh
 
     return (x,y,w,h)
+~~~
 
+## YOLOv3 是如何找到标注数据并在训练中使用   
+
+上一步中是为 YOLOv3 的训练做前期的数据准备工作, 之后就可以开始训练了.    
+
+但是在此之前还需要弄明白一个问题: YOLOv3 是如何保存这些标注数据的? 又是在训练时如何找到这些标注数据的?  
+
+### 1. YOLOv3 是如何保存标注数据的?  
+
+在标注数据格式转换完毕之后, 应该将其写入文件中供训练时使用. VOC 标注文件通过下面的脚本实现保存:  
+
+~~~python
 def convert_annotation(year, image_id):
     in_file = open('VOCdevkit/VOC%s/Annotations/%s.xml'%(year, image_id))
     out_file = open('VOCdevkit/VOC%s/labels/%s.txt'%(year, image_id), 'w')
@@ -118,9 +134,13 @@ def convert_annotation(year, image_id):
         out_file.write(str(cls_id) + " " + " ".join([str(a) for a in bb]) + '\n')
 ~~~
 
-## YOLOv3 是如何找到标注数据的?   
+其中, image_id 是训练数据集中每张图唯一的图片编号, 根据一定的比例(训练测试集 9:1)提前生成相应的 train.txt;  
 
-主要的逻辑在 fill_truth_detection() 函数中.  
+标注数据被保存到 labels/ 目录下的对应的 $(image_id).txt 文件中.  
+
+### 2. YOLOv3 在训练是如何找到这些标注数据的?  
+
+load_data() 负责加载训练所需的数据到内存/显存中, 主要的逻辑在 fill_truth_detection() 函数中.  
 
 ~~~cpp
 void fill_truth_detection(char *path, int num_boxes, float *truth, int classes, int flip, float dx, float dy, float sx, float sy)
@@ -166,12 +186,4 @@ void fill_truth_detection(char *path, int num_boxes, float *truth, int classes, 
 }
 ~~~
 
-
-## error: pycocotools/_mask.c: No such file or directory
-
-错误来自编译 cocoapi PythonAPI. 解决办法是安装 cython 后再编译.   
-　
-~~~bash
-sudo pip3 install cython
-make -j8
-~~~
+find_replace() 函数的作用是字符串查找替换.  
