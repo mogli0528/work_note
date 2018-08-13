@@ -52,6 +52,7 @@
         * [ 传智播客 day2 - urllib2 高级用法以及正则与 lxml 解析库 ](./dev_tools/python/doc/spider/c_z_b_k/day2.md)
         * [ 传智播客 day3 - 多线程爬虫 ](./dev_tools/python/doc/spider/c_z_b_k/day3.md)
         * [ 传智播客 day4 - 使用 Selenium + PhantomJS 获取动态网页 ](./dev_tools/python/doc/spider/c_z_b_k/day4.md)
+        * [ 传智播客 day5 - 使用 Tesseract 自动化识别验证码 ](./dev_tools/python/doc/spider/c_z_b_k/day5.md)
         * [ Python 正则表达式 ](./dev_tools/python/doc/spider/regular.md)
         `---------------------------------- Python Source Code ----------------------------------`
         * [ Python 源码剖析 - 1](./dev_tools/python/doc/python_src_analysis.md)
