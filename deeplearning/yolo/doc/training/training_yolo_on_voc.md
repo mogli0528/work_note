@@ -135,7 +135,14 @@ tail -f log_dir/voc_train.log
 * 用户观察输出 log, 达到合适的参数后认为停止训练;  
 * cfg/yolov3-voc.cfg 中的 `max_batches = 50200` 参数指定了训练的最大次数;  
 
+test 阶段需要作的几件事情:    
+
+- 对 cfg/yolov3-voc.cfg 中的训练阶段参数关闭, 改为新的测试阶段参数.    
+- 对 cfg/yolov3-voc.cfg 中 ignore_thresh = .7.    
+- 设置检测的阈值, 不然可能会检测出很少的目标;  
+
 训练结束后, 进行测试时需要修改 `cfg/yolov3-voc.cfg` 文件. 这里主要修改 batch 和 subdivisions, 记住是在 `# Testing` 阶段.   
+
 ~~~conf
 [net]
 # Testing

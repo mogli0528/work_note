@@ -71,18 +71,19 @@
 
 
 * [ 深度学习 ](./deeplearning/README.md)
-    * [Common]()
+    * [Common - 深度学习通用部分]()
       * [ COCO 数据集 / API 的使用](/deeplearning/common/doc/coco_api.md)  
+      * [ 全连接层的作用是什么？](/deeplearning/common/doc/role_of_full_connections.md)  
 
-    * [ YOLO](./deeplearning/yolo/YOLO_README.md)
-        * [ 使用 VOC 数据集训练 YOLOv3](./deeplearning/yolo/training_yolo_on_voc.md)
-        * [ 使用 COCO 数据集训练 YOLOv3](./deeplearning/yolo/training_yolo_on_coco.md)
-        * [ 理解 YOLOv3 的训练输出日志信息](./deeplearning/yolo/understanding_training_output.md)
-        * [ YOLO 实践篇（darknet） ](./deeplearning/yolo/yolo_config.md)
-        * [ 使用自己的数据集训练 YOLOv3 ](./deeplearning/yolo/traing_yolo_on_custom_data.md)
-        * [ 提高 YOLOv3 的检测性能](./deeplearning/yolo/how_to_improve_yolo_object_detection.md)
-        * [ YOLOv3 的标注数据格式](./deeplearning/yolo/yolo_annotations.md)
-    `-------------------------------Caffe 笔记------------------------------------`
+    * [ YOLO](./deeplearning/yolo/YOLO_README.md)  
+        * [ 使用 VOC 数据集训练 YOLOv3](./deeplearning/yolo/doc/training/training_yolo_on_voc.md)  
+        * [ 使用 COCO 数据集训练 YOLOv3](./deeplearning/yolo/doc/training/training_yolo_on_coco.md)  
+        * [ 使用自己的数据集训练 YOLOv3 ](./deeplearning/yolo/doc/training/traing_yolo_on_custom_data.md)  
+        * [ YOLO 实践篇（darknet） ](./deeplearning/yolo/doc/deep_in_to/deep_in_to/yolo_config.md)  
+        * [ 理解 YOLOv3 的训练输出日志信息](./deeplearning/yolo/doc/deep_in_to/understanding_training_output.md)  
+        * [ 提高 YOLOv3 的检测性能](./deeplearning/yolo/doc/deep_in_to/how_to_improve_yolo_object_detection.md)  
+        * [ YOLOv3 的标注数据格式](./deeplearning/yolo/doc/deep_in_to/yolo_annotations.md)  
+
     * [ Caffe / SSD](/deeplearning/caffe_ssd/README.md)  
       * [ caffe 源码阅读笔记 - langb ](/deeplearning/caffe_ssd/doc/caffe/read_caffe_source_code/README.md)  
         * [ caffe 源码阅读 —— 基本概念 ](/deeplearning/caffe_ssd/doc/caffe/read_caffe_source_code/doc/caffe_src_read-1.md)   
@@ -121,7 +122,6 @@
         * [ Caffe/SSD 中的术语 ](/deeplearning/caffe_ssd/doc/caffe_common_ssd/terms_in_caffe_or_ssd.md)   
         * [ layers 官方文档](/deeplearning/caffe_ssd/doc/caffe_common_ssd/official_layers.md)  
         * [ datum 和 blob 的区别](/deeplearning/caffe_ssd/doc/caffe_common_ssd/datum_blob.md)  
-
 
 * [ 使用 Ubuntu 系统 ](/ubuntu_os_usage/README.md)  
   `--------------------------------------- 常用命令 ---------------------------------------`   
