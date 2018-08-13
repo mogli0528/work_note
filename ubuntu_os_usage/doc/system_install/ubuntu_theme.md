@@ -6,21 +6,14 @@
 Flatabulous 主题是一款 Ubuntu 下扁平化主题，也是我试过众多主题中最喜欢的一个！最终效果如上述图所示。   
 
 
-执行以下命令安装 Flatabulous 主题：  
+执行以下命令安装 Flatabulous 主题, 该主题有配套的图标，安装方式如下：  
 
 ~~~bash
 sudo apt-get install gnome-tweak-tool
 sudo add-apt-repository ppa:noobslab/themes 
-sudo apt-get update 
-sudo apt-get install flatabulous-theme
-~~~
-
-该主题有配套的图标，安装方式如下：  
-
-~~~bash
 sudo add-apt-repository ppa:noobslab/icons 
 sudo apt-get update 
-sudo apt-get install ultra-flat-icons
+sudo apt-get install -y gnome-tweak-tool flatabulous-theme ultra-flat-icons
 ~~~
 
 
