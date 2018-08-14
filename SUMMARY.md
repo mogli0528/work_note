@@ -71,10 +71,14 @@
     * [ 《编程之法：面试和算法心得》](https://github.com/julycoding/The-Art-Of-Programming-By-July/tree/master/ebook/zh)
 
 
-* [ 深度学习 ](./deeplearning/README.md)
+* [ 深度学习 ](./deeplearning/Deeplearning_README.md)
     * [Common - 深度学习通用部分](/deeplearning/common/Common_README.md)
       * [ COCO 数据集 / API 的使用](/deeplearning/common/doc/coco_api.md)  
+      * [ 图像检测算法发展概述 ](/deeplearning/common/doc/image_detection_report.md)  
       * [ 全连接层的作用是什么？](/deeplearning/common/doc/role_of_full_connections.md)  
+      * [《神经网络与深度学习》](https://www.gitbook.com/book/tigerneil/neural-networks-and-deep-learning-zh/details)  
+      * [ 训练 tricks - 知乎专栏 ](https://zhuanlan.zhihu.com/p/27763696)   
+
 
     * [ YOLO](./deeplearning/yolo/YOLO_README.md)  
         * [ 使用 VOC 数据集训练 YOLOv3](./deeplearning/yolo/doc/training/training_yolo_on_voc.md)  

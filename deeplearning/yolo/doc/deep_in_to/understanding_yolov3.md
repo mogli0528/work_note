@@ -15,6 +15,39 @@ typedef struct{
     box **boxes;
 } data;
 
+typedef struct load_args{
+    int threads;  // 
+    char **paths;
+    char *path;
+    int n;
+    int m;
+    char **labels;
+    int h;
+    int w;
+    int out_w;
+    int out_h;
+    int nh;
+    int nw;
+    int num_boxes;
+    int min, max, size;
+    int classes;
+    int background;
+    int scale;
+    int center;
+    int coords;
+    float jitter;
+    float angle;
+    float aspect;
+    float saturation;
+    float exposure;
+    float hue;
+    data *d;
+    image *im;
+    image *resized;
+    data_type type;
+    tree *hierarchy;
+} load_args;
+
 
 ## 3. subdivisions  
 
@@ -28,7 +61,7 @@ net.batch * net.subdivisions又得到了在网络配置文件中设定的batch�
 // 因此本函数中的n实际不是总的n，而是分配到该线程上的n，比如总共要读入128张图片，共开启8个线程读数据，那么本函数中的n为16,而不是总数128
 
 
-### 4. 原始数据读取   
+## 4. 原始数据读取   
 
 im.data[k*w*h + i*w + j] = data[i*step + j*c + k]/255.;
 
@@ -39,3 +72,29 @@ im.data[k*w*h + i*w + j] = data[i*step + j*c + k]/255.;
 // 但如果指定的channels=1,data将是经过转换后通道数为1的图像数据，这时k=0，只能读取一个通道的数据;
 // 如果channels=3，那么data保持为rgbrgbrgb...存储格式，这时w=0将读取所有r通道的数据，
 // w=1将读取所有g通道的数据，w=2将读取所有b通道的数据
+
+## 5. 数据增广函数  
+
+load_data_detection() 函数  
+
+
+
+## 6. 如何查看增广后的图片
+
+在 load_data_detection() 函数中添加图片保存方式或者添加实时显示图片逻辑.   
+
+
+
+## 7. 时刻防止内存泄露 
+
+free()  
+ 
+## 模型性能评价  
+
+test_detector()  
+
+validate_detector()
+
+validate_detector_flip()  
+
+validate_detector_recall()  

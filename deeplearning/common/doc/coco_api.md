@@ -12,6 +12,44 @@ Github网址 - https://github.com/pdollar/coco
 
 关于API更多的细节在网站: http://mscoco.org/dataset/#download   
 
+### 1. 高效下载 coco 数据集  
+
+这里介绍一种不会中断的下载方法. 使用 aria2 命令行下载。   
+
+需要先安装：
+
+~~~bash
+sudo apt-get install aria2
+~~~
+
+进入存放 COCO 数据集的目录，依次输入下面 3 个命令下载：  
+
+~~~bash
+aria2c -c http://msvocds.blob.core.windows.net/annotations-1-0-3/instances_train-val2014.zip 
+aria2c -c http://msvocds.blob.core.windows.net/coco2014/train2014.zip 
+aria2c -c http://msvocds.blob.core.windows.net/coco2014/val2014.zip 
+~~~
+
+以上 3 个 url 链接分别为 2014 年的 annotations、train data、val data.  
+
+### 2. coco 2017 数据集下载链接
+
+各个链接的意思: 第一组是 train 数据，第二组是 val 验证数据集，第三组是 test 验证数据集。  
+
+数据包括物体检测和 keypoints 身体关键点的检测。  
+
+~~~html
+http://images.cocodataset.org/zips/train2017.zip
+http://images.cocodataset.org/annotations/annotations_trainval2017.zip
+
+http://images.cocodataset.org/zips/val2017.zip
+http://images.cocodataset.org/annotations/stuff_annotations_trainval2017.zip
+
+http://images.cocodataset.org/zips/test2017.zip
+http://images.cocodataset.org/annotations/image_info_test2017.zip
+~~~
+
+这些就是全部的 microsoft coco 数据集 2017 的链接了。  
 
 数据集提供 Matlab, Python 和 Lua 的 API 接口. 其中 matlab 和 python 的 API 接口可以提供完整的图像标签数据的加载, parsing 和可视化.此外,网站还提供了数据相关的文章, 教程等.
 

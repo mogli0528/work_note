@@ -1,4 +1,4 @@
-#coding=gbk
+#coding=utf-8
 import os
 import cv2
 
@@ -8,7 +8,7 @@ import cv2
 # 2017-04-08 12:46:04
 
 #parameters
-path = "frames"
+path = "/home/klm/data_training/common/miners/miners"
 wndName = "ESC close, s save, c clean, p back"
 className = ["sh002", "demo"]
 colors = [(0, 255, 0), (255, 0, 0)]
@@ -17,7 +17,6 @@ colors = [(0, 255, 0), (255, 0, 0)]
 #code
 currentClass = 0
 imgs = os.listdir(path)
-print imgs
 imgs = [(imgs[i], path + "/" + imgs[i]) for i in range(len(imgs))]
 for i in range(len(imgs)-1, -1, -1):
     if not imgs[i][1].lower().endswith("jpg") and not imgs[i][1].lower().endswith("png") and not imgs[i][1].lower().endswith("jpeg"):
@@ -105,7 +104,6 @@ def loadObjsFromXml(name):
 def loadROI(path):
     # per=ET.parse('testXml.xml')  
     # path = path + '.xml'
-    print path
     per=ET.parse(path) 
 
     roi = []
@@ -118,7 +116,7 @@ def loadROI(path):
 
     name_node = per.getiterator("name") 
     for name in name_node:
-        print "node.text:%s" % name.text   
+        print ("node.text:%s" % name.text)   
         class_name.append(name.text)
 
     lst_node = per.getiterator("bndbox")  
@@ -138,7 +136,6 @@ def loadROI(path):
         
         rois.append(roi)
         # print roi[0][0],roi[0][1],roi[1][0],roi[1][1], type(roi)
-    print len(rois), len(class_name)
     if len(rois) == len(class_name):
         return rois, class_name
         
@@ -195,7 +192,7 @@ def saveXML(name, objs, cls, w, h):
 
 
 if len(imgs) == 0:
-    print "empty imgs dir."
+    print ("empty imgs dir.")
     exit(1)
 
 
@@ -257,3 +254,5 @@ while True:
 
     if endOf: break;
     i = i+1
+
+
