@@ -84,6 +84,7 @@
         * [ 使用 VOC 数据集训练 YOLOv3](./deeplearning/yolo/doc/training/training_yolo_on_voc.md)  
         * [ 使用 COCO 数据集训练 YOLOv3](./deeplearning/yolo/doc/training/training_yolo_on_coco.md)  
         * [ 使用自己的数据集训练 YOLOv3 ](./deeplearning/yolo/doc/training/traing_yolo_on_custom_data.md)  
+        * [ 自定义训练的数据准备 ](./deeplearning/yolo/doc/training/data_prepare.md)  
         
         * [ 更好的理解 YOLOv3 ](./deeplearning/yolo/doc/deep_in_to/understanding_yolov3.md)  
         * [ YOLO 实践篇（darknet） ](./deeplearning/yolo/doc/deep_in_to/deep_in_to/yolo_config.md)  
@@ -198,6 +199,7 @@
     * [ 安装和使用 Docker ](/ubuntu_os_usage/doc/advanced_issues/docker_install.md)  
     * [ 查看目录占用的磁盘空间](/ubuntu_os_usage/doc/advanced_issues/disk_space_usage.md)   
     * [ qt 无法使用搜狗输入法](/ubuntu_os_usage/doc/advanced_issues/qt_sogou.md)   
+    * [ 安装 ImageMagick ](/ubuntu_os_usage/doc/advanced_issues/install_ImageMagick.md)   
 
 
 * [ 工作计划 ](/work_plan/README.md)  

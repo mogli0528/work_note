@@ -16,7 +16,7 @@ int main(int argc, char * argv[])
     std::vector<int> ivec_il = {1, 2, 3, 4, 5, 6};
     cout << "size = " << ivec.size() << endl;
     cout << "il_size = " << ivec_il.size() << endl;
-    ivec.reserve(30);
+    ivec.reserve(30); // 为 capacity 分配空间
     cout << endl << "size = " << ivec.size() << endl;
     cout << "capacity = " << ivec.capacity() << endl;
     ivec.resize(10);
@@ -36,11 +36,13 @@ int main(int argc, char * argv[])
     ivec.insert(ivec.begin() + 5, 4, 35);
     ivec.insert(ivec.begin(), ivec_il.begin(), ivec_il.end());
     ivec.insert(ivec.begin(), {33, 44, 55, 66});
+    cout << endl << "size = " << ivec.size() << endl;
+    cout << "capacity = " << ivec.capacity() << endl;
     for(auto it = ivec.begin(); it != ivec.end(); it++){
 
         if( (it - ivec.begin()) % 6 == 0 )
             cout << endl;
-        cout << setiosflags(ios::left) << setw(4) << *it << " "; 
+        cout << setiosflags(ios::right) << setw(5) << *it << " "; 
     }
 
     cout << endl;

@@ -1,7 +1,12 @@
 #coding=utf8
 import os
+import argparse
 
-path = "4/"
+ap = argparse.ArgumentParser()
+ap.add_argument("--path", "-p", required=True)
+args = vars(ap.parse_args())
+path = args["path"]
+
 txtFile = []
 
 files = os.listdir(path)

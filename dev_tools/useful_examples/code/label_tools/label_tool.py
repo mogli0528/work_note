@@ -18,8 +18,12 @@ current_jpg_name = ''
 
 #parameters
 path = "cll1"
+labels_path = "labels/"
+if not os.path.exists(labels_path):
+    os.makedirs(labels_path)
+
 wndName = "ESC close, s save, c clean, p back"
-className = ["bx007","bx008","bx006","bx005"]
+className = ["person","bx008","bx006","bx005"]
 colors = [(0, 255, 0), (255, 0, 0), (100, 0, 180), (255, 180, 0), (180, 0, 100)]
 
 show = []
@@ -30,10 +34,10 @@ epoint = []
 objs = []
 waitSecDown = False
 
-def refreshCurrentShow(current_jpg_name):
+def refreshCurrentShow(labeled_num_rest):
 
     cv2.resize(show, (convas.shape[1], convas.shape[0]), convas)
-    cv2.putText(convas, className[current_labeled_cls] + "-" + current_jpg_name, (10, 30), 1, 2, colors[current_labeled_cls], 2)
+    cv2.putText(convas, className[current_labeled_cls] + "-" + str(labeled_num_rest), (10, 30), 1, 2, colors[current_labeled_cls], 2)
     # cv2.putText(convas, "", (30, 30), 1, 2, colors[currentClass], 2)
     drawObjs(objs, convas)
 
@@ -53,8 +57,9 @@ def onMouse(event, x, y, flag, points):
             dpoint = (x, y)
             waitSecDown = True
 
-        refreshCurrentShow(current_jpg_name)
+        refreshCurrentShow(labeled_num_rest)
     elif event == cv2.EVENT_MOUSEMOVE:
+
         cv2.resize(convas, (convas.shape[1], convas.shape[0]), convas_mouse)
         cv2.line(convas_mouse, (0, y), (convas.shape[1], y), (0, 255, 0), 1)
         cv2.line(convas_mouse, (x, 0), (x, convas.shape[0]), (0, 255, 0), 1)
@@ -70,7 +75,7 @@ def onMouse(event, x, y, flag, points):
             if x > xmin and x < xmax and y > ymin and y < ymax:
                 del objs[i]
 
-        refreshCurrentShow(current_jpg_name)
+        refreshCurrentShow(labeled_num_rest)
 
 
 def drawObjs(objs, canvas):
@@ -169,7 +174,7 @@ def do_label(imgs):
 
         :param imgs: 所有待标注图片的路径集合
     '''
-    global currentClass, show, convas, convas_mouse, objs
+    global currentClass, current_labeled_cls, show, convas, convas_mouse, objs, labeled_num_rest
 
     endOf = False;
     i = loadBreakpoint()  # 标注的图片编号断点
@@ -181,6 +186,7 @@ def do_label(imgs):
             i = 0
 
         saveBreakpoint(i)
+        labeled_num_rest = len(imgs) - i
         current_jpg_name = os.path.basename(imgs[i][1])
         show = cv2.imread(imgs[i][1])
         convas = copy.deepcopy(show)
@@ -193,7 +199,7 @@ def do_label(imgs):
         while True:
             cv2.resize(show, (convas.shape[1], convas.shape[0]), convas)
 
-            refreshCurrentShow(current_jpg_name)
+            refreshCurrentShow(labeled_num_rest)
             cv2.setMouseCallback(wndName, onMouse)
             key = cv2.waitKey()
             key = key & 0xFF;
@@ -206,6 +212,7 @@ def do_label(imgs):
                 currentClass = key - ord('1')
                 currentClass = max(currentClass, 0)
                 currentClass = min(len(className) - 1, currentClass)
+                current_labeled_cls = currentClass
                 continue
 
             if key == ord('c'):
@@ -228,12 +235,12 @@ def do_label(imgs):
                 break
 
             if key == ord('p'):
-                if len(objs)>0:
-                    del objs[len(objs)-1]
-                continue
+                i = i - 2
+                # if len(objs)>0:
+                #     del objs[len(objs)-1]
+                break;
 
             if key == ord('s'): #s
-                print(objs)
                 saveXML("%s/%s.xml" %(path, imgs[i][0][:pos]), objs, currentClass, show.shape[1], show.shape[0])
                 break
 
