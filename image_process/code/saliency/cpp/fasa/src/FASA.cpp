@@ -47,6 +47,39 @@ float inverseCovarianceFloat[4][4] = {{43.3777,    1.7633,   -0.4059,    1.0997}
 Mat modelMean                   = Mat(4, 1, CV_32FC1, meanVectorFloat);
 Mat modelInverseCovariance      = Mat(4, 4, CV_32FC1, inverseCovarianceFloat);
 
+float overlap(float x1, float w1, float x2, float w2)
+{
+    float l1 = x1 - w1/2;
+    float l2 = x2 - w2/2;
+    float left = l1 > l2 ? l1 : l2;
+    float r1 = x1 + w1/2;
+    float r2 = x2 + w2/2;
+    float right = r1 < r2 ? r1 : r2;
+    return right - left;
+}
+
+float box_intersection(cv::Rect a, cv::Rect b)
+{
+    float w = overlap(a.x, a.width, b.x, b.width);
+    float h = overlap(a.y, a.height, b.y, b.height);
+    if(w < 0 || h < 0) return 0;
+    float area = w*h;
+    return area;
+}
+
+float box_union(cv::Rect a, cv::Rect b)
+{
+    float i = box_intersection(a, b);
+    float u = a.width*a.height + b.width*b.height - i;
+    return u;
+}
+
+float box_iou(cv::Rect a, cv::Rect b)
+{
+    return box_intersection(a, b)/box_union(a, b);
+}
+
+
 void readFiles(vector<string>& imagePaths,
                vector<string>& imageNames,
                VideoCapture &cap,
@@ -679,6 +712,8 @@ int main(int argc, const char * argv[])
 
     cout << "Processing..." << endl;cout << "Processing..." << endl;
 
+    // 创建目录 
+#if 0
     system(("mkdir -p " + savePath).c_str());
     system(("mkdir -p " + savePath + "globalContrast/").c_str());
     system(("mkdir -p " + savePath + "saliencyProbability/").c_str());
@@ -686,7 +721,7 @@ int main(int argc, const char * argv[])
     system(("mkdir -p " + savePath + "ellipseDetection/").c_str());
     system(("mkdir -p " + savePath + "rectangleDetection/").c_str());
     system(("mkdir -p " + savePath + "rectangleBoundingBoxes/").c_str());
-    
+#endif
     int totalImages     = 0;
     float totalColor    = 0;
     float totalPixels   = 0;   // pixels number of the image
@@ -706,6 +741,8 @@ int main(int argc, const char * argv[])
             cap >> im;
         }
         
+        cout << imagePaths[totalImages] << endl;
+        // system(("mv " + imagePaths[totalImages] + " /home/klm/Desktop/test/images/").c_str());
         if(im.data){
 
             Mat lab;
@@ -800,12 +837,11 @@ int main(int argc, const char * argv[])
 
             objectRectangles.open(savePath + "rectangleBoundingBoxes/" + imageNames[totalImages].substr(0, imageNames[totalImages].length()-4) + ".txt");
             
+            float xx,yy,ww,hh;
             for (int i = 0; i < numberOfColors; i++) {
                 
                 float rx = Xsize.at<float>(0,i)*im.cols;
                 float ry = Ysize.at<float>(0,i)*im.rows;
-                
-                float xx,yy,ww,hh;
                 
                 xx = mx.at<float>(0,i) - rx/2 >= 0 ? mx.at<float>(0,i) - rx/2 : 0;
                 yy = my.at<float>(0,i) - ry/2 >= 0 ? my.at<float>(0,i) - ry/2 : 0;
@@ -862,8 +898,99 @@ int main(int argc, const char * argv[])
             globalContrastImage = 255 * globalContrastImage;
             globalContrastImage.convertTo(globalContrastImage, CV_8UC1);
 
-            cv::imshow("detection", rectangleDetection);
-            int key = cv::waitKey(10);
+            // 前景提取
+            cv::Mat bgmodel, fgmodel, mask, thresh_res;
+
+            cv::Rect rect = cv::Rect(cv::Point(xx,yy), cv::Point(xx+ww,yy+hh));
+            // cv::rectangle(with_rect, rect, cv::Scalar(255, 0, 0), 1);
+
+            // 提取轮廓 
+            cv::Mat threshold_result, contour;
+            cv::Mat element3(5,5, CV_8U, cv::Scalar(1));
+            im.copyTo(contour);
+            // blur(SM,SM, Size(9,9));
+            cv::threshold(SM, threshold_result, 60, 255, cv::THRESH_BINARY);
+            // cv::adaptiveThreshold(SM, threshold_result,255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, 41, 0);
+            threshold_result.copyTo(thresh_res);
+            cv::dilate(threshold_result, threshold_result, element3, cv::Point(-1, -1), 3);
+            // Canny(saliencyProbabilityImage, threshold_result, 20, 80, 3, false);
+            std::vector<std::vector<cv::Point> > contours;
+            std::vector<cv::Vec4i> hierarchy;
+            // cv::findContours(threshold_result, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_NONE, Point(0, 0));
+            cv::findContours(threshold_result, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));
+            // cv::findContours(threshold_result, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));
+            // for(int i = 0; i < contours.size(); i++)
+            // {
+            //     if(contourArea(contours[i]) > 350 && arcLength(contours[i], false) > 350)
+            //         cv::drawContours(contour, contours, i, cv::Scalar(0, 255, 0), 2, 8, hierarchy, 0, cv::Point(0,0));
+            // }
+            std::vector<cv::Mat> foregrounds;
+            // ;(contours.size(), cv::Mat(im.size(), CV_8UC3, cv::Scalar(0, 0, 0)));
+            std::vector<Rect> minRects(contours.size());
+            size_t max_area = 0;
+            int right_box = 0;
+            cv::Rect image_rect = cv::Rect(cv::Point(0, 0), cv::Point(im.cols, im.rows));
+            cv::Mat foreground(im.size(), CV_8UC3, cv::Scalar(0, 0, 0));
+            for(int i = 0; i < contours.size(); i++)
+            {
+                cv::Mat tmp(im.size(), CV_8UC3, cv::Scalar(0, 0, 0));
+                if(contourArea(contours[i]) > 200 && arcLength(contours[i], false) > 200){
+                    
+                    minRects[i] = boundingRect(Mat(contours[i]));
+                    float iou = box_iou(minRects[i], image_rect);
+                    cout << "iou = " << iou << endl;
+                    
+                    if (contourArea(contours[i]) > max_area && iou < 0.8) {
+                        
+                        max_area = contourArea(contours[i]);
+                        right_box = i;
+                    }
+                    rectangle(contour, minRects[i], cv::Scalar(0, 0, 255), 1, 8, 0);
+            
+                    minRects[i].x -= 10;
+                    minRects[i].y -= 10;
+                    minRects[i].width += 10;
+                    minRects[i].height += 10;
+                    cv::grabCut(im, mask, minRects[i], bgmodel, fgmodel, 1, cv::GC_INIT_WITH_RECT);
+                    cv::compare(mask, cv::GC_PR_FGD, mask, cv::CMP_EQ);
+
+                    // minRects[right_box].x -= 10;
+                    // minRects[right_box].y -= 10;
+                    // minRects[right_box].width += 10;
+                    // minRects[right_box].height += 10;
+                    // cv::grabCut(im, mask, minRects[right_box], bgmodel, fgmodel, 1, cv::GC_INIT_WITH_RECT);
+
+                    // drawContours(contour, contours, i, cv::Scalar(0, 255, 0), 1,8,std::vector<Vec4i>(), 0, Point(0, 0));
+                    
+                    // Point2f rectPoints[4];
+                    // minRects[i].points(rectPoints);
+                    // for (int j = 0; j < 4; j++)
+                    {
+                        
+
+                        // line(contour, rectPoints[j], rectPoints[(j+1)%4],  cv::Scalar(0, 0, 255), 2, 8, 0);
+                    }
+                    im.copyTo(tmp, mask);
+                    foregrounds.push_back(tmp);
+                }
+            }
+            for(int i = 0; i < foregrounds.size(); i++)
+                foreground += foregrounds[i];
+            rectangle(contour, minRects[right_box], cv::Scalar(255, 0, 0), 2, 8, 0);
+            rectangle(contour, rect, cv::Scalar(0, 255, 0), 1, 8, 0);
+            
+            
+           
+            // cv::imshow("origin", im);
+            // cv::imshow("rect", with_rect);
+            cv::imshow("rect", contour);
+            cv::imshow("threshold_result", thresh_res);
+            cv::imshow("mask", mask);
+            cv::imshow("grabCut", foreground);
+            cv::imshow("saliency", SM);
+            cv::imshow("globalContrastImage", globalContrastImage);
+            cv::imshow("saliencyProbabilityImage", saliencyProbabilityImage);
+            int key = cv::waitKey();
             if (key == 27){
 
                 cv::destroyAllWindows();

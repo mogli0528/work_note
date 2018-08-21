@@ -165,6 +165,8 @@ add_library( # Sets the name of the library.
              ${homura_src} )
 
 set_target_properties( gameplay PROPERTIES IMPORTED_LOCATION libs/${ANDROID_ABI}/libgameplay.so )
+
+
 set(CMAKE_CXX_FLAGS "-Os -std=c++11 -frtti -Wno-switch-enum -Wno-switch -Wno-error=non-virtual-dtor -D__ANDROID__")
 
 target_link_libraries( # Specifies the target library.

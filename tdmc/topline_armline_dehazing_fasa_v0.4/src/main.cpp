@@ -2,6 +2,7 @@
 #include "dehazing.h"
 
 #define DRAW_LINE
+using namespace std;
 
 int main(int argc, char **argv)
 {
