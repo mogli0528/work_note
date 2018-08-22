@@ -1,3 +1,44 @@
+# Boost 文件系统操作   
+
+> 写在最前面的话: Boost 的一些库函数使用了 c++11 的枚举变量, 因此不能使用链接参数 "-std=c++11".   
+
+## CmakeLists.txt 文件中添加链接代码   
+
+cmake 关键库函数代码.   
+
+~~~cmake
+
+set(LINKER_LIBS "")  
+find_package(Boost REQUIRED COMPONENTS
+system
+filesystem
+)
+list(APPEND LINKER_LIBS ${Boost_LIBRARIES})
+include_directories(${Boost_INCLUDE_DIRS})
+~~~
+
+## API 介绍  
+
+需要包含两个头文件:   
+
+~~~cpp
+#include <boost/filesystem.hpp>
+#include "boost/algorithm/string.hpp"  
+~~~
+
+1) 目录遍历  
+
+~~~cpp
+
+~~~
+
+
+
+## 场景实例  
+
+
+
+~~~cpp
 #include <iostream>
 #include <string>
 #include <boost/filesystem.hpp>
@@ -136,3 +177,5 @@ bool CopyDirectory(const std::string &strSourceDir, const std::string &strDestDi
 	}
 	return true;
 }
+
+~~~

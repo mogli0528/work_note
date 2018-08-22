@@ -20,13 +20,15 @@ include_directories(SYSTEM ${GLOG_INCLUDE_DIRS})
 list(APPEND LINKER_LIBS ${GLOG_LIBRARIES})  
 
 # Add the source in project root directory
-aux_source_directory(src DIRSRCS)
-aux_source_directory(src/detector DIRSRCS)
-aux_source_directory(src/dehaze DIRSRCS)
-aux_source_directory(src/fasa DIRSRCS)
+aux_source_directory(src SRC_FILES)
+aux_source_directory(src/detector SRC_FILES)
+aux_source_directory(src/dehaze SRC_FILES)
+aux_source_directory(src/fasa SRC_FILES)
 
 # Target
-message("source files:  ${DIRSRCS}")
+message("Source Files: " ${SRC_FILES} )
+message("Header Files: " ${OpenCV_INCLUDE_DIRS} )
+message("Lib Files: " ${LINKER_LIBS} )
 
-add_executable( topline ${DIRSRCS})
+add_executable( topline ${SRC_FILES})
 target_link_libraries( topline ${LINKER_LIBS} -lcblas )

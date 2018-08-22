@@ -40,6 +40,154 @@ https://github.com/congve1/ImageSegmentation
 
 Image segmentation first get the saliency map and set a threshold to segment the image
 
+### 4. 语义分割+视频分割开源代码集合  
+
+来源：CSDN博客（http://blog.csdn.net/zhangjunhit/article/details/78190283）
+
+1) 语义分割 
+
+Global Deconvolutional Networks [BMVC 2016]    
+https://github.com/DrSleep/GDN  
+
+
+The One Hundred Layers Tiramisu: Fully Convolutional DenseNets for Semantic Segmentation CVPRW 2017 
+Theano/Lasagne code Implementation   
+
+https://github.com/0bserver07/One-Hundred-Layers-Tiramisu  
+
+
+
+Full-Resolution Residual Networks for Semantic Segmentation in Street Scenes CVPR2017 
+https://github.com/TobyPDE/FRRN  
+
+
+
+Awesome Semantic Segmentation   
+https://github.com/mrgloom/awesome-semantic-segmentation  
+
+
+
+Semantic Segmentation Algorithms Implemented in PyTorch 这个很好！   
+https://github.com/meetshah1995/pytorch-semseg  
+
+
+
+Learning Deconvolution Network for Semantic Segmentation   
+https://github.com/HyeonwooNoh/DeconvNet  
+
+
+
+Fully Convolutional Instance-aware Semantic Segmentation   
+https://github.com/daijifeng001/TA-FCN  
+
+
+
+Fully Convolutional Networks for Semantic Segmentation   
+https://github.com/shelhamer/fcn.berkeleyvision.org  
+
+
+PixelNet: Representation of the pixels, by the pixels, and for the pixels   
+https://github.com/aayushbansal/PixelNet   
+http://www.cs.cmu.edu/~aayushb/pixelNet/  
+
+
+
+ICNet for Real-Time Semantic Segmentation on High-Resolution Images   
+https://hszhao.github.io/projects/icnet/ https://github.com/hszhao/ICNet  
+
+
+
+SegNet: A Deep Convolutional Encoder-Decoder Architecture for Semantic Pixel-Wise Labelling 
+https://arxiv.org/pdf/1511.00561.pdf   
+PAMI-2017 https://github.com/alexgkendall/caffe-segnet  
+
+
+
+DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs   
+https://bitbucket.org/aquariusjay/deeplab-public-ver2/overview  
+
+
+
+DeconvNet : Learning Deconvolution Network for Semantic Segmentation ICCV2015   
+https://github.com/HyeonwooNoh/DeconvNet http://cvlab.postech.ac.kr/research/deconvnet/  
+
+
+
+Pyramid Scene Parsing Network CVPR2017   
+https://github.com/hszhao/PSPNet  
+
+
+
+Fully Convolutional Instance-aware Semantic Segmentation CVPR2017   
+https://github.com/msracver/FCIS  
+
+
+
+ParseNet: Looking Wider to See Better   
+https://github.com/weiliu89/caffe/tree/fcn  
+
+
+
+其他 
+半监督语义分割 
+
+Mix-and-Match Tuning for Self-Supervised Semantic Segmentation   
+AAAI Conference on Artificial Intelligence (AAAI) 2018   
+http://mmlab.ie.cuhk.edu.hk/projects/M&M/   
+https://github.com/XiaohangZhan/mix-and-match/  
+
+deconvnet analysis   
+Salient Deconvolutional Networks ECCV2016   
+https://github.com/aravindhm/deconvnet_analysis  
+
+
+
+Instance Segmentation 分水岭+CNN   
+Deep Watershed Transform for Instance Segmentation CVPR2017   
+https://github.com/min2209/dwt  
+
+
+
+Instance Segmentation   
+End-to-End Instance Segmentation with Recurrent Attention CVPR2017   
+https://github.com/renmengye/rec-attend-public  
+
+
+
+基于单张训练样本的视频运动物体分割   
+Video Object Segmentation Without Temporal Information One-Shot Video Object Segmentation   
+http://www.vision.ee.ethz.ch/~cvlsegmentation/osvos/  
+
+
+
+图像语义匹配   
+
+SCNet: Learning Semantic Correspondence ICCV2017   
+Matlab code: https://github.com/k-han/SCNet  
+
+
+
+同时检测和分割，类似 Mask R-CNN 
+BlitzNet: A Real-Time Deep Network for Scene Understanding   
+ICCV2017 
+
+https://github.com/dvornikita/blitznet   
+
+
+
+目标候选区域分割   
+
+FastMask: Segment Multi-scale Object Candidates in One Shot CVPR2017   
+https://github.com/voidrank/FastMask  
+
+
+
+视频分割  
+
+Learning to Segment Instances in Videos with Spatial Propagation Network CVPRW2017   
+https://github.com/JingchunCheng/Seg-with-SPN  
+
+
 
 
 ### 6. 王井东  

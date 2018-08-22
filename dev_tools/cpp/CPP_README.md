@@ -25,6 +25,11 @@
 ### ProtoBuf 使用 
 - [ProtoBuf 的使用](./doc/protobuf.md)
 
+## CPP 使用中的盲点  
+
+- [ C/C++ 中 #pragma once 的使用](./doc/blind_points/pragma_once.md)
+- [ 函数默认参数类型为引用? ](./doc/blind_points/default_ref_param_init.md)
+
 
 ### 在山寨中成长      
 - [x] convert_annoset.cpp 中的 gflag/glog 语法模仿;   
