@@ -1,21 +1,26 @@
 #include <iostream>
 #include <string>
+
+#define BOOST_NO_CXX11_SCOPED_ENUMS
 #include <boost/filesystem.hpp>
+#undef BOOST_NO_CXX11_SCOPED_ENUMS
 #include "boost/algorithm/string.hpp"
 
 /**
  * With "-std=c++11" can result in:
- *   boost_filesys.cpp:(.text.startup+0x743): undefined reference to 
- *   `boost::filesystem::detail::copy_file(boost::filesystem::path const&, 
- *   boost::filesystem::path const&, boost::filesystem::copy_option, boost::system::error_code*)'
+ *   undefined reference to: 
+ *   `boost::filesystem::detail::copy_file(
+ *      boost::filesystem::path const&, boost::filesystem::path const&, 
+ *      boost::filesystem::copy_option, boost::system::error_code*)'
  * 
- * https://blog.csdn.net/tianwenzhe00/article/details/77453548
+ * Solutions:
+ * https://codeyarns.com/2017/09/20/undefined-reference-to-boost-copy_file/
  * 
 */
 
 using namespace std;
 
-int main(int argc, char* argv[])
+int main_(int argc, char* argv[])
 {
     string curPath = "/home/klm/work/test"; 
     boost::system::error_code ec;
@@ -94,7 +99,7 @@ int main(int argc, char* argv[])
 
     }
 
-    boost::filesystem还可以创建目录：
+    // boost::filesystem 还可以创建目录： 
     boost::filesystem::path strFilePath("/home/klm/work/test/build/");
     if( !boost::filesystem::exists( strFilePath ) )
     {
@@ -117,12 +122,13 @@ bool CopyDirectory(const std::string &strSourceDir, const std::string &strDestDi
 	boost::system::error_code ec;
 	for (boost::filesystem::recursive_directory_iterator pos(strSourceDir); pos != end; ++pos)
 	{
-                //过滤掉目录和子目录为空的情况
+        //过滤掉目录和子目录为空的情况
 		if(boost::filesystem::is_directory(*pos))
 			continue;
 		std::string strAppPath = boost::filesystem::path(*pos).string();
 		std::string strRestorePath;
-                //replace_first_copy在algorithm/string头文件中，在strAppPath中查找strSourceDir字符串，找到则用strDestDir替换，替换后的字符串保存在一个输出迭代器中
+        
+        //replace_first_copy在algorithm/string头文件中，在strAppPath中查找strSourceDir字符串，找到则用strDestDir替换，替换后的字符串保存在一个输出迭代器中
 		boost::replace_first_copy(std::back_inserter(strRestorePath), strAppPath, strSourceDir, strDestDir);
 		if(!boost::filesystem::exists(boost::filesystem::path(strRestorePath).parent_path()))
 		{
@@ -135,4 +141,35 @@ bool CopyDirectory(const std::string &strSourceDir, const std::string &strDestDi
 		return false;
 	}
 	return true;
+}
+
+/**
+ * Copy regular files in a directory
+*/
+int main(int argc, char* argv[])
+{
+    string curPath = "/home/klm/work/test"; 
+    string filename = "";
+    boost::system::error_code ec;
+
+    //定义一个可以递归的目录迭代器,用于遍历
+    boost::filesystem::recursive_directory_iterator itEnd;
+    for(boost::filesystem::recursive_directory_iterator itor( curPath.c_str() ); itor != itEnd ;++itor)
+    {
+        if(boost::filesystem::is_directory(itor->path()))
+			continue;
+
+        boost::filesystem::path filePath = itor->path();
+        filename = filePath.filename().string();
+       
+        // boost::filesystem 还可以创建目录： 
+        boost::filesystem::path dstPath("/home/klm/work/test_dst/"+filename);
+        if( !boost::filesystem::exists( dstPath.parent_path() ) )
+        {
+            cout << "create_directories..." << endl;  
+            boost::filesystem::create_directories(dstPath.parent_path());
+        }
+        boost::filesystem::copy_file(filePath, dstPath, boost::filesystem::copy_option::overwrite_if_exists, ec);
+        cout << "copy file: " << dstPath.filename().string() << endl;  
+    }
 }

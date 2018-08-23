@@ -28,22 +28,183 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 1) 目录遍历  
 
+分两种类型, 一种是一次遍历一个目录, 另一种是递归遍历所有目录;  
+
+* boost::filesystem::directory_iterator;  
+* boost::filesystem::recursive_directory_iterator;  
+
+使用范例:  
+
 ~~~cpp
 
+string curPath = "/home/klm/work/test"; 
+
+//定义一个可以递归的目录迭代器,用于遍历
+// boost::filesystem::directory_iterator it_end;
+// for (boost::filesystem::directory_iterator it(bst_path); it != it_end; ++it) {
+boost::filesystem::recursive_directory_iterator itEnd;
+for(boost::filesystem::recursive_directory_iterator itor( curPath.c_str() ); itor != itEnd ;++itor)
+{
+
+    /**
+     * 当 curPath 是相对路径时， itor->string() 也是相对路径
+     * 当 curPath 是绝对路径时， itor->string() 也是绝对路径
+     */
+    string file = itor->path().string() ; // 是目录下每个文件的路径
+}
 ~~~
 
+> 以下几个操作是在遍历目录的基础上使用.   
 
+2) 获取文件名, 即不包含路径的文件名   
+
+~~~cpp
+path filename() const
+~~~
+
+3) 获取/修改文件的扩展名(包含".")和净文件名(即不含扩展名的文件名)   
+
+~~~cpp
+path &replace_extension(const path &new_extension = path());
+path extension() const
+path stem() const
+~~~
+
+4) 获取文件的大小   
+
+~~~cpp
+boost::uintmax_t file_size(const path& p);
+
+
+boost::uintmax_t file_size(const path& p, system::error_code& ec);
+~~~
+
+5) 获取/修改文件的最后修改时间   
+
+~~~cpp
+// 返回文件的最后一次修改时间
+std::time_t last_write_time(const path& p);
+std::time_t last_write_time(const path& p, system::error_code& ec);
+
+// 修改文件的最后修改时间，相当于 Linux 中的 touch 命令  
+void last_write_time(const path& p, const std::time_t new_time);
+void last_write_time(const path& p, const std::time_t new_time, system::error_code& ec);
+~~~
+
+6) 判断文件是目录还是普通文件  
+
+~~~cpp
+bool is_directory(const path& p);
+bool is_directory(const path& p, system::error_code& ec);
+bool is_regular_file(const path& p);
+bool is_regular_file(const path& p, system::error_code& ec);
+bool is_other(const path& p);
+bool is_other(const path& p, system::error_code& ec);
+bool is_symlink(const path& p);
+bool is_symlink(const path& p, system::error_code& ec);
+~~~
+
+7) 判断文件或目录是否存在    
+
+~~~cpp
+bool exists(const path& p);
+bool exists(const path& p, system::error_code& ec);
+~~~
+
+8) 文件重命名   
+
+~~~cpp
+void rename(const path& old_p, const path& new_p);
+void rename(const path& old_p, const path& new_p, system::error_code& ec);
+~~~
+
+9) 拷贝文件  
+
+~~~cpp
+boost::filesystem::copy_file(tmpPath, filePath, 
+                    boost::filesystem::copy_option::overwrite_if_exists, ec);
+~~~
+
+注意: 如果编译时使用 "-std=c++11", 那么这个函数会导致如下的链接错误:   
+
+~~~bash
+undefined reference to:  `boost::filesystem::detail::copy_file(
+boost::filesystem::path const&, boost::filesystem::path const&, 
+boost::filesystem::copy_option, boost::system::error_code*)'
+~~~
+
+这里提供了一种解决方案: https://codeyarns.com/2017/09/20/undefined-reference-to-boost-copy_file/.   
+
+10) 获取某个文件相关的目录  
+
+~~~cpp
+path parent_path() const;
+path current_path(system::error_code* ec=0);
+void current_path(const path& p, system::error_code* ec=0);
+~~~
+
+11) 删除文件  
+
+~~~cpp
+bool remove(const path& p, system::error_code* ec=0);
+boost::uintmax_t remove_all(const path& p, system::error_code* ec=0);
+~~~
 
 ## 场景实例  
 
-
+1) 拷贝一个目录下的常规文件到另外一个目录 
 
 ~~~cpp
 #include <iostream>
 #include <string>
+
+#define BOOST_NO_CXX11_SCOPED_ENUMS
 #include <boost/filesystem.hpp>
+#undef BOOST_NO_CXX11_SCOPED_ENUMS
 #include "boost/algorithm/string.hpp"
 
+/**
+ * Copy regular files in a directory
+*/
+int main(int argc, char* argv[])
+{
+    string curPath = "/home/klm/work/test"; 
+    string filename = "";
+    boost::system::error_code ec;
+
+    //定义一个可以递归的目录迭代器,用于遍历
+    boost::filesystem::recursive_directory_iterator itEnd;
+    for(boost::filesystem::recursive_directory_iterator itor( curPath.c_str() ); itor != itEnd ;++itor)
+    {
+        if(boost::filesystem::is_directory(itor->path()))
+			continue;
+
+        boost::filesystem::path filePath = itor->path();
+        filename = filePath.filename().string();
+       
+        // boost::filesystem 还可以创建目录： 
+        boost::filesystem::path dstPath("/home/klm/work/test_dst/"+filename);
+        if( !boost::filesystem::exists( dstPath.parent_path() ) )
+        {
+            cout << "create_directories..." << endl; // ".sh"
+            boost::filesystem::create_directories(dstPath.parent_path());
+        }
+        boost::filesystem::copy_file(filePath, dstPath, boost::filesystem::copy_option::overwrite_if_exists, ec);
+        cout << "copy file: " << dstPath.filename().string() << endl;
+    }
+}
+~~~
+
+2) 查看一个目录下文件的属性  
+
+~~~cpp
+#include <iostream>
+#include <string>
+
+#define BOOST_NO_CXX11_SCOPED_ENUMS
+#include <boost/filesystem.hpp>
+#undef BOOST_NO_CXX11_SCOPED_ENUMS
+#include "boost/algorithm/string.hpp"
 /**
  * With "-std=c++11" can result in:
  *   boost_filesys.cpp:(.text.startup+0x743): undefined reference to 
