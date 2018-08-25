@@ -97,3 +97,19 @@
 	"fast_open": false
 }
 ```
+
+klm@klm:~$ cat /etc/grub.d/40_custom 
+#!/bin/sh
+exec tail -n +3 $0
+# This file provides an easy way to add custom menu entries.  Simply type the
+# menu entries you want to add after this comment.  Be careful not to change
+# the 'exec tail' line above.
+
+menuentry "Windows 10" {
+    insmod part_msdos
+    insmod ntfs
+    set root=(hd1,msdos1)
+    search --no-floppy --fs-uuid --set=root 9A087D21087CFE17
+    chainloader ($root)/Windows/Boot/EFI/bootmgfw.efi
+}
+klm@klm:~$ 

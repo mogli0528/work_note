@@ -1,4 +1,8 @@
-# QDialog
+# 多窗口设计中涉及到的控件 - QDialog, QmessageBox, QLineEdit  
+
+> QDialog, QMessageBox, QLineEdit, QAction   
+
+## QDialog
 
 QDialog 运行 exec() 函数会显示对话框， 如果运行了 accept() 函数, 那么返回值应该是 Accepted.  
 
@@ -36,7 +40,7 @@ Qt 中的 QMessageBox 类提供了多种常用的对话框类型， 比如这里
 
 
 
-## LineEdit  
+## QLineEdit  
 
 1) 隐藏输入密码 
 
@@ -68,4 +72,52 @@ ui->usrLineEdit->setFocus();
 
 下面来看下怎么使用代码自定义槽，然后手动进行关联。   
 
+~~~cpp
+connect(sender, signal, this, slot);
+~~~
 
+
+## 添加菜单和菜单图标  
+
+在编辑动作对话框中的“图标”后面有 "选择图标文件"按钮, 黑色箭头下拉框可以选择使用资源还是使用文件来最为图标.   
+
+如果使用文件的话，那么就可以直接在弹出的文件对话框中选择本地磁盘上的一个图标文件。
+
+下面我们来讲述使用资源的方式，如果直接点击这个按钮就是默认的使用资源。    
+
+1) 添加资源文件
+
+我们向项目中添加新文件，模板选择Qt分类中的Qt资源文件（Qt Resource File）。 
+
+添加完文件后会自动打开该资源文件， 需要先添加前缀，点击“添加”按钮，然后选择“添加前缀”，默认的前缀是“/new/prefix1”，这个可以修改为“/myimages”。   
+
+然后再按下添加按钮来添加文件，这里最好将所有要用到的图片放到项目目录中。比如这里在项目目录中新建了一个images文件夹，然后将需要的图标文件粘贴进去。   
+
+当添加完资源后，一定要按下Ctrl + S来保存资源文件，不然在后面可能无法显示已经添加的资源。  
+
+2) 添加菜单项
+
+可以在 UI 设计界面中添加, 也可以使用代码添加.  
+
+下面使用代码再来添加一个菜单项，并为其设置图标。在编辑模式打开 mainwindow.cpp 文件，并在构造函数中添加如下代码：  
+
+~~~cpp
+{
+    // 创建新的 action
+    QAction *openAct = new QAction(tr("&open"), this);
+    QIcon openIcon(":/myImages/menu_icon/new.svg");
+    openAct->setIcon(openIcon);
+    openAct->setShortcut(QKeySequence(tr("Ctrl+O")));
+    ui->menu_File->addAction(openAct);
+    
+    // 创建新的编辑菜单, 同时创建新的 Action  
+    QMenu *menu_Edit = ui->menuBar->addMenu(tr("编辑(&E)"));
+    QAction *find_Act = new QAction(tr("&查找"), this);
+    QIcon findIcon(":/myImages/menu_icon/find.svg");
+    find_Act->setIcon(findIcon);
+    find_Act->setShortcut(QKeySequence("Ctrl+F"));
+    menu_Edit->addAction(find_Act);
+}
+~~~
+
+菜单栏上可以通过 addMenu() 来添加新的菜单，而菜单中可以使用 addAction() 来创建菜单项。  

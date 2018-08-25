@@ -35,13 +35,13 @@ $ sudo im-config -s fcitx -z default
 ## 卸载搜狗输入法
 首先使用命令查看下安装的搜狗拼音输入法`sudo dpkg -l so*`，然后先卸载搜狗拼音`sudo apt-get purge sogoupinyin`
 
-卸载fcitx，
+卸载fcitx，  
 
 ```bash
 $ sudo apt-get purge fcitx
 ```
 
-彻底卸载fcitx及相关配置，
+彻底卸载fcitx及相关配置，  
 
 ```bash
 $ sudo apt-get autoremove
@@ -49,3 +49,14 @@ $ sudo apt-get autoremove
 
 最后别忘注销或者重启系统，如果注销按钮不能使用，可以使用命令`sudo pkill Xorg`，当再次登录系统之后，可以看到搜狗输入法已经完全被卸载干净了。
 
+
+## 搜狗输入法候选词是乱码  
+
+qimpanel需要kimpanel才能工作，所以需要安装fictx-module-kimpanel ……
+那个乱码的窗口是fcitx-ui-classic的窗口，不是qimpanel的窗口
+
+~~~ 
+sudo rm -rf ~/.config/SogouPY* ~/.config/sogou*
+sudo apt-get purge fcitx-ui-classic
+sudo apt-get install fictx-module-kimpanel
+~~~

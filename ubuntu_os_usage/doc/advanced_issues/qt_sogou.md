@@ -82,7 +82,11 @@ Call Stack (most recent call first):
 解决方法如下:   
 
 ~~~bash
-sudo apt install libxkbcommon-dev
+wget http://xkbcommon.org/download/libxkbcommon-0.5.0.tar.xz
+tar xf libxkbcommon-0.5.0.tar.xz
+./configure —prefix=/usr —libdir=/usr/lib/x86_64-linux-gnu —disable-x11
+make
+sudo make install
 
 cmake ..
 ~~~
